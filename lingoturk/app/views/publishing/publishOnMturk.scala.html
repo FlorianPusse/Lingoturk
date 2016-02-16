@@ -1,0 +1,129 @@
+@(exp: LingoExpModel, balance : Double)
+
+@main("Preview") {
+
+    <script>
+    $(document).ready (function(){
+        $("#tabs").tabs({});
+        $("#fileButton").click(function(){
+            $("#fileInput").click();
+        });
+        $("#fileInput").change(function(){
+            if ($("#fileInput").val() != "") {
+                var files = document.getElementById('fileInput').files;
+                for(var i = 0; i < files.length; i++){
+                    var file = files[i];
+                    var reader = new FileReader();
+                    reader.onload = (function(fileName) {
+                        return function(f){
+                            var workerIds = [];
+                            var content = f.target.result;
+                            var rows = content.split("\n");
+                            for(var rowCounter = 0; rowCounter < rows.length; rowCounter++){
+                                var columns = rows[rowCounter].split(",");
+                                for(var columnCounter = 0; columnCounter < columns.length; columnCounter++){
+                                    var workerId = columns[columnCounter].trim();
+                                    if(workerId != ""){
+                                        workerIds.push(workerId);
+                                    }
+                                }
+                            }
+
+                            $("#blockedWorkers").val(workerIds.join(","));
+                            $("#workerCounter").text(workerIds.length);
+                            $("#workerCounter").parent("p").show();
+                        }
+                    })(file.name);
+                    reader.readAsText(files[i]);
+                }
+            }
+        });
+        $(".btn-group > .btn").click(function(){
+            $(this).addClass("active").siblings().removeClass("active");
+        });
+        $("button[name='dest']").click(function(){
+            $("#destination").val($(this).attr("id"));
+        })
+    }) ;
+    </script>
+
+    <div class="panel panel-success" style="margin-bottom : 70px; width : 100%">
+        <div class="panel-heading">
+            <h3 class="panel-title">Set publishing options <strong style="float:right">account balance: @if(balance != -1){$@balance}else{temporarily not available}</strong></h3>
+            @if(balance == -1){<h2>Service temporarily not available!</h2>}
+        </div>
+
+        <form action="@routes.Application.publish()" method="POST" role="form" enctype="multipart/form-data" align="center">
+            <div class="panel-body" style="width: 100%;overflow:auto;">
+
+                <div style="float:left; width:49.5%" id="inputOptions">
+                    <input type="hidden" value="@exp.getId()" name="eId">
+
+                    <div class="form-group">
+                        <label for="costsPerAssignment"> Reward per Question: (in $) </label>
+                        <input value="0" class="form-control" id="costsPerAssignment" name="costsPerAssignment">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="duration"> Time Activated (days): </label>
+                        <input value="3" class="form-control" id="duration" name="duration">
+                    </div>
+
+                    <div class="form-group">
+                        <label id="maxAssign"> Maximum Assignments: </label>
+                        <input value="1" class="form-control" id="maxAssign" name="maxAssign">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="keywords"> Keywords (comma seperated list): </label>
+                        <input value="" class="form-control" id="keywords" name="keywords">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="datei"> Excluded Workers (comma separated list): </label>
+                        <input id="fileInput" class="form-control" type="file" style="display: none" accept="text/comma-separated-values">
+                        <input id="blockedWorkers" name="blockedWorkers" type="hidden">
+                        <button type="button" class="btn btn-default" id="fileButton" style="display: block;margin: 0 auto;">Upload</button>
+                        <p style="display: none;margin-top:10px">Number of excluded workers: <strong id="workerCounter"></strong></p>
+                    </div>
+
+                    <div class="form-group text-center">
+                        <label for="destinationDiv"> Choose destination: </label><br/>
+                        <div id="destinationDiv" class="btn-group">
+                            <button type="button" name="dest" id="sandbox" class="btn btn-default active">Upload to Sandbox</button>
+                            <button type="button" name="dest" id="amt" class="btn btn-default">Upload to Mechanical Turk</button>
+                            <input id="destination" type="hidden" name="destination" value="sandbox">
+                        </div>
+                    </div>
+
+                    <input type="submit" name="sub" class="btn btn-default" style="float : center; margin-top: 10%" value="Submit" formaction="@routes.Application.publish()" formmethod="post">
+                </div>
+
+                <div style="float:right; width:49.5%;">
+                    <label>Previews:</label>
+                    <div style="min-height: 400px;" id="tabs">
+                        <ul>
+                            <li><a href="#preview">Preview</a></li>
+                            <li><a href="#part">Experiment</a></li>
+                        </ul>
+                        <div id="preview" style="height:450px">
+                            @if(!exp.getParts.isEmpty) {
+                                <iframe src="@Application.getStaticIp()/render?id=@exp.getParts.get(0).getId()&assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE&hitId=2DDOX7H57DZKRJGLCO4HGM25YA70AL&Type=part" style="margin:0 ; padding:0 ; border : none ; width : 100% ; height : 100%" name="seite"></iframe>
+                            }else{
+                                <p>Preview not available, since there are no parts used in this experiment.</p>
+                            }
+                        </div>
+                        <div id="part" style="height:450px">
+                            @if(!exp.getParts.isEmpty) {
+                                <iframe src="@Application.getStaticIp()/render?id=@exp.getParts.get(0).getId&assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE_TEST&hitId=2DDOX7H57DZKRJGLCO4HGM25YA70AL&workerId=TEST&Type=part" style="margin : 0 ; padding : 0 ; border : none ; width : 100% ; height : 100%" name="seite"></iframe>
+                            }else{
+                                <p>Preview not available, since there are no parts used in this experiment.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div style="clear:both"></div>
+            </div>
+        </form>
+    </div>
+}

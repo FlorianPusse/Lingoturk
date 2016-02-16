@@ -1,0 +1,50 @@
+@(expId:Int, text:String)
+
+<html>
+
+    <head>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")" />
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-2.1.1.js")"></script>
+        <script>
+            $(document).ready(function(){
+                $("#instructions").on("input",function(){
+                    $("#previewBody").html($(this).val());
+                });
+                $("#previewBody").html($("#instructions").val());
+            });
+        </script>
+    </head>
+    <body>
+        <div style="height: 100%; width: 100%; display: table;">
+            <div style=" display: table-cell; height: 100%; vertical-align: middle;">
+                <div class="panel panel-primary" style="width:90%;margin:auto;">
+                    <div class="panel-heading" style="font-weight: bolder;">
+                                New instructions
+                    </div>
+                    <div class="panel-body">
+                        <form action="/submitNewInstructions" method="POST">
+                        <input type="hidden" name="expId" value="@expId">
+                        <textarea id="instructions" rows="15" name="instructions" type="text" class="form-control textInput">@text</textarea>
+
+                        <button type="submit" class="textInput btn btn-default" style="float:right;margin-top:20px">Submit</button>
+                        </form>
+                    </div>
+                </div>
+
+                <label for="preview" style="display: block; width:90%; margin-left:auto; margin-right:auto; margin-top:30px; margin-bottom:15px">Previw:</label>
+                <div id="preview" class="panel panel-primary" style="width:90%;margin:auto;">
+                    <div class="panel-heading" style="font-weight: bolder;">
+                        Instructions
+                    </div>
+                    <div class="panel-body">
+                        <div id="previewBody">
+
+                        </div>
+                        <button type="button" class="btn btn-default" style="float:right;margin-top:20px" disabled="disabled">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+</html>

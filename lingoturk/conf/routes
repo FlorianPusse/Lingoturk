@@ -1,0 +1,75 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+
+# Home page
+GET         /                                       controllers.Application.index()
+GET         /contact                                controllers.Application.contact()
+
+######        Extracten     ######
+GET         /extract                                controllers.Extract.extract()
+GET         /extractResult                          controllers.Extract.result(id:Int)
+GET         /failedAssignments                      controllers.AsynchronousJob.failedAssignments()
+
+######         Createn      ######
+
+GET         /overviewPage                           controllers.Application.overviewPage()
+GET         /createExperiment                       controllers.ManageExperiments.createExperiment(name:String)
+
+
+POST        /submitNew_Experiment                   controllers.ManageExperiments.submitNewExperiment()
+
+######      Manage/Publish ######
+
+GET         /editInstructions                       controllers.ManageExperiments.editInstructions(expId:Int)
+POST        /submitNewInstructions                  controllers.ManageExperiments.submitNewInstructions()
+
+GET         /returnJson/:id                         controllers.ManageExperiments.returnJSON(id:Int)
+GET         /returnPart                             controllers.ManageExperiments.returnPart(partId:Int)
+GET         /getPart                                controllers.ManageExperiments.returnPartAsJSON(expId : Int, workerId : String)
+
+GET         /getQuestion/:id                        controllers.ManageExperiments.getQuestion(id:Int)
+GET         /getConnectives/:id                     models.Questions.DiscourseConnectivesExperiment.DiscourseConnectivesQuestion.getConnectives(id:Int)
+
+GET         /manage                                 controllers.Application.manage()
+POST        /publish                                controllers.Application.publish()
+GET         /publishingPlatform                     controllers.Application.publishingPlatform(expId: Int)
+GET         /publishOnMturk                         controllers.Application.publishOnMturk(expId:Int)
+GET         /publishOnProlific                      controllers.Application.publishOnProlific(expId:Int)
+GET         /publishProlific                        models.Questions.LinkingExperimentV1.Prolific.LinkingGroup.publishProlific(expId:Int)
+
+GET         /modify/:id                             controllers.Application.modify(id:Int)
+
+GET         /changeSettings/:id                     controllers.Application.changeSettings(id:String)
+GET         /renderExampleQuestion/:id              controllers.RenderController.renderExampleQuestion(id: Int)
+GET         /render                                 controllers.RenderController.render(Type: String ?= null, id: Int, id2: Int ?= -1, assignmentId: String ?= null, hitId: String, workerId: String ?= null, turkSubmitTo ?= null)
+GET         /renderAMT                              controllers.RenderController.renderAMT(id: Int, id2: Int, slot1 : Int, slot2 : Int, assignmentId: String ?= null, hitId: String, workerId: String ?= null, turkSubmitTo ?= null)
+GET         /renderProlific                         controllers.RenderController.renderProlific(expId: Int)
+GET         /generalRendering                       controllers.RenderController.generalRender(Type: String ?= null, id: Int, id2: Int ?= -1, assignmentId: String ?= null, hitId: String, workerId: String ?= null, turkSubmitTo ?= null)
+GET         /pictureNaming                          controllers.RenderController.renderPictureNaming(expId: Int, origin: String ?= null)
+GET         /renderPB                               controllers.RenderController.renderPB(expId: Int, origin: String ?= null)
+GET         /renderStoryCompletion                  controllers.RenderController.renderStoryCompletion(expId: Int, origin: String ?= null)
+
+GET         /renderLinkingProlific                  models.Questions.LinkingExperimentV1.Prolific.LinkingGroup.renderLinkingProlific(expId:Int)
+
+POST        /submitResult                           controllers.ManageExperiments.submitResult()
+
+GET         /delete                                 controllers.Application.delete(id: Int)
+
+######      Global Settings ######
+
+GET         /settings                               controllers.Settings.settings()
+POST        /globalSettingsChanged                  controllers.Settings.globalSettingsChanged()
+
+######      Login           ######
+
+GET         /login                                  controllers.Secured.login()
+POST        /authenticate                           controllers.Secured.authenticate()
+
+######      Results         ######
+POST        /submitResults                          controllers.ManageExperiments.submitResults()
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET         /assets/*file                           controllers.Assets.at(path="/public", file)

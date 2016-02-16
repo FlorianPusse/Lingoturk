@@ -1,0 +1,184 @@
+@(expId:Int)
+<html>
+    <head>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")" />
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-2.1.1.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/angular.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("../../../../public/javascripts/ExperimentRendering/LinkingExperimentV1/LinkingExperimentProlific_render.js")"></script>
+        <input type="hidden" id="expId" value="@expId">
+        <style type="text/css">
+        img {
+            max-width: 900px;
+            display:block;
+            margin: 0 auto;
+        }
+        .item-inactive {
+        background-color : #DEE5DE ;
+        border : 1px solid #EBE9C5 ;
+        border-radius : 4px ;
+        margin-bottom : 10px ;
+        cursor : no-drop ;
+        padding : 5px ;
+        }
+
+        .item-active {
+        background-color : #FFFFFF ;
+        border : 1px solid #EBE9C5 ;
+        border-radius : 4px ;
+        margin-bottom : 10px ;
+        cursor : pointer ;
+        padding : 5px ;
+        }
+
+        .item-current {
+        background-color : #B7F7B2 ;
+        border : 1px solid #EBE9C5 ;
+        border-radius : 4px ;
+        margin-bottom : 10px ;
+        padding : 5px ;
+        cursor : pointer ;
+        }
+
+        .blank {
+        cursor : pointer ;
+        }
+
+        .deletion {
+        display: none;
+        }
+
+        .force-visibility > .deletion {
+        display: inline-block;
+        border-right: 2px;
+        border-color: black;
+        border-right-style: solid;
+        padding-right: 15px;
+        }
+
+        canvas {
+        position : absolute ;
+        top : 0px ;
+        left : 0px ;
+        width : 100% ;
+        height : 100% ;
+        z-index : 1 ;
+        }
+
+        ::-webkit-scrollbar {
+        width : 12px ;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+        -webkit-border-radius : 10px ;
+        border-radius : 10px ;
+        background : rgba(255, 255, 255, 0.7 ) ;
+        -webkit-box-shadow : inset 0 0 6px rgba( 0, 0, 0, 0.7 ) ;
+        }
+
+        .transparent-scrollbar ::-webkit-scrollbar-thumb {
+        -webkit-border-radius : 10px ;
+        border-radius : 10px ;
+        background : rgba( 255, 255, 255, 0.2 ) ;
+        -webkit-box-shadow : inset 0 0 6px rgba( 0, 0, 0, 0.1 ) ;
+        }
+        </style>
+    </head>
+
+    <body id="angularApp" ng-app="LinkingApp" style="width : 100%" ng-controller="RenderController as RC" >
+        <div class="panel panel-primary" id="workerSlide" style="width:80%;margin: 0 auto; margin-top:3%;margin-bottom:5%">
+            <div class="panel-heading" style="font-size: 16px">
+                Please enter your workerId into the box below:
+            </div>
+            <div class="panel-body">
+                <input type="text" class="form-control textInput" ng-model="RC.workerId">
+                <button type="button" ng-click="RC.load()" class="btn btn-default" disabled="disabled" placeholder="enter here" style="float:right;margin-top:10px">Continue</button>
+            </div>
+        </div>
+
+        <div class="panel panel-primary" id="instructions" style="display:none;width:80%;margin: 0 auto; margin-top:3%;margin-bottom:3%">
+            <div class="panel-heading" style="font-size: 16px">
+                Instructions to workers
+            </div>
+            <div class="panel-body">
+                <span class="label label-important" style="background-color: #b94a48;display:block;margin-bottom:15px;font-size:100%">Please go through all the 6 examples below to understand the task</span>
+                <pre style="word-break: normal;font-size: 15px;">You will be presented with two descriptions of an everyday activity e.g. eating in a fast food restaurant. Each description consists of a sequence of sentences depicting events which are part of the activity.
+                    Some events in the first description will be <span style="background-color: #F9F8B0;">highlighted</span>. Please choose one of them and link it to the most similar event in the second description.
+                    For example, <strong>"order the meal"</strong> in the first description is most similar to <strong>"order meal option with server"</strong> from the second description.
+                    Do this for each of the highlighted events. </pre>
+
+                <label for="example1">
+                    Example 1
+                </label>
+                <div style="margin-bottom: 20px" id="example1">
+                    <img style="width:100%" src="@routes.Assets.at("images/linkingPreview/example1.PNG")">
+                </div>
+
+                <pre style="word-break: normal;font-size: 15px;">If you do not find a similar event in the second description, please indicate at which point the highlighted event would typically take place in the second description. For example, <strong>"wait for meal"</strong> typically occurs after <strong>"order meal option with server"</strong> and before <strong>"receive meal from server"</strong>.</pre>
+
+                <label for="example2">
+                    Example 2
+                </label>
+                <div style="margin-bottom: 20px" id="example2">
+                    <img style="width:100%" src="@routes.Assets.at("images/linkingPreview/example2.PNG")">
+                </div>
+
+                <pre style="word-break: normal;font-size: 15px;">If you do not find a similar event in the second description or a position in the second description where the highlighted event would typically take place, please link it with <strong>"no linking possible"</strong>.
+                    For example, <strong>"server brings change"</strong> typically happens after one pays, but there is no position before or after <strong>"place credit card in holder"</strong>, <strong>"server will pick up payment"</strong> and <strong>"server brings charge slip"</strong> where it would take place.</pre>
+
+                <label for="example3">
+                    Example 3
+                </label>
+                <div style="margin-bottom: 20px" id="example3">
+                    <img style="width:100%" src="@routes.Assets.at("images/linkingPreview/example3.PNG")">
+                </div>
+
+                <pre style="word-break: normal;font-size: 15px;">Sometimes, the highlighted sentence could depict more than one event. If you think that this it the case, please link it with all the similar events in the second description. For example, <strong>"tip the waiter and leave restaurant"</strong> depicts two events and it is linked to both <strong>"leave tip"</strong> and <strong>"leave restaurant"</strong>.</pre>
+
+                <label for="example4">
+                    Example 4
+                </label>
+                <div style="margin-bottom: 20px" id="example4">
+                    <img style="width:100%" src="@routes.Assets.at("images/linkingPreview/example4.PNG")">
+                </div>
+
+
+                <pre style="word-break: normal;font-size: 15px;">Sometimes, the highlighted sentence could depict more than one event, but not all of them may be mentioned in the second description. If you think that this it the case, please link the highlighted sentence to all the mentioned events. For example, <strong>"eat and drink"</strong> depicts two events but only one of them <strong>"eat meal"</strong> is mentioned in the second description.</pre>
+
+                <label for="example5">
+                    Example 5
+                </label>
+                <div style="margin-bottom: 20px" id="example5">
+                    <img style="width:100%" src="@routes.Assets.at("images/linkingPreview/example5.PNG")">
+                </div>
+
+                <pre style="word-break: normal;font-size: 15px;">Sometimes, the highlighted event in the first description could correspond to more than one event in the second description.
+
+                    If you think that this it the case, please link it with all the corresponding events. For example, the event <strong>"pay the bill"</strong> in the first description could include <strong>"place credit card in holder"</strong>, <strong>"server will pickup payment"</strong>, <strong>"server brings charge slip"</strong>, <strong>"sign slip"</strong> in the second description.</pre>
+
+                <label for="example6">
+                    Example 6
+                </label>
+                <div style="margin-bottom: 20px" id="example6">
+                    <img style="width:100%" src="@routes.Assets.at("images/linkingPreview/example6.PNG")">
+                </div>
+
+                <div style="margin: 10px;padding:10px;text-align:center;background-color: #f5f5f5; border: 1px solid #ccc;">
+                    <strong style="display:block;margin-bottom:5px">If you are ready to start the experiment, please press the "Start now" button.</strong>
+                    <button onclick="$('#instructions').hide();$('#iFrame').show();" type="button" style="display:block;margin:0 auto" class="btn btn-default">Start now</button>
+                </div>
+            </div>
+        </div>
+        <iframe id="iFrame" style="display:none; width: 100%;height: 100%;"></iframe>
+
+        <div class="panel panel-primary" id="finish" style="display:none; width:80%;margin: 0 auto; margin-top:3%;margin-bottom:5%">
+            <div class="panel-heading" style="font-size: 16px">
+                Study finished
+            </div>
+            <div class="panel-body">
+                ... tba ...
+                <button type="button" class="btn btn-default" disabled="disabled" placeholder="enter here" style="float:right;margin-top:10px">Submit</button>
+            </div>
+        </div>
+    </body>
+</html>

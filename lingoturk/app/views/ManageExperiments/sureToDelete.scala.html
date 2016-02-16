@@ -1,0 +1,9 @@
+@(expId: Int ,expType: String, exp: LingoExpModel)
+
+@main("LINGOturk") {
+
+Are you sure you want to delete the following experiment? <br> <br>
+@exp.getName() <br><br>
+<a href="deletereturn?id=@expId&type=@expType" class="noLinkColor"> delete </a>
+
+}

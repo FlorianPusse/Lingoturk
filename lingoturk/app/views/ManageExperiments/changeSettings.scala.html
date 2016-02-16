@@ -1,0 +1,34 @@
+@(id: String)
+
+@main("changeSettings") {
+
+        <div align="center"> 
+        	<p style="font-size: 1.4em">Here you can change the settings of the running experiment you selected.</p><br>
+        	@**
+			<form action="@routes.Application.operationSuccess("Extend", id)"  method="POST" role="form" enctype="multipart/form-data" style="margin-bottom: 15px;font-size: 1.2em">
+				Add number of Assignments:&nbsp&nbsp&nbsp&nbsp&nbsp <input value="0" name="assign"> <br>
+				Add expiration time in seconds:&nbsp <input value="0" name="expiration"> <br>
+				<input type="submit" name="extend" value="Extend experiment duration" style="width: 300px;height: 30px;margin-top: 5px;margin-bottom: 15px" data-original-title="Click to extend the duration of the experiment." rel="tooltip">
+        	</form>
+			
+        	<form action="@routes.Application.operationSuccess("Disable", id)" method="POST" role="form" enctype="multipart/form-data" style="margin-bottom: 15px;font-size: 1.2em">
+				<input type="submit" name="disable" value="Disable experiment" style="width: 300px;height: 30px" data-original-title="Click to click." rel="tooltip"> <br> <br>
+        	</form>
+			
+        	<form action="@routes.Application.operationSuccess("Expire", id)"  method="POST" role="form" enctype="multipart/form-data" style="margin-bottom: 15px;font-size: 1.2em">
+				<input type="submit" name="expire" value="End experiment" style="width: 300px;height: 30px" data-original-title="Click to end the experiment on AMT." rel="tooltip"> <br> <br>
+        	</form>
+        	
+			<form action="@routes.Application.operationSuccess("Approve", id)"  method="POST" role="form" enctype="multipart/form-data" style="margin-bottom: 15px;font-size: 1.2em">
+				Give the workers a feedback:&nbsp <input value="" name="feed" ><br>
+				<input type="submit" name="approve" value="Approve" style="width: 300px;height: 30px;margin-top: 5px;margin-bottom: 15px" data-original-title="Click to approve the runned experiments." rel="tooltip"><br>
+        	</form>
+			
+        	<form action="@routes.Application.operationSuccess("Dispose", id)"  method="POST" role="form" enctype="multipart/form-data" style="margin-bottom: 5px;font-size: 1.2em">
+				<input type="submit" name="dispose" value="Dispose experiment" style="width: 300px;height: 30px" data-original-title="Click to delete the experiment from AMT." rel="tooltip"> <br> <br>
+				<font color="red">Note that you must expire the experiment in advance and should approve the work that was done.</font>
+        	</form>
+
+			**@
+        </div>
+}

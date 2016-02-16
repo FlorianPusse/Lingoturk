@@ -1,0 +1,21 @@
+@(Fail: String, link: String)
+
+    @main("Errorpage") {
+
+        <div align="center">
+            <p>
+                An error has occurred.
+                Error description:
+                @Fail
+            </p>
+
+            <p>
+                <a href="@link" style="font-size: 1.2em">Go back.</a>
+            </p>
+
+            <p>
+                <a href="/" style="font-size : 1.2em">Cancel and go to title screen.</a>
+            </p>
+
+        </div>
+    }

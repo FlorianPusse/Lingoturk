@@ -1,0 +1,162 @@
+@(story1 : Int, story2 : Int, assignmentId: String, hitId : String, workerId: String, turkSubmitTo: String, additionalExplanations: String)
+<html>
+
+    <head>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")" />
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-2.1.1.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/angular.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/ExperimentRendering/LinkingExperimentV1/LinkingExperimentV1_render.js")"></script>
+        <style type="text/css">
+            .item-inactive {
+            background-color : #F4F4F4 ;
+            border : 1px solid #EBE9C5 ;
+            border-radius : 4px ;
+            margin-bottom : 10px ;
+            cursor : no-drop ;
+            padding : 5px ;
+            color:grey;
+            }
+
+            .item-active {
+            background-color : #F9F8B0 ;
+            border: 1px solid #949494;
+            border-radius : 4px ;
+            margin-bottom : 10px ;
+            cursor : pointer ;
+            padding : 5px ;
+            color:black;
+            }
+
+            .right-item {
+            background-color : #FFFFFF ;
+            border: 1px solid #C7C5A8;
+            border-radius : 4px ;
+            margin-bottom : 10px ;
+            cursor : pointer ;
+            padding : 5px ;
+            color:black;
+            }
+
+            .item-current {
+            background-color : #B7F7B2 ;
+            border: 1px solid #949494;
+            border-radius : 4px ;
+            margin-bottom : 10px ;
+            padding : 5px ;
+            cursor : pointer ;
+            color:black;
+            }
+
+            .blank {
+            cursor : pointer ;
+            padding: 5px;
+            }
+
+            .deletion {
+                display: none;
+            }
+
+            .force-visibility > .deletion {
+                display: inline-block;
+                border-right: 2px;
+                border-color: black;
+                border-right-style: solid;
+                padding-right: 15px;
+            }
+
+            canvas {
+            position : absolute ;
+            top : 0px ;
+            left : 0px ;
+            width : 100% ;
+            height : 100% ;
+            z-index : 1 ;
+            }
+
+            /* http://stackoverflow.com/questions/826782/css-rule-to-disable-text-selection-highlighting */
+            body {
+            -webkit-touch-callout : none ;
+            -webkit-user-select : none ;
+            -khtml-user-select : none ;
+            -moz-user-select : none ;
+            -ms-user-select : none ;
+            user-select : none ;
+            }
+
+            ::-webkit-scrollbar {
+            width : 12px ;
+            }
+
+            /* Handle */
+            ::-webkit-scrollbar-thumb {
+            -webkit-border-radius : 10px ;
+            border-radius : 10px ;
+            background : rgba(255, 255, 255, 0.7 ) ;
+            -webkit-box-shadow : inset 0 0 6px rgba( 0, 0, 0, 0.7 ) ;
+            }
+
+            .transparent-scrollbar ::-webkit-scrollbar-thumb {
+            -webkit-border-radius : 10px ;
+            border-radius : 10px ;
+            background : rgba( 255, 255, 255, 0.2 ) ;
+            -webkit-box-shadow : inset 0 0 6px rgba( 0, 0, 0, 0.1 ) ;
+            }
+        </style>
+    </head>
+
+    <body ng-mousemove="RC.mousemove($event)" id="angularApp" ng-app="guessing" style="overflow : hidden ; width : 100%" ng-controller="RenderController as RC" >
+        <canvas id="canvas" ng-click="RC.isPointInLine($event)"></canvas>
+        <div style=" position : absolute ; top : 0px ; left : 0px ; width : 100% ; height : 100% ; z-index : 2">
+            <div class="alert alert-info" style="text-align:center;background-color:#EFF7FB">Please choose a <span style="background-color: #F9F8B0;">highlighted</span> event, one at a time, and link it following the examples given in the <a class="btn btn-info btn-sm" onclick="var width = $(window).width(); var height = $(window).height(); window.open('/render?id=@story1&id2=@story2&assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE&hitId=NOT_AVAILABLE&Type=question',null,'height=' + height + ',width=' + width + ',status=yes,toolbar=no,menubar=no,location=no');" style="padding-top:0;padding-bottom:0">Instructions</a>.</div>
+            <div style="width : 40% ; height : 90% ; float : left">
+                <div class="panel panel-primary" style="width : 100% ; height : 100% ; overflow-y : auto ; background-color : transparent ; border-right-color : rgba ( 66, 139, 202, 0.3 )" id="leftBox">
+                    <div class="panel-body question">
+                        <div ng-click="RC.setCurrentActiveItem(item,$event)" ng-mousedown="RC.currentActiveItem == item && RC.mousedown($event)" ng-class="RC.checkItemClass(item)" ng-repeat="item in RC.script1.items">
+                            {{item.original}}
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true" ng-if="RC.checkItem(item)" style="float:right"></span>
+                        </div>
+
+                        <div style="text-align : center">
+                            <button ng-click="RC.submit()" ng-if="RC.isDone()" type="button" class="btn btn-default">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="width : 40% ; height : 90% ; float : right ;">
+                <div class="panel panel-primary" style="width : 100% ; height : 100% ; overflow-y : auto ; background-color : transparent ; border-left-color : rgba ( 66, 139, 202, 0.3 )" id="rightBox">
+                    <div class="panel-body question">
+                        <div ng-repeat="item in (rightOrdered = (RC.script2.items | orderBy:'slot'))">
+                            <div id="before_{{item.id}}" ng-mouseup="RC.mouseup($event)" ng-if="$first" class="right-item blank" style="opacity : 0.8 ; width : 20%; padding : 5px">
+                                <span style="border:none" ng-click="RC.removeConenction($event)" class="glyphicon glyphicon-remove deletion" aria-hidden="true"></span>
+                            </div>
+                            <div id="{{item.id}}" ng-mouseup="RC.mouseup($event,item)" class="right-item" style="cursor : pointer ;">
+                                <span ng-click="RC.removeConenction($event)" class="glyphicon glyphicon-remove deletion" aria-hidden="true"></span>
+                                {{item.original}}
+                            </div>
+                            <div id="between_{{item.id}}_{{rightOrdered[$index + 1].id}}" ng-if="!$last" ng-mouseup="RC.mouseup($event)" class="right-item blank" style="opacity : 0.8 ; width : 20%; padding : 5px">
+                                <span style="border:none" ng-click="RC.removeConenction($event)" class="glyphicon glyphicon-remove deletion" aria-hidden="true"></span>
+                            </div>
+                            <div id="after_{{item.id}}" ng-if="$last" ng-mouseup="RC.mouseup($event)" class="right-item blank" style="opacity : 0.8 ; width : 20%; padding : 5px">
+                                <span style="border:none" ng-click="RC.removeConenction($event)" class="glyphicon glyphicon-remove deletion" aria-hidden="true"></span>
+                            </div>
+                        </div>
+
+                        <hr style="margin-top:20px"/>
+                        <div id="noLinkingPossible" ng-click="RC.removeConenction($event)" ng-mouseup="RC.mouseup($event)" class="item-active" style="font-weight:bold;background-color: mistyrose;">
+                            <span style="border:none" ng-click="RC.removeConenction($event)" class="glyphicon glyphicon-remove deletion" aria-hidden="true"></span>
+                            No linking possible
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form method="POST" action="@turkSubmitTo/mturk/externalSubmit" align="center" id="form">
+            <input id="story1" name="story1" type="hidden" value="@story1" />
+            <input id="story2" name="story2" type="hidden" value="@story2" />
+            <input id="assignmentId" name="assignmentId" type="hidden" value="@assignmentId" />
+            <input id="hitId" name="hitId" type="hidden" value="@hitId" />
+            <input id="workerId" name="workerId" type="hidden" value="@workerId" />
+        </form>
+    </body>
+
+</html>

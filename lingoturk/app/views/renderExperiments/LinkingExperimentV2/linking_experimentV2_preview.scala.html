@@ -1,0 +1,141 @@
+<html>
+
+    <head>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")" />
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-2.1.1.js")"></script>
+        <style type="text/css">
+        .item-inactive {
+        background-color : #DEE5DE ;
+        border : 1px solid #EBE9C5 ;
+        border-radius : 4px ;
+        margin-bottom : 10px ;
+        cursor : no-drop ;
+        padding : 5px ;
+        }
+
+        .item-active {
+        background-color : #FFFFFF ;
+        border : 1px solid #EBE9C5 ;
+        border-radius : 4px ;
+        margin-bottom : 10px ;
+        cursor : pointer ;
+        padding : 5px ;
+        }
+
+        .item-current {
+        background-color : #B7F7B2 ;
+        border : 1px solid #EBE9C5 ;
+        border-radius : 4px ;
+        margin-bottom : 10px ;
+        padding : 5px ;
+        cursor : pointer ;
+        }
+
+        .blank {
+        cursor : pointer ;
+        }
+
+        .deletion {
+        display: none;
+        }
+
+        .force-visibility > .deletion {
+        display: inline-block;
+        border-right: 2px;
+        border-color: black;
+        border-right-style: solid;
+        padding-right: 15px;
+        }
+
+        canvas {
+        position : absolute ;
+        top : 0px ;
+        left : 0px ;
+        width : 100% ;
+        height : 100% ;
+        z-index : 1 ;
+        }
+
+        ::-webkit-scrollbar {
+        width : 12px ;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+        -webkit-border-radius : 10px ;
+        border-radius : 10px ;
+        background : rgba(255, 255, 255, 0.7 ) ;
+        -webkit-box-shadow : inset 0 0 6px rgba( 0, 0, 0, 0.7 ) ;
+        }
+
+        .transparent-scrollbar ::-webkit-scrollbar-thumb {
+        -webkit-border-radius : 10px ;
+        border-radius : 10px ;
+        background : rgba( 255, 255, 255, 0.2 ) ;
+        -webkit-box-shadow : inset 0 0 6px rgba( 0, 0, 0, 0.1 ) ;
+        }
+        </style>
+    </head>
+
+    <body ng-mousemove="RC.mousemove($event)" id="angularApp" ng-app="guessing" style="width:100%;height:100%;" ng-controller="RenderController as RC" >
+            <div class="panel panel-primary" style="width:90%;margin: 0 auto; margin-top:3%;margin-bottom:3%">
+                <div class="panel-heading" style="font-size: 16px">
+                    Instructions to workers
+                </div>
+                <div class="panel-body">
+                    <span class="label label-important" style="background-color: #b94a48;display:block;margin-bottom:15px;font-size:100%">Please go through all the 4 examples below to understand the task</span>
+<pre style="word-break: normal;font-size: 15px;">You will be presented with two descriptions of an everyday activity e.g. eating in a fast food restaurant. Each description consists of a sequence of sentences depicting events which are part of the activity.
+Two sentences will be <span style="background-color: #B7F7B2;">highlighted</span>, one in the first description and another in the second description. Please indicate whether or not the two sentences are similar and represent the same event. For example <strong>"leave restaurant"</strong> in the first description and <strong>"drive out of restaurant"</strong> in the second description represent the same event and are considered to be similar. </pre>
+
+                    <label for="example1">
+                        Example 1
+                    </label>
+                    <div style="margin-bottom: 20px" id="example1">
+                        <img style="width:100%" src="@routes.Assets.at("images/linkingPreview/example1_v2.PNG")">
+                    </div>
+
+<pre style="word-break: normal;font-size: 15px;">
+If you think the two sentences are not similar, please link the highlighted sentence in the first description to the most similar sentence in the second description.
+For example, <strong>"choose food to order"</strong> in the first description is not similar to <strong>"order meal option with server"</strong> from the second description. Thus <strong>"choose food to order"</strong>, is linked to <strong>"decide what you want"</strong> in the second description.
+</pre>
+
+                    <label for="example2">
+                        Example 2
+                    </label>
+                    <div style="margin-bottom: 20px" id="example2">
+                        <img style="width:100%" src="@routes.Assets.at("images/linkingPreview/example2_v2.PNG")">
+                    </div>
+
+
+<pre style="word-break: normal;font-size: 15px;">
+If think the two sentences are not similar, and you do not find a most similar sentence in the second description, please indicate at which point the highlighted event in the first description would typically take place in the second description.
+
+For example, <strong>"wait for meal"</strong> is not similar to <strong>"eat meal"</strong> but typically occurs after <strong>"order meal option with server"</strong> and before <strong>"receive meal from server"</strong>. Thus <strong>"wait for meal"</strong> is linked to the space between <strong>"order mean option with server"</strong> and <strong>"receive meal from server"</strong>
+</pre>
+
+                    <label for="example3">
+                    Example 3
+                    </label>
+                    <div style="margin-bottom: 20px" id="example3">
+                        <img style="width:100%" src="@routes.Assets.at("images/linkingPreview/example3_v2.PNG")">
+                    </div>
+
+
+
+<pre style="word-break: normal;font-size: 15px;">
+If think the two sentences are not similar, and you do not find a similar sentence in the second description or a point in the second description where the highlighted sentence in the first description would typically take place, please link the highlighted sentence in the first description to <strong>"No Linking Possible"</strong>.
+For example, <strong>"server brings change"</strong> is not similar to <strong>"server bring charge receipt"</strong> and <strong>"server brings change"</strong> typically happens after one pays, but there is no position before or after <strong>"place credit card in holder"</strong>, <strong>"server will pick up payment"</strong> and <strong>"server brings charge slip"</strong> where it would take place. Thus <strong>"server brings change"</strong> is linked to <strong>"No Linking Possible"</strong>
+</pre>
+
+                    <label for="example4">
+                    Example 4
+                    </label>
+                    <div style="margin-bottom: 20px" id="example4">
+                        <img style="width:100%" src="@routes.Assets.at("images/linkingPreview/example4_v2.PNG")">
+                    </div>
+               
+                </div>
+            </div>
+    </body>
+
+</html>

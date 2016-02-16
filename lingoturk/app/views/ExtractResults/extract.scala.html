@@ -1,0 +1,119 @@
+@(hits_mTurk : java.util.List[Extract.PublishedExperiment], hits_sandbox : java.util.List[Extract.PublishedExperiment])
+
+<link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/jquery-ui.css")">
+
+@main("Extract") {
+
+    <script>
+    $(document).ready(function() {
+        $("#tabs").tabs();
+
+        $(document).on("mouseenter",".extract-btn",function(){
+            $(this).fadeTo('fast',1);
+        });
+
+        $(document).on("mouseleave",".extract-btn",function(){
+            $(this).fadeTo('fast',0.01);
+        });
+    });
+    </script>
+
+    <style type="text/css">
+    td.pic { text-align : center }
+    .extract-btn { opacity : 0.01 ; text-align: center;}
+    </style>
+
+    <label>Click on the Experiment you would like to extract: </label>
+    <div id="tabs">
+        <ul>
+            <li><a href="#tab-1">Mechanical Turk</a></li>
+            <li><a href="#tab-2">Sandbox</a></li>
+        </ul>
+        <div id="tab-1" class="row">
+        @if(hits_mTurk.isEmpty) {
+            <div class="ui-state-highlight ui-corner-all" style="margin-top : 20px ; padding : 0.7em ;">
+                <p><span class="ui-icon ui-icon-info" style="float : left ; margin-right :.3em ;"></span>
+                    No experiment published at the moment.</p>
+            </div>
+        } else {
+            <div class="form-group">
+                <table class="table" style="margin-bottom : 70px; width : 100%">
+                    <thead>
+                        <th>ID</th>
+                        <th>Name on AMT</th>
+                        <th>Publishing timestamp</th>
+                        <th>lifetime</th>
+                        <th style="text-align: center">URL</th>
+                        <th style="text-align: center">Extract</th>
+                        <th style="text-align: center">Details</th>
+                    </thead>
+                    <tbody>
+                    @for(hit <- hits_mTurk) {
+                        <tr>
+                            <td>@hit.getPublishID</td>
+                            <td>@hit.getLingoExpModel().getNameOnAmt</td>
+                            <td>@hit.getTimestamp().toString()</td>
+                            <td>@hit.getLifetime().toString()</td>
+                            <td style="text-align: center"><a class="btn btn-default extract-btn" href="@hit.getURL()">Mturk</a></td>
+                            <td style="text-align: center"><a class="btn btn-default extract-btn" href="/extractResult?id=@hit.getLingoExpModel().getId()">Extract</a></td>
+                            <td style="text-align: center"><a class="btn btn-default extract-btn" href="/getHITDetails?id=@hit.getPublishID&service=MTURK">Details</a></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+        </div>
+        <div id="tab-2" class="row">
+        @if(hits_sandbox.isEmpty) {
+            <div class="ui-state-highlight ui-corner-all" style="margin-top : 20px ; padding : 0.7em ;">
+                <p><span class="ui-icon ui-icon-info" style="float : left ; margin-right :.3em ;"></span>
+                    No experiment published at the moment.</p>
+            </div>
+        } else {
+            <div class="form-group">
+                <table class="table" style="margin-bottom : 70px; width : 100%">
+                    <thead>
+                        <th>ID</th>
+                        <th>Name on AMT</th>
+                        <th>Publishing timestamp</th>
+                        <th>lifetime</th>
+                        <th style="text-align: center">URL</th>
+                        <th style="text-align: center">Extract</th>
+                        <th style="text-align: center">Details</th>
+                    </thead>
+                    <tbody>
+                    @for(hit <- hits_sandbox) {
+                        <tr>
+                            <td>@hit.getPublishID</td>
+                            <td>@hit.getLingoExpModel().getNameOnAmt</td>
+                            <td>@hit.getTimestamp().toString()</td>
+                            <td>@hit.getLifetime().toString()</td>
+                            <td style="text-align: center"><a class="btn btn-default extract-btn" href="@hit.getURL()">Sandbox</a></td>
+                            <td style="text-align: center"><a class="btn btn-default extract-btn" href="/extractResult?id=@hit.getLingoExpModel().getId()">Extract</a></td>
+                            <td style="text-align: center"><a class="btn btn-default extract-btn" href="/getHITDetails?id=@hit.getPublishID&service=SANDBOX">Details</a></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+        </div>
+    </div>
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

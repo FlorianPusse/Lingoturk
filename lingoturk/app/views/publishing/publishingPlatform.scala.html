@@ -1,0 +1,21 @@
+@(expId: Int)
+@main("Publishing platform") {
+    <div class="panel panel-success" style="margin-bottom : 70px; width : 100%">
+        <div class="panel-heading">
+            <h3 class="panel-title">Which platform should be used to run the experiment?</h3>
+        </div>
+
+        <div class="panel-body" style="width: 100%;overflow:auto;text-align:center">
+            <a style="margin-top:10px;" href="/publishOnMturk?expId=@expId" class="noLinkColor">
+                <div style="line-height:50px" class="experimentSelection" >
+                    <b>Amazon Mechanical Turk</b>
+                </div>
+            </a>
+            <a style="margin-top:10px;" href="/publishOnProlific?expId=@expId" class="noLinkColor">
+                <div style="line-height:50px" class="experimentSelection" >
+                    <b>Prolific Academic</b>
+                </div>
+            </a>
+        <div>
+    </div>
+}

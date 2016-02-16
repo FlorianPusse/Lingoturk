@@ -1,0 +1,41 @@
+@(expId: Int)
+
+@main("Preview") {
+
+    <script>
+    $(document).ready (function(){
+        $("#tabs").tabs({});
+
+    }) ;
+    </script>
+
+    <div class="alert alert-warning">
+        <strong>Warning!</strong> Currently disabled.
+    </div>
+
+    <div class="panel panel-success" style="margin-bottom : 70px; width : 100%">
+        <div class="panel-heading">
+            <h3 class="panel-title">Set publishing options</h3>
+        </div>
+
+        <form action="@routes.Application.publish()" method="POST" role="form" enctype="multipart/form-data" align="center">
+            <div class="panel-body" style="width: 100%;overflow:auto;">
+
+                <div id="inputOptions">
+                    <input type="hidden" value="@expId" name="expId">
+                    <div class="form-group">
+                        <label> Use the following URL as experiment URL: </label>
+                        <input value="tba" class="form-control" id="maxAssign" name="maxAssign">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="keywords"> Enter the completion URL: </label>
+                        <input value="" class="form-control" id="keywords" name="keywords">
+                    </div>
+                </div>
+                <button type="button" disabled="disabled" class="btn btn-default" style="float:right">Submit</button>
+            </div>
+
+        </form>
+    </div>
+}

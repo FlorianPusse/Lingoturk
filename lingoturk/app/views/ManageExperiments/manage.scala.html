@@ -1,0 +1,79 @@
+@(offlineExperiments: java.util.List[LingoExpModel], runningExperiments: java.util.List[LingoExpModel])
+
+    @main("Manage") {
+
+        <script>
+        $ (document).ready ( function ( ) {
+            $ ( "#tabs" ).tabs ( ) ;
+            $ ( "#tabs2" ).tabs ( ) ;
+            $ ( "#accordion" ).accordion ( ) ;
+        })
+        </script>
+
+        <div id="accordion" style="margin-bottom : 70px">
+            <h3>Saved experiments</h3>
+            <div class="row">
+                @if(offlineExperiments.isEmpty) {
+                    <div class="ui-state-highlight ui-corner-all" style="margin-top : 20px ; padding : 0.7em ;">
+                        <p><span class="ui-icon ui-icon-info" style="float : left ; margin-right :.3em ;"></span>
+                            No offline experiment saved at the moment.</p>
+                    </div>
+                } else {
+                    @for(exp <- offlineExperiments) {
+                        <div class="col-md-8 experimentSelection" style="width : 100%; line-height:50px">
+                            <div style="float : left ;">
+                            @exp.getName()
+                            </div>
+
+                            @**
+                                TODO
+                            <div style="float : right">
+                                <a href="editInstructions?expId=@exp.getId()" class="noLinkColor">edit </a>
+                            </div>**@
+
+                            <div style="float : right ; margin-right : 10px ;">
+                                <a href="publishingPlatform?expId=@exp.getId()" class="noLinkColor"> publish </a>
+                            </div>
+
+                            <div style="float : right ; margin-right : 10px ;">
+                                <a href="delete?id=@exp.getId()" class="noLinkColor"> delete </a>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
+            <h3>Experiments running on AMT</h3>
+            <div class="row">
+            @if(runningExperiments.isEmpty) {
+                <div class="ui-state-highlight ui-corner-all" style="margin-top : 20px ; padding : 0.7em ;">
+                    <p><span class="ui-icon ui-icon-info" style="float : left ; margin-right :.3em ;"></span>
+                        No running experiment saved at the moment.</p>
+                </div>
+            } else {
+                @for(exp <- runningExperiments) {
+                    <div class="col-md-8 experimentSelection" style="width : 100%">
+                        <div style="float : left ;">
+                        @exp.getName()
+                        </div>
+
+                        @**
+                        TODO
+                        <div style="float : right">
+                        <a href="editInstructions?expId=@exp.getId()" class="noLinkColor">edit </a>
+                        </div>**@
+
+                        <div style="float : right ; margin-right : 10px ;">
+                            <a href="publishingPlatform?expId=@exp.getId()" class="noLinkColor"> publish </a>
+                        </div>
+
+                        <div style="float : right ; margin-right : 10px ;">
+                            <a href="delete?id=@exp.getId()" class="noLinkColor"> delete </a>
+                        </div>
+                    </div>
+                }
+            }
+            </div>
+        </div>
+
+    }

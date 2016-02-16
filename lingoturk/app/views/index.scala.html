@@ -1,0 +1,33 @@
+@main("LINGOturk") {
+	<script>
+		jQuery(function ($) {
+			$('[rel=tooltip]').tooltip({delay: { show: 500, hide: 300 }} );
+		})
+	</script>
+	
+    <div style="margin: 0 auto !important;">
+			<a href="overviewPage" class="noLinkColor" style="margin-top:5%">
+				<div class="navBox" rel="tooltip" data-original-title="Click to create a new experiment prototype!">
+					<b>Create experiment</b>
+				</div>
+			</a>
+
+			<a href="manage" class="noLinkColor">
+				<div class="navBox" rel="tooltip" data-original-title="Click to publishOnAMT and modify existing experiment prototypes!">
+					<b>Manage existing experiments</b>
+				</div>
+			</a>
+
+			<a href="extract" class="noLinkColor">
+				<div class="navBox" rel="tooltip" data-original-title="Click to download the results from your published experiments!">
+					<b>Extract results</b>
+				</div>
+			</a>
+
+			<a href="settings" class="noLinkColor">
+				<div class="navBox" rel="tooltip" data-original-title="Click to change the account settings!">
+					<b>Settings</b>
+				</div>
+			</a>
+	</div>
+}

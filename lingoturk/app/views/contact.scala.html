@@ -1,0 +1,24 @@
+@main("Contact"){
+
+<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-2.1.1.js")"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#contact").on("click",function(){
+            $(this).append($('<a href="mailto:florian.pusse@@freenet.de">florian.pusse@@freenet.de</a>'));
+            $("#name").remove();
+        });
+    })
+</script>
+
+
+<div align="center" style="margin-top=200px; margin: 0px;">
+
+        <blockquote style="border-right: 5px solid #FF9500;">
+        <p>
+            This platform is developed by <strong id="contact"><span id="name">Florian Pusse</span></strong> during his work as student research assistant
+            at the University of Saarland.
+        </p>
+        </blockquote>
+
+</div>
+}

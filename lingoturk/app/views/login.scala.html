@@ -1,0 +1,37 @@
+@main("Login"){
+<html>
+    <head>
+        <style type="text/css">
+        .sec{
+            background-image: url(@routes.Assets.at("images/key.png"));
+            width:520px;
+            height:200px;
+            padding:20px;
+            margin-top:10%;
+            margin-left:20%;
+        }
+
+        .error{
+            color: white;
+        }
+        </style>
+    </head>
+
+    <body>
+    <div align="center" class="sec" style="margin-left: 200px;">
+    <div style="margin-left: 200px;">
+        <h1 style="color: white;">Sign in</h1>
+
+        <form action="/authenticate" method="POST">
+            <div class="form-inline">
+                <div class="form-group">
+                    <input class="form-control" type="password" name="password" placeholder="Password">
+                    <button class="btn btn-default" style="float:right; margin-top: 20px"  type="submit">Login</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    </div>
+    </body>
+</html>
+}

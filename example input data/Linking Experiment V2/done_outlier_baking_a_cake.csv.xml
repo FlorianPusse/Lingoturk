@@ -1,0 +1,684 @@
+<scripts>
+	<script id="1">
+		<item head="take" original="Take flour in a bowl" slot="1" text="take in">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="flour" text="flour" />
+			<ptcp head="bowl" text="a bowl" />
+		</item>
+		<item h="10,5" head="add" original="Add water, sugar, beaten egg, vanilla essence, butter and salt one by one" slot="2" text="add by">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="water" text="water" />
+			<ptcp head="sugar" text="sugar" />
+			<ptcp head="egg" text="beaten egg" />
+			<ptcp head="essence" text="vanilla essence" />
+			<ptcp head="butter" text="butter and salt" />
+			<ptcp head="one" text="one" />
+			<ptcp head="one" text="one" />
+		</item>
+		<item head="whisk" original="Whisk after each addition" slot="3" text="whisk after">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="addition" text="each addition" />
+		</item>
+		<item h="9,6" head="stir" original="stir to combine" slot="4" text="stir ">
+		</item>
+		<item h="9,6" head="fill" original="Fill the cake tray" slot="5" text="fill ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="tray" text="the cake tray" />
+		</item>
+		<item head="bake" original="Bake in the oven for 14 minutes" slot="6" text="bake in for">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="oven" text="the oven" />
+			<ptcp head="minutes" text="14 minutes" />
+		</item>
+		<item head="turn" original="Turn off oven and let the cake cool" slot="7" text="turn ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="oven" text="oven" />
+			<ptcp head="cake" text="the cake" />
+		</item>
+		<item h="6,13" head="take" original="Take the cake out of oven " slot="8" text="take out of">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="the cake" />
+			<ptcp head="oven" text="oven" />
+		</item>
+	</script>
+	<script id="2">
+		<item head="get" original="Get a cake mix" slot="1" text="get ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="mix" text="a cake mix" />
+		</item>
+		<item h="5,2" head="mix" original="Mix in the extra ingredients" slot="2" text="mix in">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="the extra ingredients" />
+		</item>
+		<item head="prepare" original="Prepare the cake pan" slot="3" text="prepare ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="pan" text="the cake pan" />
+		</item>
+		<item head="preheat" original="Preheat the oven" slot="4" text="preheat ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="oven" text="the oven" />
+		</item>
+		<item head="put" original="Put the mix in the pans" slot="5" text="put in">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="mix" text="the mix" />
+			<ptcp head="pans" text="the pans" />
+		</item>
+		<item head="put" original="Put the cake batter in the oven" slot="6" text="put in">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="batter" text="the cake batter" />
+			<ptcp head="oven" text="the oven" />
+		</item>
+		<item head="take" original="Take it out of the oven" slot="7" text="take out of">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="it" text="it" />
+			<ptcp head="oven" text="the oven" />
+		</item>
+	</script>
+	<script id="3">
+		<item head="review" original="Review desired recipe" slot="1" text="review ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="recipe" text="desired recipe" />
+		</item>
+		<item h="8,7" head="prepare" original="Prepare the ingredients listed on the recipe" slot="2" text="prepare on">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="the ingredients" />
+			<ptcp head="recipe" text="the recipe" />
+		</item>
+		<item head="preheat" original="Preheat the oven to instructed temperature" slot="3" text="preheat to">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="oven" text="the oven" />
+			<ptcp head="temperature" text="instructed temperature" />
+		</item>
+		<item h="9,8" head="mix" original="Meanwhile, mix a batter following the recipe" slot="4" text="mix ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="batter" text="a batter" />
+			<ptcp head="recipe" text="the recipe" />
+		</item>
+		<item head="pour" original="Pour the batter into the prepared pan" slot="5" text="pour into">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="batter" text="the batter" />
+			<ptcp head="pan" text="the prepared pan" />
+		</item>
+		<item h="8,16" head="bake" original="Bake a cake for the duration of instructed time" slot="6" text="bake for of">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="a cake" />
+			<ptcp head="duration" text="the duration" />
+			<ptcp head="time" text="instructed time" />
+		</item>
+	</script>
+	<script id="4">
+		<item head="purchase" original="Purchase cake mix" slot="1" text="purchase ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="mix" text="cake mix" />
+		</item>
+		<item head="preheat" original="Preheat oven" slot="2" text="preheat ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="oven" text="oven" />
+		</item>
+		<item head="grease" original="Grease pan" slot="3" text=" pan">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="pan" text="grease pan" />
+		</item>
+		<item head="open" original="Open mix and add required ingredients" slot="4" text="open ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="mix" text="mix" />
+			<ptcp head="ingredients" text="required ingredients" />
+		</item>
+		<item head="mix" original="Mix well" slot="5" text="mix ">
+		</item>
+		<item head="pour" original="Pour into prepared pan" slot="6" text="pour into">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="pan" text="prepared pan" />
+		</item>
+		<item head="bake" original="Bake cake for required time" slot="7" text="bake for">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="cake" />
+			<ptcp head="time" text="required time" />
+		</item>
+		<item h="5,7" head="remove" original="Remove cake from oven and cool" slot="8" text="remove from">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="cake" />
+			<ptcp head="oven" text="oven and cool" />
+		</item>
+		<item h="6,11" head="turn" original="Turn cake out onto cake plate" slot="9" text="turn onto">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="cake" />
+			<ptcp head="plate" text="cake plate" />
+		</item>
+		<item head="apply" original="Apply icing or glaze" slot="10" text="apply ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="icing" text="icing" />
+		</item>
+	</script>
+	<script id="5">
+		<item head="gather" original="Gather all ingredients." slot="1" text="gather ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="all ingredients" />
+		</item>
+		<item h="6,3" head="mix" original="Mix ingredients together in a bowl." pair="6,7" slot="2" text="mix in">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="ingredients" />
+			<ptcp head="bowl" text="a bowl" />
+		</item>
+		<item h="11,8" head="pour" original="Pour into cake pan." slot="3" text="pour into">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="pan" text="cake pan" />
+		</item>
+		<item head="preheat" original="Preheat oven. " slot="4" text="preheat ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="oven" text="oven" />
+		</item>
+		<item head="place" original="Place pan into oven when preheated. " slot="5" text="place into">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="pan" text="pan" />
+			<ptcp head="oven" text="oven" />
+		</item>
+		<item head="bake" original="Bake in oven according to time on instructions." slot="6" text="bake in according to on">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="oven" text="oven" />
+			<ptcp head="time" text="time" />
+			<ptcp head="instructions" text="instructions" />
+		</item>
+		<item head="remove" original="Remove cake from oven. " slot="7" text="remove from">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="cake" />
+			<ptcp head="oven" text="oven" />
+		</item>
+		<item head="allow" original="Allow cake to cool. " slot="8" text="allow ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="cake" />
+		</item>
+		<item head="frost" original="Frost and decorate cake. " slot="9" text=" and decorate cake">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="frost" text="frost" />
+			<ptcp head="cake" text="decorate cake" />
+		</item>
+		<item head="eat" original="Eat Cake. " slot="10" text="eat ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="cake" />
+		</item>
+	</script>
+	<script id="6">
+		<item head="go" original="Go to the grocery store and buy a cake mix" slot="1" text="go to">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="store" text="the grocery store" />
+			<ptcp head="mix" text="a cake mix" />
+		</item>
+		<item h="8,3" head="leaving" original="Before leaving store, read instructions on box for other ingredients needed" slot="2" text="leaving before on for">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="store" text="store" />
+			<ptcp head="instructions" text="instructions" />
+			<ptcp head="box" text="box" />
+			<ptcp head="ingredients" text="other ingredients" />
+		</item>
+		<item head="buy" original="Buy other ingredients if you do not have at home" slot="3" text="buy at">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="other ingredients" />
+			<ptcp head="you" text="you" />
+			<ptcp head="home" text="home" />
+		</item>
+		<item head="go" original="Go home" slot="4" text="go ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="home" text="home" />
+		</item>
+		<item head="preheat" original="Preheat oven according to box directions" slot="5" text="preheat according to">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="oven" text="oven" />
+			<ptcp head="directions" text="box directions" />
+		</item>
+		<item head="prepare" original="Prepare pan according to box directions" slot="6" text="prepare according to">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="pan" text="pan" />
+			<ptcp head="directions" text="box directions" />
+		</item>
+		<item head="combine" original="Combine ingredients according to box directions" slot="7" text="combine according to">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="ingredients" />
+			<ptcp head="directions" text="box directions" />
+		</item>
+		<item head="pour" original="Pour batter in pan" slot="8" text="pour in">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="batter" text="batter" />
+			<ptcp head="pan" text="pan" />
+		</item>
+		<item head="put" original="Put pan in oven" slot="9" text="put in">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="pan" text="pan" />
+			<ptcp head="oven" text="oven" />
+		</item>
+		<item head="bake" original="Bake the minimum time written on box" slot="10" text="bake on">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="time" text="the minimum time" />
+			<ptcp head="box" text="box" />
+		</item>
+		<item head="check" original="Check to see if cake is done" slot="11" text="check ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="cake" />
+		</item>
+		<item head="bake" original="If cake is not done, bake additional minutes, up to maximum on box" slot="12" text="bake up to on">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="cake" />
+			<ptcp head="maximum" text="maximum" />
+			<ptcp head="box" text="box" />
+		</item>
+		<item h="2,6" head="remove" original="When cake is done, remove from oven" pair="2,7" slot="13" text="remove from">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="remove" text="when cake is done , remove from oven" />
+			<ptcp head="cake" text="cake" />
+			<ptcp head="oven" text="oven" />
+		</item>
+		<item head="follow" original="Follow box directions for cooling" slot="14" text="follow for">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="directions" text="box directions" />
+		</item>
+	</script>
+	<script id="7">
+		<item head="preheat" original="Preheat oven" slot="1" text="preheat ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="oven" text="oven" />
+		</item>
+		<item head="gather" original="Gather all of your ingredients (varies depending on your recipe)" slot="2" text="gather of on">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="all" text="all" />
+			<ptcp head="ingredients" text="ingredients" />
+			<ptcp head="recipe" text="your recipe" />
+		</item>
+		<item head="mix" original="Mix the dry ingredients in one bowl (flour, baking soda, salt, etc)" slot="3" text="mix in">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="the dry ingredients" />
+			<ptcp head="bowl" text="one bowl" />
+			<ptcp head="flour" text="flour" />
+			<ptcp head="soda" text="baking soda" />
+			<ptcp head="salt" text="salt" />
+		</item>
+		<item h="2,2" head="mix" original="Mix the wet ingredients in another (butter, sugars, vanilla, etc)" slot="4" text="mix in">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="the wet ingredients" />
+			<ptcp head="-LRB-" text="another -LRB- butter , sugars , vanilla , etc -RRB-" />
+			<ptcp head="butter" text="butter" />
+			<ptcp head="sugars" text="sugars" />
+			<ptcp head="vanilla" text="vanilla" />
+		</item>
+		<item head="mix" original="Mix them together" slot="5" text="mix ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="them" text="them" />
+		</item>
+		<item head="grease" original="Grease baking pan" slot="6" text=" baking pan">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="pan" text="grease baking pan" />
+		</item>
+		<item h="8,10" head="pour" original="Pour in batter" pair="8,9" slot="7" text="pour in">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="batter" text="batter" />
+		</item>
+		<item head="bake" original="Bake for allotted time" slot="8" text="bake for">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="time" text="allotted time" />
+		</item>
+		<item head="let" original="Let cool" slot="9" text="let ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cool" text="cool" />
+		</item>
+		<item head="frost" original="Frost your cake" slot="10" text="frost ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="your cake" />
+		</item>
+		<item h="10,15" head="cut" original="Cut into pieces" slot="11" text="cut into">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="pieces" text="pieces" />
+		</item>
+		<item head="enjoy" original="Enjoy" slot="12" text="enjoy ">
+		</item>
+	</script>
+	<script id="8">
+		<item head="look" original="Look up a cake recipe" slot="1" text="look ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="recipe" text="a cake recipe" />
+		</item>
+		<item head="print" original="Print out or write down the recipe" slot="2" text="print ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="recipe" text="the recipe" />
+		</item>
+		<item h="6,1" head="go" original="Go to the supermarket and purchase the ingredients" slot="3" text="go to">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="supermarket" text="the supermarket" />
+			<ptcp head="ingredients" text="the ingredients" />
+		</item>
+		<item head="come" original="Come home with the ingredients " slot="4" text="come with">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="home" text="home" />
+			<ptcp head="ingredients" text="the ingredients" />
+		</item>
+		<item h="9,4" head="gather" original="Gather all the items I will need to bake the cake such as a mixing bowl, whisk, and cake pan" pair="9,3" slot="5" text="gather as">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="items" text="all the items" />
+			<ptcp head="i" text="i" />
+			<ptcp head="cake" text="the cake" />
+			<ptcp head="bowl" text="a mixing bowl" />
+			<ptcp head="whisk" text="whisk" />
+			<ptcp head="pan" text="cake pan" />
+		</item>
+		<item h="10,11" head="preheat" original="Preheat oven to temperature the recipe requires" pair="10,8" slot="6" text="preheat to">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="oven" text="oven" />
+			<ptcp head="temperature" text="temperature" />
+			<ptcp head="recipe" text="the recipe" />
+		</item>
+		<item head="open" original="Open the ingredients" slot="7" text="open ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="the ingredients" />
+		</item>
+		<item head="combine" original="Combine and mix all the ingredients as the recipe delegates" slot="8" text="combine as">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="all the ingredients" />
+			<ptcp head="delegates" text="the recipe delegates" />
+		</item>
+		<item head="pour" original="Pour ingredients into a cake pan" slot="9" text="pour into">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="ingredients" />
+			<ptcp head="pan" text="a cake pan" />
+		</item>
+		<item head="put" original="Put the cake pan with the cake mixture in the oven" slot="10" text="put with in">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="pan" text="the cake pan" />
+			<ptcp head="mixture" text="the cake mixture" />
+			<ptcp head="oven" text="the oven" />
+		</item>
+		<item head="set" original="Set a timer when the recipe states the cake will be done" slot="11" text="set ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="timer" text="a timer" />
+			<ptcp head="recipe" text="the recipe" />
+			<ptcp head="cake" text="the cake" />
+		</item>
+		<item head="open" original="When the timer goes off, open the oven and check to see if the cake is fully cooked " slot="12" text="open ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="timer" text="the timer" />
+			<ptcp head="oven" text="the oven" />
+			<ptcp head="cake" text="the cake" />
+		</item>
+		<item head="take" original="Take the cake out of the oven and let it cool" slot="13" text="take out of">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="the cake" />
+			<ptcp head="oven" text="the oven" />
+			<ptcp head="it" text="it" />
+		</item>
+		<item head="turn" original="Turn off the oven" slot="14" text="turn ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="oven" text="the oven" />
+		</item>
+		<item h="11,16" head="refrigerate" original="Refrigerate the cake" slot="15" text="refrigerate ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="the cake" />
+		</item>
+		<item head="eat" original="Eat the cake" slot="16" text="eat ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="the cake" />
+		</item>
+	</script>
+	<script id="9">
+		<item head="gather" original="Gather ingredients" slot="1" text="gather ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="ingredients" />
+		</item>
+		<item h="4,2" head="turn" original="Turn oven on" slot="2" text="turn ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="oven" text="oven" />
+		</item>
+		<item head="get" original="Get mixing bowl" slot="3" text="get ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="bowl" text="mixing bowl" />
+		</item>
+		<item head="add" original="Add ingredients in mixing bowl " slot="4" text="add in">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="ingredients" />
+			<ptcp head="bowl" text="bowl" />
+		</item>
+		<item head="mix" original="Mix ingredients with mixer " slot="5" text="mix with">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="ingredients" />
+			<ptcp head="mixer" text="mixer" />
+		</item>
+		<item head="get" original="Get cake pan" slot="6" text="get ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="pan" text="cake pan" />
+		</item>
+		<item head="pan" original="Spray cake pan with nonstick spray" slot="7" text="pan with">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="spray cake" />
+			<ptcp head="spray" text="nonstick spray" />
+		</item>
+		<item head="add" original="Add cake batter to pan" slot="8" text="add ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="batter" text="cake batter" />
+		</item>
+		<item head="put" original="Put pan in oven" slot="9" text="put in">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="pan" text="pan" />
+			<ptcp head="oven" text="oven" />
+		</item>
+		<item head="set" original="Set timer " slot="10" text="set ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="timer" text="timer" />
+		</item>
+		<item head="remove" original="Remove finished cake when timer goes off" slot="11" text="remove ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="finished cake" />
+			<ptcp head="timer" text="timer" />
+		</item>
+		<item h="8,13" head="turn" original="Turn off oven " pair="8,14" slot="12" text="turn ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="oven" text="oven" />
+		</item>
+	</script>
+	<script id="10">
+		<item head="take" original="take out box of cake mix from shelf" slot="1" text="take of from">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="box" text="box of cake mix" />
+			<ptcp head="mix" text="cake mix" />
+			<ptcp head="shelf" text="shelf" />
+		</item>
+		<item head="gather" original="gather together cake ingredients such as eggs, butter, water, vanilla, milk" slot="2" text="gather as">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="cake ingredients" />
+			<ptcp head="eggs" text="eggs" />
+		</item>
+		<item head="get" original="get mixing bowl" slot="3" text="get ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="bowl" text="mixing bowl" />
+		</item>
+		<item h="6,4" head="get" original="get mixing tool or spoon or fork" slot="4" text="get ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="tool" text="mixing tool" />
+			<ptcp head="spoon" text="spoon or fork" />
+		</item>
+		<item head="add" original="add ingredients to bowl" slot="5" text="add to">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="ingredients" />
+			<ptcp head="bowl" text="bowl" />
+		</item>
+		<item head="stir" original="stir together and mix" slot="6" text="stir ">
+		</item>
+		<item h="11,6" head="use" original="use fork to breakup clumps" slot="7" text="use to">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="fork" text="fork" />
+			<ptcp head="clumps" text="breakup clumps" />
+		</item>
+		<item head="preheat" original="preheat oven" slot="8" text="preheat ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="oven" text="oven" />
+		</item>
+		<item head="pan" original="spray pan with non stick or grease" slot="9" text="pan with">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="stick" text="non stick or grease" />
+		</item>
+		<item head="pour" original="pour cake mix into pan" slot="10" text="pour into">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="mix" text="cake mix" />
+			<ptcp head="pan" text="pan" />
+		</item>
+		<item head="put" original="put pan into oven" slot="11" text="put into">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="pan" text="pan" />
+			<ptcp head="oven" text="oven" />
+		</item>
+		<item head="set" original="set timer on oven" slot="12" text="set on">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="timer" text="timer" />
+			<ptcp head="oven" text="oven" />
+		</item>
+		<item h="5,8" head="bake" original="bake cake " slot="13" text="bake ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="cake" />
+		</item>
+		<item head="remove" original="remove cake pan when timer goes off" slot="14" text="remove ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="cake" />
+			<ptcp head="timer" text="timer" />
+		</item>
+		<item h="11,15" head="stick" original="stick tooth pick into cake to see if done" pair="11,12" slot="15" text="stick into">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="pick" text="tooth pick" />
+			<ptcp head="cake" text="cake to see if done" />
+		</item>
+		<item head="let" original="let cake pan cool then remove cake" slot="16" text="let ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="cake" />
+			<ptcp head="cake" text="cake" />
+		</item>
+	</script>
+	<script id="11">
+		<item head="enter" original="Enter grocery store." slot="1" text="enter ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="store" text="grocery store" />
+		</item>
+		<item head="buy" original="Buy cake ingredients." slot="2" text="buy ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="cake ingredients" />
+		</item>
+		<item h="6,4" head="return" original="Return home." slot="3" text="return ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="home" text="home" />
+		</item>
+		<item head="enter" original="Enter kitchen." slot="4" text="enter ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="kitchen" text="kitchen" />
+		</item>
+		<item h="5,1" head="measure" original="Measure wet ingredients." slot="5" text="measure ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="wet ingredients" />
+		</item>
+		<item head="measure" original="Measure dry ingredients." slot="6" text="measure ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="dry ingredients" />
+		</item>
+		<item h="5,2" head="mix" original="Mix in a bowl." slot="7" text="mix in">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="bowl" text="a bowl" />
+		</item>
+		<item head="pour" original="Pour batter into cake pan." slot="8" text="pour into">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="batter" text="batter" />
+			<ptcp head="pan" text="cake pan" />
+		</item>
+		<item head="set" original="Set timer." slot="9" text="set ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="timer" text="timer" />
+		</item>
+		<item h="10,10" head="wait" original="Wait for cake to bake." slot="10" text="wait for to">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="cake" />
+			<ptcp head="bake" text="bake" />
+		</item>
+		<item h="10,11" head="return" original="Return to oven." slot="11" text="return to">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="oven" text="oven" />
+		</item>
+		<item head="check" original="Check cake for doneness." slot="12" text="check for">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="cake" />
+			<ptcp head="doneness" text="doneness" />
+		</item>
+		<item head="remove" original="Remove from pan." slot="13" text="remove from">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="pan" text="pan" />
+		</item>
+		<item head="let" original="Let cake cool." slot="14" text="let ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="cake" />
+		</item>
+		<item head="decorate" original="Decorate the cake with icing." slot="15" text="decorate with">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="the cake" />
+			<ptcp head="icing" text="icing" />
+		</item>
+		<item head="eat" original="Eat the cake." slot="16" text="eat ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="the cake" />
+		</item>
+	</script>
+	<script id="12">
+		<item head="read" original="Read recipe" slot="1" text="read ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="recipe" text="recipe" />
+		</item>
+		<item head="gather" original="Gather ingredients" slot="2" text="gather ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="ingredients" />
+		</item>
+		<item h="9,6" head="get" original="Get cake pan, utensils, mixer " slot="3" text="get ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="pan" text="cake pan" />
+			<ptcp head="utensils" text="utensils" />
+			<ptcp head="mixer" text="mixer" />
+		</item>
+		<item head="apply" original="Apply non-stick spray to cake pan" slot="4" text="apply to">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="spray" text="non-stick spray" />
+			<ptcp head="pan" text="cake pan" />
+		</item>
+		<item head="pre-heat" original="Pre-heat oven based on recipes instructions" slot="5" text="pre-heat on">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="oven" text="oven" />
+			<ptcp head="instructions" text="recipes instructions" />
+		</item>
+		<item head="mix" original="Mix all ingredients together " slot="6" text="mix ">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="ingredients" text="all ingredients" />
+		</item>
+		<item head="pour" original="Pour mixture into cake pan" slot="7" text="pour into">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="mixture" text="mixture" />
+			<ptcp head="pan" text="cake pan" />
+		</item>
+		<item head="place" original="Place cake into oven " slot="8" text="place into">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="cake" />
+			<ptcp head="oven" text="oven" />
+		</item>
+		<item head="set" original="Set timer and cook based on recipes instructions" slot="9" text="set on">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="timer" text="timer" />
+			<ptcp head="instructions" text="recipes instructions" />
+		</item>
+		<item h="8,12" head="cooked" original="When cakes is cooked place on cooling rack" slot="10" text="cooked on">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cakes" text="cakes" />
+			<ptcp head="place" text="place" />
+			<ptcp head="rack" text="cooling rack" />
+		</item>
+		<item head="remove" original="Remove cake from cake pan" slot="11" text="remove from">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="cake" />
+			<ptcp head="pan" text="cake pan" />
+		</item>
+		<item h="4,3" head="ice" original="Ice cake with frosting" pair="4,10" slot="12" text=" cake with frosting">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="cake" text="ice cake" />
+			<ptcp head="frosting" text="frosting" />
+		</item>
+		<item h="10,16" head="serve" original="Serve to family or friends" slot="13" text="serve to">
+			<ptcp head="imp_" text="imp_participant" />
+			<ptcp head="family" text="family or friends" />
+		</item>
+	</script>
+</scripts>

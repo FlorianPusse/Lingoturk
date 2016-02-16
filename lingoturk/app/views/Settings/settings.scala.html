@@ -1,0 +1,67 @@
+@(accKey: String, secKey: String, staticIP: String)
+
+@main("Settings") {
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/Settings/settings.css")">
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/Settings/settings.js")"></script>
+
+    <div class="div-wrapper" ng-app="Settings" ng-controller="SettingsController as SC">
+        <div class="btn-group-wrap">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default active" data-optionType="#keySettings">Keys</button>
+                <button type="button" class="btn btn-default" data-optionType="#ipSettings">IP address</button>
+                <button type="button" class="btn btn-default" data-optionType="#passwordSettings">Change password</button>
+            </div>
+        </div>
+
+        @** Change keys **@
+        <div id="keySettings" class="settingsContainer">
+            <div class="form-group">
+                <label for="newAccKey">Access key</label>
+                <input id="newAccKey" type="text" class="form-control" ng-model="SC.accessKey" placeholder=@accKey>
+            </div>
+
+            <div class="form-group">
+                <label for="newSecKey">Secret key</label>
+                <input id="newSecKey" type="text" class="form-control" ng-model="SC.secretKey" placeholder=@secKey>
+            </div>
+        </div>
+
+        @** Change IP **@
+        <div id="ipSettings" class="settingsContainer">
+            <div class="form-group">
+                <label for="ip">Static IP</label>
+                <input id="ip" type="text" class="form-control" ng-model="SC.ipAddress" placeholder=@staticIP>
+            </div>
+        </div>
+
+        @** Change password **@
+        <div id="passwordSettings" class="settingsContainer">
+            <div class="form-group">
+                <label for="oldPassword">Old password</label>
+                <input id="oldPassword" type="text" class="form-control" ng-model="SC.oldPassword" placeholder="Old password">
+            </div>
+
+            <div class="form-group">
+                <label for="newPassword1">New password</label>
+                <input id="newPassword1" type="text" class="form-control" ng-model="SC.newPassword1" placeholder="New password">
+            </div>
+
+            <div class="form-group">
+                <label for="newPassword2">New password again</label>
+                <input id="newPassword2" type="text" class="form-control" ng-model="SC.newPassword2" placeholder="New password again">
+            </div>
+        </div>
+
+        <button id="submitButton" ng-if="SC.isDirty()" type="button" class="btn btn-success" ng-click="SC.submitButtonClick()">Apply changes</button>
+        <button id="submitButton" ng-if="!SC.isDirty()" type="button" class="btn btn-success" disabled="disabled">Apply changes</button>
+        <div id="successButton">
+            <p class="text-center"><strong>The changes have been applied successfully.</strong></p>
+            <button type="button" disabled="disabled" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></button>
+        </div>
+        <div id="failButton">
+            <p class="text-center"><strong>An error occured! Please try again in a few seconds.</strong></p>
+            <p class="text-center" id="message"></p>
+            <button type="button" disabled="disabled" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span></button>
+        </div>
+    </div>
+}
