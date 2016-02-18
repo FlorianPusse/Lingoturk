@@ -7,6 +7,8 @@ import models.Groups.LinkingExperimentV1.PoolGroup;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
 import models.Repository;
+import models.Worker;
+import play.data.DynamicForm;
 import play.mvc.Result;
 
 
@@ -52,6 +54,11 @@ public class LinkingGroup extends AbstractGroup {
 
     @Override
     public String publishOnAMT(RequesterService service, int publishedId, String hitTypeId, Long lifetime, Integer maxAssignments) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
         return null;
     }
 

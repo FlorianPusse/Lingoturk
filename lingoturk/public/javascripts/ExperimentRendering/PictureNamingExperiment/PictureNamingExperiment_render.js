@@ -4,7 +4,7 @@
     app.controller('RenderController', ['$http', '$timeout', function ($http, $timeout) {
         var self = this;
         this.assignmentId = -1;
-        this.part = null;
+        this.questions = null;
         this.chunks = [];
         this.currentChunk = 0;
         this.origin = "";
@@ -17,51 +17,50 @@
             });
         };
 
-        this.instructionsFinished = function(){
-            if(self.origin == "prolific"){
+        this.instructionsFinished = function () {
+            if (self.origin == "prolific") {
                 $('#instructionsSlide').hide();
                 $('#workerIdSlide').show();
-            }else if (self.origin == "mail"){
+            } else if (self.origin == "mail") {
                 $('#instructionsSlide').hide();
                 $('.pictureSlide').first().show();
-            }else{
+            } else {
                 $('#instructionsSlide').hide();
                 $('.pictureSlide').first().show();
             }
         };
 
-        this.nextPicture = function(index){
+        this.nextPicture = function (index) {
             var currentSlide = $(".chunk").find(".pictureSlide").eq(index);
             currentSlide.hide();
-            if(index + 1 < self.chunks[self.currentChunk].pictures.length){
+            if (index + 1 < self.chunks[self.currentChunk].pictures.length) {
                 currentSlide.next(".pictureSlide").show();
-            }else{
+            } else {
                 $(".chunk").hide();
                 self.submitResults();
             }
         };
 
-        this.generateRandomId = function()
-        {
+        this.generateRandomId = function () {
             var text = "";
             var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-            for( var i=0; i < 30; i++ )
+            for (var i = 0; i < 30; i++)
                 text += possible.charAt(Math.floor(Math.random() * possible.length));
 
             return text;
         };
 
-        this.submitResults = function(){
+        this.submitResults = function () {
             var currChunk = self.chunks[self.currentChunk];
 
             var workerId = "";
-            if(self.origin == "prolific"){
+            if (self.origin == "prolific") {
                 workerId = self.workerId;
-            }else if (self.origin == "mail"){
+            } else if (self.origin == "mail") {
                 self.workerId = "mail_" + self.generateRandomId();
                 workerId = self.workerId;
-            }else{
+            } else {
                 self.workerId = "other_" + self.generateRandomId();
                 workerId = self.workerId;
             }
@@ -70,35 +69,37 @@
             var chunkId = currChunk.id;
             var answerList = [];
 
-            for(var i = 0; i < currChunk.pictures.length; i++){
+            for (var i = 0; i < currChunk.pictures.length; i++) {
                 var pictureObject = currChunk.pictures[i];
                 var pictureId = pictureObject.id;
                 var answer = pictureObject.answer;
-                answerList.push({pictureId : pictureId, answer: answer});
+                answerList.push({pictureId: pictureId, answer: answer});
             }
 
             var result = {
-                experimentType : "PictureNamingExperiment",
-                workerId : workerId,
-                partId : partId,
-                chunkId : chunkId,
-                answers : answerList
+                experimentType: "PictureNamingExperiment",
+                workerId: workerId,
+                partId: partId,
+                chunkId: chunkId,
+                answers: answerList
             };
 
             $http.post("/submitResults", result)
                 .success(function () {
-                    if(self.currentChunk + 1 < self.chunks.length){
+                    if (self.currentChunk + 1 < self.chunks.length) {
                         $("#chunkEnd").show();
-                    }else{
+                    } else {
                         $("#statistics").show();
                     }
                 })
                 .error(function () {
-                    setTimeout(function() { self.submitResults() }, 2000);
+                    setTimeout(function () {
+                        self.submitResults()
+                    }, 2000);
                 });
         };
 
-        this.nextChunk = function(){
+        this.nextChunk = function () {
             $("#chunkEnd").hide();
             self.currentChunk = self.currentChunk + 1;
 
@@ -135,40 +136,25 @@
         $(document).ready(function () {
             self.origin = $("#origin").val();
 
-            var partId = $("#partId").val();
+            var questionId = $("#questionId").val();
             var importantChunkId = parseInt($("#importantChunk").val());
 
-            if (partId != "") {
-                $http.get("/returnPart?partId=" + partId).success(function (data) {
+            if (questionId != "") {
+                $http.get("/getQuestion/" + questionId).success(function (data) {
+                    // TODO: FIX
+                    self.part = {number : 1};
+
                     var json = data;
-                    self.part = json;
-                    if(importantChunkId == -1){
-                        self.chunks = json.questions;
-                    }else{
-                        var otherChunks = [];
-                        for(var i = 0; i < json.questions.length; i++){
-                            if(json.questions[i].id == importantChunkId){
-                                self.chunks.push(json.questions[i]);
-                            }else{
-                                otherChunks.push(json.questions[i]);
-                            }
-                        }
-                        self.shuffleArray(otherChunks);
-                        for(var j = 0; j < otherChunks.length; j++){
-                            self.chunks.push(otherChunks[j]);
-                        }
-                    }
-
-                    self.shuffleArray(json.questions);
-                    self.chunks = json.questions;
-
+                    self.questions = json;
+                    self.shuffleArray(self.questions);
+                    self.chunks = [];
+                    self.chunks.push(self.questions);
 
                     var scope = angular.element($("#angularApp")).scope();
                     $timeout(function () {
                         scope.$apply();
                         $(".chunk").first().show();
                     });
-
 
                     $(document).on("input", ".textInput", function () {
                         if ($(this).val() != "") {
@@ -178,10 +164,10 @@
                         }
                     });
 
-                    $(document).on("click","#submitButton", function(){
-                        if(self.origin == "prolific"){
+                    $(document).on("click", "#submitButton", function () {
+                        if (self.origin == "prolific") {
                             window.location.href = "https://prolificacademic.co.uk/submissions/5627688addff3c000dbcdb69/complete?cc=QJVQYV7U";
-                        }else if (self.origin == "mail"){
+                        } else if (self.origin == "mail") {
                             $http.get("/submitMailAddress?mailAddress=" + encodeURIComponent(self.mail) + "&workerId=" + encodeURIComponent(self.workerId)).success(function () {
                                 $("#statistics").hide();
                                 $("#mailSuccess").show();
@@ -195,8 +181,8 @@
                         $('.pictureSlide').first().show();
                     });
 
-                    $(window).keydown(function(event){
-                        if(event.keyCode == 13) {
+                    $(window).keydown(function (event) {
+                        if (event.keyCode == 13) {
                             event.preventDefault();
                             return false;
                         }

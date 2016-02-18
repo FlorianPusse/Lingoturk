@@ -1,4 +1,4 @@
-@(story1 : Int, lhs_slot: Int, story2 : Int, rhs_slot : Int,assignmentId: String, hitId : String, workerId: String, turkSubmitTo: String)
+@(question : models.Questions.Question, part : models.Groups.AbstractGroup, worker: Worker, assignmentId: String, hitId: String, turkSubmitTo: String, exp: LingoExpModel, df: play.data.DynamicForm, origin: String)
 <html>
 
     <head>
@@ -106,7 +106,7 @@
         <canvas id="canvas"></canvas>
 
         <div style=" position : absolute ; top : 0px ; left : 0px ; width : 100% ; height : 100% ; z-index : 2">
-            <div class="alert alert-info" style="text-align:center;background-color:#EFF7FB;margin-bottom:5px;height:8%">Please decide if the linked sentences are similar and represent the same event following the examples given in the <a class="btn btn-info btn-sm" onclick="var width = $(window).width(); var height = $(window).height(); window.open('/render?id=@story1&id2=@story2&assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE&hitId=NOT_AVAILABLE&Type=question',null,'height=' + height + ',width=' + width + ',status=yes,toolbar=no,menubar=no,location=no');" style="padding-top:0;padding-bottom:0">Instructions</a>.</div>
+            <div class="alert alert-info" style="text-align:center;background-color:#EFF7FB;margin-bottom:5px;height:8%">Please decide if the linked sentences are similar and represent the same event following the examples given in the <a class="btn btn-info btn-sm" onclick="var width = $(window).width(); var height = $(window).height(); window.open('/render?id=@question.getId&id2=@df.get("id2")&assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE&hitId=NOT_AVAILABLE&Type=question',null,'height=' + height + ',width=' + width + ',status=yes,toolbar=no,menubar=no,location=no');" style="padding-top:0;padding-bottom:0">Instructions</a>.</div>
             <div style="width : 40% ; height : 82% ; float : left;">
                 <div class="panel panel-primary" style="width : 100% ; height : 100% ; overflow-y : auto ; background-color : transparent ; border-right-color : rgba( 66, 139, 202, 0.3 )" id="leftBox">
                     <div class="panel-body question">
@@ -152,13 +152,13 @@
             </div>
         </div>
         <form method="POST" action="@turkSubmitTo/mturk/externalSubmit" align="center" id="form">
-            <input id="story1" name="story1" type="hidden" value="@story1" />
-            <input id="lhs_slot" name="lhs_slot" type="hidden" value="@lhs_slot" />
-            <input id="story2" name="story2" type="hidden" value="@story2" />
-            <input id="rhs_slot" name="rhs_slot" type="hidden" value="@rhs_slot" />
+            <input id="story1" name="story1" type="hidden" value="@question.getId" />
+            <input id="lhs_slot" name="lhs_slot" type="hidden" value="@df.get("slot1")" />
+            <input id="story2" name="story2" type="hidden" value="@df.get("id2")" />
+            <input id="rhs_slot" name="rhs_slot" type="hidden" value="@df.get("slot2")" />
             <input id="assignmentId" name="assignmentId" type="hidden" value="@assignmentId" />
             <input id="hitId" name="hitId" type="hidden" value="@hitId" />
-            <input id="workerId" name="workerId" type="hidden" value="@workerId" />
+            <input id="workerId" name="workerId" type="hidden" value="@worker.getId" />
             <input id="result" name="result" type="hidden" />
         </form>
     </body>

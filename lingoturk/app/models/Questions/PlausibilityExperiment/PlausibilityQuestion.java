@@ -1,13 +1,14 @@
 package models.Questions.PlausibilityExperiment;
 
-import au.com.bytecode.opencsv.CSVWriter;
 import com.amazonaws.mturk.requester.Assignment;
 import com.fasterxml.jackson.databind.JsonNode;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
 import models.Repository;
 import models.Results.AssignmentResult;
+import models.Worker;
 import org.dom4j.DocumentException;
+import play.data.DynamicForm;
 import play.mvc.Result;
 
 import javax.json.Json;
@@ -65,8 +66,8 @@ public class PlausibilityQuestion extends PartQuestion{
     }
 
     @Override
-    public Result render(String assignmentId, String hitId, String workerId, String turkSubmitTo, String additionalExplanations) {
-        return null;
+    public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
+        throw new RuntimeException("This method should not be called");
     }
 
     @Override

@@ -41,22 +41,22 @@ public class ManageExperiments extends Controller {
 
     /* Render experiment creation page */
     @BodyParser.Of(value = BodyParser.Json.class, maxLength = 200 * 1024 * 10)
-    public static Result submitResults(){
+    public static Result submitResults() {
         JsonNode json = request().body().asJson();
         String experimentType = json.get("experimentType").asText();
         Class<?> experimentClass = ManageExperiments.lookupExperimentType(experimentType);
 
-        if(experimentClass == null){
+        if (experimentClass == null) {
             return internalServerError("Unknown experiment type: " + experimentType);
         }
 
         try {
             Question question = (Question) experimentClass.newInstance();
-            Method m = experimentClass.getMethod("writeResults",JsonNode.class);
-            m.invoke(question,json);
+            Method m = experimentClass.getMethod("writeResults", JsonNode.class);
+            m.invoke(question, json);
         } catch (NoSuchMethodException e) {
             return internalServerError("Function write: " + experimentType);
-        }catch (InstantiationException e) {
+        } catch (InstantiationException e) {
             return internalServerError("No default constructor for: " + experimentType);
         } catch (IllegalAccessException e) {
             return internalServerError("writeResults method is not accessible: " + experimentType);
@@ -94,8 +94,9 @@ public class ManageExperiments extends Controller {
     }
 
     private static Map<String, Class> classMap = new HashMap<>();
+
     public static Class lookupExperimentType(String experimentName) {
-        if(classMap.containsKey(experimentName)){
+        if (classMap.containsKey(experimentName)) {
             return classMap.get(experimentName);
         }
 
@@ -108,7 +109,7 @@ public class ManageExperiments extends Controller {
                 try {
                     c = Class.forName(classIdentifier);
                 } catch (ClassNotFoundException e) {
-                   // Is not a correct implemented file -> Play will take care of that
+                    // Is not a correct implemented file -> Play will take care of that
                 }
 
                 if (PartQuestion.class.isAssignableFrom(c)) {
@@ -180,6 +181,7 @@ public class ManageExperiments extends Controller {
     }
 
     static int fallBackCounter = 0;
+
     public static Result returnPartAsJSON(int expId, String workerId) throws SQLException, IOException {
         LingoExpModel exp = LingoExpModel.byId(expId);
 
@@ -279,7 +281,7 @@ public class ManageExperiments extends Controller {
 
         // new experiment
         if (json.get("id").asInt() == -1) {
-            experiment = LingoExpModel.createLingoExpModel(name, description, additionalExplanations, nameOnAmt,experimentType);
+            experiment = LingoExpModel.createLingoExpModel(name, description, additionalExplanations, nameOnAmt, experimentType);
         } else {
             experiment = LingoExpModel.byId(json.get("id").asInt());
             experiment.setName(name);

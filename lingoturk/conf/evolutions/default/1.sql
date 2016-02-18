@@ -127,40 +127,36 @@ create sequence Words_seq;
 
 create sequence Workers_seq;
 
-alter table LinkingItem add constraint fk_LinkingItem_script_1 foreign key (script_QuestionID) references Questions (QuestionID) on delete restrict on update restrict;
+alter table LinkingItem add constraint fk_LinkingItem_script_1 foreign key (script_QuestionID) references Questions (QuestionID);
 create index ix_LinkingItem_script_1 on LinkingItem (script_QuestionID);
-alter table ptcp add constraint fk_ptcp_LinkingItem_2 foreign key (item_id) references LinkingItem (id) on delete restrict on update restrict;
+alter table ptcp add constraint fk_ptcp_LinkingItem_2 foreign key (item_id) references LinkingItem (id);
 create index ix_ptcp_LinkingItem_2 on ptcp (item_id);
-alter table pair add constraint fk_pair_LinkingItem_3 foreign key (item_id) references LinkingItem (id) on delete restrict on update restrict;
+alter table pair add constraint fk_pair_LinkingItem_3 foreign key (item_id) references LinkingItem (id);
 create index ix_pair_LinkingItem_3 on pair (item_id);
-alter table PictureNaming add constraint fk_PictureNaming_Questions_4 foreign key (picture_naming_chunk_QuestionID) references Questions (QuestionID) on delete restrict on update restrict;
+alter table PictureNaming add constraint fk_PictureNaming_Questions_4 foreign key (picture_naming_chunk_QuestionID) references Questions (QuestionID);
 create index ix_PictureNaming_Questions_4 on PictureNaming (picture_naming_chunk_QuestionID);
 
 
 
 # --- !Downs
 
-SET REFERENTIAL_INTEGRITY FALSE;
+drop table if exists Groups cascade;
 
-drop table if exists Groups;
+drop table if exists LinkingItem cascade;
 
-drop table if exists LinkingItem;
+drop table if exists LingoExpModels cascade;
 
-drop table if exists LingoExpModels;
+drop table if exists ptcp cascade;
 
-drop table if exists ptcp;
+drop table if exists pair cascade;
 
-drop table if exists pair;
+drop table if exists PictureNaming cascade;
 
-drop table if exists PictureNaming;
+drop table if exists Questions cascade;
 
-drop table if exists Questions;
+drop table if exists Words cascade;
 
-drop table if exists Words;
-
-drop table if exists Workers;
-
-SET REFERENTIAL_INTEGRITY TRUE;
+drop table if exists Workers cascade;
 
 drop sequence if exists Groups_seq;
 

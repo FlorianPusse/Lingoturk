@@ -6,8 +6,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import controllers.Application;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
+import models.Questions.Question;
 import models.Questions.StoryCompletionExperiment.StoryCompletionQuestion;
 import models.Worker;
+import play.api.templates.Html;
+import play.data.DynamicForm;
 import play.mvc.Result;
 
 import javax.json.Json;
@@ -17,10 +20,14 @@ import javax.json.JsonObjectBuilder;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
+import static controllers.RenderController.getRenderMethod;
+import static play.mvc.Results.internalServerError;
 import static play.mvc.Results.ok;
 
 
@@ -52,16 +59,25 @@ public class FullGroup extends AbstractGroup {
     }
 
     @Override
-    public Result render(Worker worker, String assignmentId, String hitId, String workerId, String turkSubmitTo, LingoExpModel exp) throws SQLException {
-        return ok(views.html.renderExperiments.StoryCompletionExperiment.storyCompletionExperiment.render(exp));
+    public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df){
+        try {
+            Method m = getRenderMethod(exp.getExperimentType());
+
+            Html webpage = (Html) m.invoke(null, null, this, worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK");
+            return ok(webpage);
+        } catch (NoSuchMethodException | ClassNotFoundException | InvocationTargetException | IllegalAccessException e) {
+            return internalServerError("Could not load experiment of type: " + exp.getExperimentType());
+        }
     }
 
     @Override
     public void setJSONData(LingoExpModel experiment, JsonNode partNode) throws SQLException {
         super.setJSONData(experiment,partNode);
 
-        String fileName = partNode.get("fileName").asText();
-        this.fileName = fileName;
+        JsonNode fileName = partNode.get("fileName");
+        if(fileName != null) {
+            this.fileName = fileName.asText();
+        }
     }
 
     @Override
@@ -70,10 +86,7 @@ public class FullGroup extends AbstractGroup {
         JsonArrayBuilder questionsBuilder = Json.createArrayBuilder();
 
         List<PartQuestion> questions = getQuestions();
-        for (StoryCompletionQuestion q : StoryCompletionQuestion.fillers) {
-            questions.add(q);
-        }
-
+        Collections.addAll(questions, StoryCompletionQuestion.fillers);
         Collections.shuffle(questions);
 
         for (PartQuestion partQuestion : getQuestions()) {

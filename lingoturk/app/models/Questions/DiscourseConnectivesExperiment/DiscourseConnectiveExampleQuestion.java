@@ -5,6 +5,8 @@ import models.LingoExpModel;
 import models.Questions.ExampleQuestion;
 import models.Repository;
 import models.Word;
+import models.Worker;
+import play.data.DynamicForm;
 import play.mvc.Result;
 
 import javax.json.Json;
@@ -142,7 +144,7 @@ public class DiscourseConnectiveExampleQuestion extends DiscourseConnectivesQues
     }
 
     @Override
-    public Result render(String assignmentId, String hitId, String workerId, String turkSubmitTo, String additionalExplanations) {
+    public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
         return redirect("https://www.youtube.com/watch?v=0FFiXDrAhFM");
     }
 

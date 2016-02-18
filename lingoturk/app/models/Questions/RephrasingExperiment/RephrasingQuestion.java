@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
 import models.Results.AssignmentResult;
+import models.Worker;
 import org.dom4j.DocumentException;
+import play.data.DynamicForm;
 import play.mvc.Result;
 
 import javax.json.Json;
@@ -91,8 +93,8 @@ public class RephrasingQuestion extends PartQuestion {
     }
 
     @Override
-    public Result render(String assignmentId, String hitId, String workerId, String turkSubmitTo, String additionalExplanations) {
-        return ok(views.html.renderExperiments.RephrasingExperiment.RephrasingExperiment.render(this, assignmentId, workerId, turkSubmitTo, additionalExplanations));
+    public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
+        return ok(views.html.renderExperiments.RephrasingExperiment.RephrasingExperiment_render.render(this, null, worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK"));
     }
 
     public String getFillerQuestion2() {

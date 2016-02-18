@@ -10,7 +10,6 @@ import com.amazonaws.mturk.requester.*;
 import models.Groups.*;
 import models.Questions.DiscourseConnectivesExperiment.CheaterDetectionQuestion;
 import models.Worker;
-import org.dom4j.DocumentException;
 import play.mvc.*;
 import views.html.*;
 
@@ -23,16 +22,15 @@ import com.amazonaws.mturk.service.exception.ServiceException;
 
 public class Application extends Controller {
 
+    // TODO: Variables will be refractored and removed
     public final static String PASSWORD = "password";
-
     public static QualificationRequirement[] qualificationRequirements;
-
     public static int actCounter = 0;
 
     /**
      * Renders the index-page.
      *
-     * @return Result (index-page)
+     * @return Result object (index-page)
      */
 
     @Security.Authenticated(Secured.class)
@@ -41,9 +39,10 @@ public class Application extends Controller {
     }
 
     /**
-     * Asks the user which kind of experiment he wants to create.
+     * Asks the user which kind of experiment s/he wants to create.
+     * Lists all available experiment types to choose from.
      *
-     * @return The rendered page
+     * @return Result object (The rendered page)
      */
     @Security.Authenticated(Secured.class)
     public static Result overviewPage() {
@@ -55,7 +54,7 @@ public class Application extends Controller {
 	 */
 
     /**
-     * Renders the manage page, first it gets all experiments, splits them into the ones which are on AMT
+     * Renders the manage page, first it gets all experiments, splits them into the ones which are on currently published
      * and the ones which are not. Then it renders the page with two different tables based on the splitted lists.
      *
      * @return renders the page
@@ -76,6 +75,11 @@ public class Application extends Controller {
         return ok(views.html.ManageExperiments.manage.render(offlineExperiments, runningExperiments));
     }
 
+    /**
+     * Lets the user choose an experiment platform to publish an experiment on.
+     * @param expId The Id of the experiment that should be published
+     * @return the experiment decision page
+     */
     @Security.Authenticated(Secured.class)
     public static Result publishingPlatform(int expId) {
         return ok(views.html.publishing.publishingPlatform.render(expId));
@@ -84,8 +88,8 @@ public class Application extends Controller {
     /**
      * Renders the preview page based on the given Experiment given by the Parameters
      *
-     * @param expId: Id of the Experiment in the SQL-Database
-     * @return renders the page
+     * @param expId: The Id of the experiment that should be published
+     * @return the preview page
      */
     @Security.Authenticated(Secured.class)
     public static Result publishOnMturk(int expId) {
@@ -213,8 +217,12 @@ public class Application extends Controller {
         return ok(views.html.publishing.publish.render(url));
     }
 
+    /**
+     * Renders the contact information page
+     * @return Result object containing the page
+     */
     @Security.Authenticated(Secured.class)
-    public static Result contact() throws SQLException, DocumentException, IOException {
+    public static Result contact() {
         return ok(contact.render());
     }
 

@@ -1,4 +1,4 @@
-@(question : models.Questions.RephrasingExperiment.RephrasingQuestion, assignmentId: String, workerId: String, turkSubmitTo: String, additionalExplanations : String)
+@(question : models.Questions.Question, part : models.Groups.AbstractGroup, worker: Worker, assignmentId: String, hitId: String, turkSubmitTo: String, exp: LingoExpModel, df: play.data.DynamicForm, origin: String)
 <html>
     <head>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-1.11.1.min.js")"></script>

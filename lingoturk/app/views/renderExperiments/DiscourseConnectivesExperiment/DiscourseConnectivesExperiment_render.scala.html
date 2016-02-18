@@ -1,5 +1,4 @@
-@(question : models.Questions.DiscourseConnectivesExperiment.DiscourseConnectivesQuestion, assignmentId: String, workerId: String, turkSubmitTo: String, additionalExplanations : String)
-
+@(question : models.Questions.Question, part : models.Groups.AbstractGroup, worker: Worker, assignmentId: String, hitId: String, turkSubmitTo: String, exp: LingoExpModel, df: play.data.DynamicForm, origin: String)
 <html>
     <head>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-1.11.1.min.js")"></script>
@@ -39,7 +38,7 @@
             <div class="form-group" style="margin-bottom: 4%">
                 <label for="explanations">Explanations</label>
                 <blockquote id="explanations">
-                    <p>@Html(additionalExplanations)</p>
+                    <p>@Html(exp.getAdditionalExplanations())</p>
                 </blockquote>
             </div>
 
@@ -67,7 +66,7 @@
             </div>
 
             <blockquote id="Sentence1" style="padding-bottom:7px;padding-top:7px">
-                <p><strong>Part 1: </strong>@Html(question.getSentence1())</p>
+                <p><strong>Part 1: </strong>@Html(question.asInstanceOf[models.Questions.DiscourseConnectivesExperiment.DiscourseConnectivesQuestion].getSentence1())</p>
             </blockquote>
 
             <div ng-if="!RC.categorySet" class="panel panel-warning" id="sortableDiv">
@@ -148,7 +147,7 @@
 
 
             <blockquote id="Sentence2" style="padding-bottom:7px;padding-top:7px">
-                <p><strong>Part 2: </strong>@Html(question.getSentence2())</p>
+                <p><strong>Part 2: </strong>@Html(question.asInstanceOf[models.Questions.DiscourseConnectivesExperiment.DiscourseConnectivesQuestion].getSentence2())</p>
             </blockquote>
 
             <form method="POST" action="@turkSubmitTo/mturk/externalSubmit" align="center" id="form" style="margin-top: 4%">
@@ -165,10 +164,9 @@
                 }
                 <button ng-if="!RC.categorySet" id="categoriesChosenButton" ng-click="RC.categoriesChosen()" type="button" class="btn btn-default" disabled="disabled">That's it</button>
             </form>
-            <input type="hidden" id="partID" value="@question.getId()"/>
         </div>
 
 
-        <input type="hidden" name="workerId" value="@workerId">
+        <input type="hidden" name="workerId" value="@worker.getId()">
     </body>
 </html>

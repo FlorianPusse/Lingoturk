@@ -4,11 +4,11 @@ import com.amazonaws.mturk.service.axis.RequesterService;
 import com.fasterxml.jackson.databind.JsonNode;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
-import models.Questions.PublishableQuestion;
 import models.Questions.Question;
 import models.Questions.QuestionFactory;
 import models.Repository;
 import models.Worker;
+import play.data.DynamicForm;
 import play.db.ebean.Model;
 import play.mvc.Result;
 
@@ -81,7 +81,7 @@ public abstract class AbstractGroup extends Model {
     }
 
     public int getAvailability() throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT availability FROM Parts WHERE PartId=" + this.getId());
+        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT availability FROM Groups WHERE PartId=" + this.getId());
         ResultSet rs = statement.executeQuery();
 
         int result = -1;
@@ -94,7 +94,7 @@ public abstract class AbstractGroup extends Model {
     }
 
     public void setAvailability(int availability) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("UPDATE Parts SET availability = ? WHERE PartId=" + this.getId());
+        PreparedStatement statement = Repository.getConnection().prepareStatement("UPDATE Groups SET availability = ? WHERE PartId=" + this.getId());
         statement.setInt(1,availability);
         statement.execute();
     }
@@ -143,29 +143,9 @@ public abstract class AbstractGroup extends Model {
         statement.execute();
     }
 
-    public Result render(Worker worker, String assignmentId, String hitId, String workerId, String turkSubmitTo, LingoExpModel exp) throws SQLException {
-        Worker.Participation participation = worker.getParticipatesInPart(this);
-
-        if(!assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE_TEST")){
-            // Worker hasn't participated in the HIT already
-            if(participation == null){
-                Question question = this.getNextQuestion();
-                worker.addParticipatesInPart(this, question, null, assignmentId, hitId);
-                return question.render(assignmentId,hitId,workerId,turkSubmitTo,exp.getAdditionalExplanations());
-            }
-            // Worker has already participated in a hit
-            if (participation.getAssignmentID().equals(assignmentId)){
-                return PublishableQuestion.byId(participation.getQuestionID()).render(assignmentId,hitId,workerId,turkSubmitTo,exp.getAdditionalExplanations());
-            }
-        }
-
-        // just a test -> return random question
-        return this.getRandomQuestion(assignmentId,hitId,workerId,turkSubmitTo,exp);
-    }
-
-    public Result getRandomQuestion(String assignmentId, String hitId, String workerId, String turkSubmitTo, LingoExpModel exp) throws SQLException {
+    public Result getRandomQuestion(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) throws SQLException {
         int nr = random.nextInt(getQuestions().size());
-        return getQuestions().get(nr).render(assignmentId, hitId, workerId, turkSubmitTo, exp.getAdditionalExplanations());
+        return getQuestions().get(nr).renderAMT(worker, assignmentId, hitId, turkSubmitTo, exp, df);
     }
 
     public JsonObject returnJSON() throws SQLException {
@@ -214,6 +194,8 @@ public abstract class AbstractGroup extends Model {
         return this.questions;
     }
 
+    public abstract Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df);
+
     public void saveQuestions() throws SQLException {
         PreparedStatement statement = Repository.getConnection().prepareStatement("INSERT INTO Parts_contain_Questions(PartID,QuestionID) SELECT " + getId() + ", ? " +
                 "WHERE NOT EXISTS (" +
@@ -232,11 +214,11 @@ public abstract class AbstractGroup extends Model {
         try {
             for(Question question : getQuestions()){
                 question.delete();
-                super.delete();
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        super.delete();
     }
 
     public int getId() {

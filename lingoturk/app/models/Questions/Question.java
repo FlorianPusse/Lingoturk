@@ -1,6 +1,9 @@
 package models.Questions;
 
+import models.LingoExpModel;
 import models.Repository;
+import models.Worker;
+import play.data.DynamicForm;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import play.mvc.Result;
@@ -15,27 +18,27 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 @Entity
 @Inheritance
-@DiscriminatorColumn(length=30)
-@Table(name="Questions")
+@DiscriminatorColumn(length = 30)
+@Table(name = "Questions")
 @MappedSuperclass
 public abstract class Question extends Model {
 
     @Id
-    @Column(name="QuestionID")
+    @Column(name = "QuestionID")
     protected int id;
 
     @Basic
     @Constraints.Required
-    @Column(name="LingoExpModelId")
+    @Column(name = "LingoExpModelId")
     protected int experimentID;
 
-    @Column(name="Availability", columnDefinition = "integer default 1")
+    @Column(name = "Availability", columnDefinition = "integer default 1")
     protected int availability = 1;
 
-    private static Finder<Integer,Question> finder = new Finder<>(Integer.class,Question.class);
+    private static Finder<Integer, Question> finder = new Finder<>(Integer.class, Question.class);
 
     public static Question byId(int id) {
-       return finder.byId(id);
+        return finder.byId(id);
     }
 
     public synchronized Question getIfAvailable() throws SQLException {
@@ -46,11 +49,11 @@ public abstract class Question extends Model {
             this.availability = rs.getInt("Availability");
         }
 
-        if (availability > 0){
-            this.availability-- ;
+        if (availability > 0) {
+            this.availability--;
             statement = Repository.getConnection().prepareStatement("UPDATE Questions SET Availability = ? WHERE QuestionID = ?");
-            statement.setInt(1,this.availability);
-            statement.setInt(2,this.getId());
+            statement.setInt(1, this.availability);
+            statement.setInt(2, this.getId());
             statement.execute();
             return this;
         }
@@ -70,5 +73,5 @@ public abstract class Question extends Model {
 
     public abstract JsonObject returnJSON() throws SQLException;
 
-    public abstract Result render(String assignmentId, String hitId, String workerId, String turkSubmitTo, String additionalExplanations);
+    public abstract Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df);
 }

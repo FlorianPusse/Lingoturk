@@ -1,6 +1,5 @@
 package models.Questions.LinkingExperimentV1;
 
-import au.com.bytecode.opencsv.CSVWriter;
 import com.amazonaws.mturk.requester.Assignment;
 import com.fasterxml.jackson.databind.JsonNode;
 import models.LingoExpModel;
@@ -15,6 +14,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import play.data.DynamicForm;
 import play.mvc.Result;
 
 import javax.json.*;
@@ -50,13 +50,13 @@ public class Script extends PartQuestion {
 
     private static final int MAX_FALSE_ANSWERS = 20;
 
-    public Script(String scriptId,String side,LingoExpModel exp){
+    public Script(String scriptId, String side, LingoExpModel exp) {
         this.scriptId = scriptId;
         this.side = side;
         this.experimentID = exp.getId();
     }
 
-    public String toString(){
+    public String toString() {
         return "id : " + id + "\nitems : " + itemList;
     }
 
@@ -167,19 +167,19 @@ public class Script extends PartQuestion {
     }
 
     public JsonObject returnJSON() throws SQLException {
-        Collections.sort(itemList,new Item.ItemSlotComparator());
+        Collections.sort(itemList, new Item.ItemSlotComparator());
 
         JsonArrayBuilder array = Json.createArrayBuilder();
-        for(Item item : itemList){
+        for (Item item : itemList) {
             array.add(item.returnJSON());
         }
 
-        return Json.createObjectBuilder().add("id",id).add("items",array.build()).build();
+        return Json.createObjectBuilder().add("id", id).add("items", array.build()).build();
     }
 
     @Override
-    public Result render(String assignmentId, String hitId, String workerId, String turkSubmitTo, String additionalExplanations) {
-        return null;
+    public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
+        return ok(views.html.renderExperiments.LinkingExperimentV1.LinkingExperimentV1_render.render(this, null, worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK"));
     }
 
     @Override
@@ -187,11 +187,11 @@ public class Script extends PartQuestion {
         throw new RuntimeException("Method \"setJSONData\" not implemented for class \"Script\"");
     }
 
-    public void addItem(Item item){
+    public void addItem(Item item) {
         itemList.add(item);
     }
 
-    public static List<Script> createScripts(String xmlString, String side, LingoExpModel exp, boolean deleteEmpty) throws ParserConfigurationException, IOException, SAXException{
+    public static List<Script> createScripts(String xmlString, String side, LingoExpModel exp, boolean deleteEmpty) throws ParserConfigurationException, IOException, SAXException {
 
         List<Script> scriptList = new LinkedList<>();
         Script currentScript = null;
@@ -204,21 +204,21 @@ public class Script extends PartQuestion {
 
         // get stories
         NodeList scripts = document.getElementsByTagName("script");
-        for(int i = 0; i < scripts.getLength(); i++){
+        for (int i = 0; i < scripts.getLength(); i++) {
             Node script = scripts.item(i);
 
-            if(script.getNodeType() == Node.ELEMENT_NODE){
+            if (script.getNodeType() == Node.ELEMENT_NODE) {
                 Element scriptElement = (Element) script;
 
-                if(currentScript != null){
+                if (currentScript != null) {
                     scriptList.add(currentScript);
                 }
-                currentScript = new Script(scriptElement.getAttribute("id"),side,exp);
+                currentScript = new Script(scriptElement.getAttribute("id"), side, exp);
 
                 Item currentItem;
 
                 NodeList itemList = scriptElement.getElementsByTagName("item");
-                for(int j = 0; j < itemList.getLength(); j++){
+                for (int j = 0; j < itemList.getLength(); j++) {
                     Node item = itemList.item(j);
                     Element itemElement = (Element) item;
                     String item_hAttribute = itemElement.getAttribute("h");
@@ -228,10 +228,10 @@ public class Script extends PartQuestion {
                     String item_textAttribute = itemElement.getAttribute("text");
                     String item_pair = itemElement.getAttribute("pair");
 
-                    currentItem = new Item(item_hAttribute,item_pair,item_textAttribute,item_slotAttribute,item_originalAttribute,item_headAttribute);
+                    currentItem = new Item(item_hAttribute, item_pair, item_textAttribute, item_slotAttribute, item_originalAttribute, item_headAttribute);
 
                     NodeList ptcpList = itemElement.getElementsByTagName("ptcp");
-                    for(int z = 0; z < ptcpList.getLength(); z++){
+                    for (int z = 0; z < ptcpList.getLength(); z++) {
                         Node ptcp = ptcpList.item(z);
                         Element ptcpElement = (Element) ptcp;
                         String ptcp_headAttribute = ptcpElement.getAttribute("head");
@@ -242,26 +242,26 @@ public class Script extends PartQuestion {
 
                     currentScript.addItem(currentItem);
                 }
-            }else{
+            } else {
                 throw new RuntimeException("wrong format");
             }
         }
 
-        if(currentScript != null){
+        if (currentScript != null) {
             scriptList.add(currentScript);
         }
 
-        for(Iterator<Script> scriptIterator = scriptList.iterator(); scriptIterator.hasNext();){
+        for (Iterator<Script> scriptIterator = scriptList.iterator(); scriptIterator.hasNext(); ) {
             Script s = scriptIterator.next();
-            if(deleteEmpty){
+            if (deleteEmpty) {
                 boolean containsActive = false;
-                for(Item item : s.getItemList()){
-                    if(!item.getH().equals("")){
+                for (Item item : s.getItemList()) {
+                    if (!item.getH().equals("")) {
                         containsActive = true;
                         break;
                     }
                 }
-                if(!containsActive){
+                if (!containsActive) {
                     scriptIterator.remove();
                     continue;
                 }
@@ -277,31 +277,17 @@ public class Script extends PartQuestion {
         return null;
     }
 
-    public List<Item> getItemList(){
+    public List<Item> getItemList() {
         return itemList;
     }
 
-    public String getScriptId(){
+    public String getScriptId() {
         return scriptId;
     }
 
-    public static Result renderScripts(Script script1, Script script2, String assignmentId, String hitId, String workerId, String turkSubmitTo, String exp) throws SQLException {
-        int falseAnswers = countFalseAnswers(workerId);
-
-        if(falseAnswers > MAX_FALSE_ANSWERS){
-            return ok(views.html.renderExperiments.bannedWorker.render());
-        }else{
-            Worker w = Worker.getWorkerById(workerId);
-            w.addParticipatesInPart(null,script1,script2,assignmentId,hitId);
-
-            return ok(views.html.renderExperiments.LinkingExperimentV1.linkingExperiment.render(script1.getId(),script2.getId(),assignmentId, hitId, workerId,
-                    turkSubmitTo, exp));
-        }
-    }
-
-    public boolean containsActiveItem(){
-        for(Item item : getItemList()){
-            if(!item.getH().equals("")){
+    public boolean containsActiveItem() {
+        for (Item item : getItemList()) {
+            if (!item.getH().equals("")) {
                 return true;
             }
         }
@@ -314,7 +300,7 @@ public class Script extends PartQuestion {
         ResultSet resultSet = statement.executeQuery();
 
         int count = -1;
-        if(resultSet.next()){
+        if (resultSet.next()) {
             count = resultSet.getInt(1);
         }
 

@@ -148,7 +148,7 @@
 
         this.Question = function (sentence1, question1, questionFirst1, sentence2, question2, questionFirst2) {
             var self = this;
-            self.type = "NewExpQuestion";
+            self.type = "RephrasingQuestion";
             self.sentence1 = sentence1;
             self.question1 = question1;
             self.questionFirst1 = questionFirst1;
@@ -159,7 +159,7 @@
 
         this.Part = function () {
             var self = this;
-            self.type = "DisjunctGroup";
+            self.type = "DisjointGroup";
             self.questions = [];
             self.newSentence1 = "";
             self.newQuestion1 = "";

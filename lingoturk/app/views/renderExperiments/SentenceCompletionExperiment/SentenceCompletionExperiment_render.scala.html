@@ -1,4 +1,4 @@
-@(expModel: LingoExpModel)
+@(question : models.Questions.Question, part : models.Groups.AbstractGroup, worker: Worker, assignmentId: String, hitId: String, turkSubmitTo: String, exp: LingoExpModel, df: play.data.DynamicForm, origin: String)
     <html>
 
         <head>
@@ -6,7 +6,7 @@
             <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-2.1.1.js")"></script>
             <script type="text/javascript" src="@routes.Assets.at("javascripts/angular.min.js")"></script>
             <script type="text/javascript" src="@routes.Assets.at("javascripts/ExperimentRendering/SentenceCompletionExperiment/SentenceCompletionExperiment_render.js")"></script>
-            <input type="hidden" id="expId" value="@expModel.getId">
+            <input type="hidden" id="expId" value="@exp.getId()">
             <style type="text/css">
             hr {
                 border-style: solid none;
@@ -33,7 +33,7 @@
                                 Instructions
                             </div>
                             <div class="panel-body">
-                                @Html(expModel.getAdditionalExplanations)
+                                @Html(exp.getAdditionalExplanations())
                                 <button id="instructions" onclick="$('#instructionsSlide').hide();$('#workerIdSlide').show();" type="button" class="btn btn-default" style="float:right;margin-top:20px">Next</button>
                             </div>
                         </div>

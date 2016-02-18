@@ -93,7 +93,7 @@
 
         this.Story = function(itemId,story,storyType){
             var self = this;
-            self.type = "StoryCompletionExperiment";
+            self.type = "StoryCompletionQuestion";
             self.story = story;
             self.itemId = itemId;
             self.storyType = storyType;

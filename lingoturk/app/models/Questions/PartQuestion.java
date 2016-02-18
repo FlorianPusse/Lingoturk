@@ -39,7 +39,7 @@ public abstract class PartQuestion extends PublishableQuestion {
         ResultSet rs = statement.executeQuery("SELECT PartID FROM Parts_contain_Questions WHERE QuestionID=" + getId());
 
         AbstractGroup group = null;
-        if(rs.next()){
+        if (rs.next()) {
             int partID = rs.getInt("PartID");
             group = AbstractGroup.byId(partID);
         }

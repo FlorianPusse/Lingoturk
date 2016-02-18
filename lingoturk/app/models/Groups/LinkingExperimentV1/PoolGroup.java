@@ -13,6 +13,7 @@ import models.Questions.PartQuestion;
 import models.Questions.Question;
 import models.Repository;
 import models.Worker;
+import play.data.DynamicForm;
 import play.mvc.Result;
 
 import javax.json.Json;
@@ -24,7 +25,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+
+import static play.mvc.Results.internalServerError;
 import static play.mvc.Results.ok;
 
 @Entity
@@ -32,7 +36,7 @@ import static play.mvc.Results.ok;
 @DiscriminatorValue("PoolGroup")
 public class PoolGroup extends AbstractGroup {
 
-    public PoolGroup(String fileName){
+    public PoolGroup(String fileName) {
         this.fileName = fileName;
     }
 
@@ -46,19 +50,20 @@ public class PoolGroup extends AbstractGroup {
     static String KEYWORDS = "script,scripts,activity,activities,linking,aligning, English,events,description,descriptions,most,similar,everyday";
     static String DESCRIPTION = "We require native speakers of English who will be presented with two descriptions of everyday activities and will be required to decide if the highlighted event in the first description is most similar to the highlighted event in the second description.";
 
-    public PoolGroup(){}
+    public PoolGroup() {
+    }
 
     @Override
     public String publishOnAMT(RequesterService service, int publishedId, String hitTypeId, Long lifetime, Integer maxAssignmentsPerCombination) throws SQLException {
         String url = null;
 
-        hitTypeId = service.registerHITType(AUTO_APPROVAL_DELAY_IN_SECONDS, ASSIGNMENT_DURATION_IN_SECONDS, REWARD, TITLE + Application.actCounter, KEYWORDS,DESCRIPTION, Application.qualificationRequirements);
+        hitTypeId = service.registerHITType(AUTO_APPROVAL_DELAY_IN_SECONDS, ASSIGNMENT_DURATION_IN_SECONDS, REWARD, TITLE + Application.actCounter, KEYWORDS, DESCRIPTION, Application.qualificationRequirements);
 
         int counter = 0;
 
-        for(Script lhs : getLeftHandSide()){
-            if(!lhs.containsActiveItem()){
-                System.out.println("Warning: " + lhs.getId() +  " will not be published. Script does not contain active items.");
+        for (Script lhs : getLeftHandSide()) {
+            if (!lhs.containsActiveItem()) {
+                System.out.println("Warning: " + lhs.getId() + " will not be published. Script does not contain active items.");
                 continue;
             }
 
@@ -66,7 +71,7 @@ public class PoolGroup extends AbstractGroup {
 
             //System.out.println(lhs.getId() +  " will be published. Script contains at least one active item.");
 
-            for(Script rhs : getRightHandSide()){
+            for (Script rhs : getRightHandSide()) {
                 String question = "<ExternalQuestion xmlns=\"http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd\">"
                         + "<ExternalURL> " + Application.getStaticIp() + "/render?id=" + lhs.getId() + "&amp;id2=" + rhs.getId() + "&amp;Type=question</ExternalURL>"
                         + "<FrameHeight>" + 800 + "</FrameHeight>" + "</ExternalQuestion>";
@@ -75,7 +80,7 @@ public class PoolGroup extends AbstractGroup {
                 url = service.getWebsiteURL() + "/mturk/preview?groupId=" + hit.getHITTypeId();
                 System.out.println(url);
 
-                insert(hit.getHITId(),publishedId,lhs.getId(),rhs.getId());
+                insert(hit.getHITId(), publishedId, lhs.getId(), rhs.getId());
             }
         }
 
@@ -84,25 +89,25 @@ public class PoolGroup extends AbstractGroup {
         return url;
     }
 
-    public void insert(String hitID,int publishedId, int question1, int question2) throws SQLException {
+    public void insert(String hitID, int publishedId, int question1, int question2) throws SQLException {
         PreparedStatement statement = Repository.getConnection().prepareStatement("INSERT INTO PartPublishedAs(PartID,mTurkID,publishedId,question1,question2) VALUES(?,?,?,?,?)");
         statement.setInt(1, getId());
         statement.setString(2, hitID);
-        statement.setInt(3,publishedId);
-        statement.setInt(4,question1);
-        statement.setInt(5,question2);
+        statement.setInt(3, publishedId);
+        statement.setInt(4, question1);
+        statement.setInt(5, question2);
         statement.execute();
     }
 
     public List<Script> getLeftHandSide() throws SQLException {
-        if(leftHandSide != null){
+        if (leftHandSide != null) {
             return leftHandSide;
         }
 
         List<Script> tmp = new LinkedList<>();
-        for(PartQuestion s : getQuestions()){
+        for (PartQuestion s : getQuestions()) {
             Script s_tmp = (Script) s;
-            if(s_tmp.side.equals("lhs")){
+            if (s_tmp.side.equals("lhs")) {
                 tmp.add(s_tmp);
             }
         }
@@ -110,14 +115,14 @@ public class PoolGroup extends AbstractGroup {
     }
 
     public List<Script> getRightHandSide() throws SQLException {
-        if(rightHandSide != null){
+        if (rightHandSide != null) {
             return rightHandSide;
         }
 
         List<Script> tmp = new LinkedList<>();
-        for(PartQuestion s : getQuestions()){
+        for (PartQuestion s : getQuestions()) {
             Script s_tmp = (Script) s;
-            if(s_tmp.side.equals("rhs")){
+            if (s_tmp.side.equals("rhs")) {
                 tmp.add(s_tmp);
             }
         }
@@ -128,16 +133,16 @@ public class PoolGroup extends AbstractGroup {
     public JsonObject returnJSON() throws SQLException {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-        for(Question q : getLeftHandSide()){
+        for (Question q : getLeftHandSide()) {
             arrayBuilder.add(q.returnJSON());
         }
         objectBuilder.add("lhs", arrayBuilder.build()).build();
 
         arrayBuilder = Json.createArrayBuilder();
-        for(Question q : getRightHandSide()){
+        for (Question q : getRightHandSide()) {
             arrayBuilder.add(q.returnJSON());
         }
-        objectBuilder.add("rhs",arrayBuilder.build()).build();
+        objectBuilder.add("rhs", arrayBuilder.build()).build();
 
         return objectBuilder.build();
     }
@@ -145,7 +150,7 @@ public class PoolGroup extends AbstractGroup {
     @Override
     public void setJSONData(LingoExpModel experiment, JsonNode partNode) throws SQLException {
         // TODO: Exception handling
-        try{
+        try {
             String fileName = partNode.get("fileName").asText();
             System.out.println(fileName);
 
@@ -153,33 +158,41 @@ public class PoolGroup extends AbstractGroup {
             String rhs = partNode.get("rhs").asText();
 
             System.out.println("Create LHS.");
-            List<Script> leftHandSide = Script.createScripts(lhs,"lhs",experiment,true);
+            List<Script> leftHandSide = Script.createScripts(lhs, "lhs", experiment, true);
             System.out.println("Create RHS.");
-            List<Script> rightHandSide = Script.createScripts(rhs,"rhs",experiment,false);
+            List<Script> rightHandSide = Script.createScripts(rhs, "rhs", experiment, false);
 
             leftHandSide.addAll(rightHandSide);
             questions = new LinkedList<>(leftHandSide);
-        }catch (Throwable t){
+        } catch (Throwable t) {
             t.printStackTrace();
         }
     }
 
     @Override
-    public Result getRandomQuestion(String assignmentId, String hitId, String workerId, String turkSubmitTo, LingoExpModel exp) throws SQLException {
-        Random random = new Random();
+    public Result getRandomQuestion(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
+        try {
+            Random random = new Random();
 
-        PartQuestion lhs = getLeftHandSide().get(random.nextInt(getLeftHandSide().size()));
-        PartQuestion rhs = getRightHandSide().get(random.nextInt(getRightHandSide().size()));
+            PartQuestion lhs = getLeftHandSide().get(random.nextInt(getLeftHandSide().size()));
+            PartQuestion rhs = getRightHandSide().get(random.nextInt(getRightHandSide().size()));
 
-        return ok(views.html.renderExperiments.LinkingExperimentV1.linkingExperiment.render(lhs.getId(),rhs.getId(),assignmentId, hitId, workerId,
-                turkSubmitTo, exp.getAdditionalExplanations()));
+            Map<String,String> variableMap = df.data();
+            variableMap.put("id1", String.valueOf(lhs.getId()));
+            variableMap.put("id2", String.valueOf(rhs.getId()));
+
+            df = df.fill(variableMap);
+            return ok(views.html.renderExperiments.LinkingExperimentV1.LinkingExperimentV1_render.render(lhs, null, worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK"));
+        } catch (SQLException e) {
+            return internalServerError("Can't connect to DB.");
+        }
     }
 
     public List<Combination> getQuestionCombinations() throws SQLException {
         List<Combination> combinations = new LinkedList<>();
-        for(Script lhs : getLeftHandSide()){
-            for(Script rhs : getRightHandSide()){
-                Combination c = new Combination(new int[]{lhs.getId(),rhs.getId()});
+        for (Script lhs : getLeftHandSide()) {
+            for (Script rhs : getRightHandSide()) {
+                Combination c = new Combination(new int[]{lhs.getId(), rhs.getId()});
                 c.save();
                 combinations.add(c);
             }
@@ -188,8 +201,8 @@ public class PoolGroup extends AbstractGroup {
     }
 
     @Override
-    public Result render(Worker worker, String assignmentId, String hitId, String workerId, String turkSubmitTo, LingoExpModel exp) throws SQLException {
-        return this.getRandomQuestion(assignmentId,hitId,workerId,turkSubmitTo,exp);
+    public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
+        return this.getRandomQuestion(worker, assignmentId, hitId, turkSubmitTo, exp, df);
     }
 
 

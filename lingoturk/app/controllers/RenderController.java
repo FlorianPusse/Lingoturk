@@ -3,65 +3,29 @@ package controllers;
 import models.Groups.DisjointGroup;
 import models.Groups.AbstractGroup;
 import models.Groups.FullGroup;
-import models.Groups.LinkingExperimentV2.PoolGroupV2;
 import models.LingoExpModel;
 import models.Questions.ExampleQuestion;
 import models.Questions.LinkingExperimentV1.Script;
 import models.Questions.Question;
 import models.Repository;
 import models.Worker;
+import play.api.templates.Html;
+import play.data.DynamicForm;
 import play.mvc.Controller;
 import play.mvc.Result;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Random;
-
 
 public class RenderController extends Controller {
 
+    // TODO: Reimplement
     public static Result renderExampleQuestion(int id) {
         ExampleQuestion exampleQuestion = (ExampleQuestion) Question.byId(id);
         return exampleQuestion.render();
-    }
-
-    private static Random randomGenerator = new Random();
-    public static Result renderPictureNaming(int expId, String origin) throws SQLException {
-        if (origin != null) {
-            LingoExpModel exp = LingoExpModel.byId(expId);
-            List<AbstractGroup> groups = exp.getParts();
-
-            int index = randomGenerator.nextInt(groups.size());
-            AbstractGroup group = groups.get(index);
-
-            if (!(group instanceof DisjointGroup)) {
-                throw new RuntimeException("Wrong type");
-            } else {
-                DisjointGroup disjointGroup = (DisjointGroup) group;
-                return disjointGroup.render(origin, -1);
-            }
-        } else {
-            LeastUsedChunksAnswer leastUsedChunk = getLeastUsedChunk(expId);
-            DisjointGroup part = (DisjointGroup) AbstractGroup.byId(leastUsedChunk.partId);
-            return part.render(origin, leastUsedChunk.chunkId);
-        }
-    }
-
-    static int storyCompletionCounter = 0;
-    public static synchronized Result renderStoryCompletion(int expId, String origin) throws SQLException {
-        if (origin != null) {
-            LingoExpModel exp = LingoExpModel.byId(expId);
-            if(exp != null){
-                return ok(views.html.renderExperiments.SentenceCompletionExperiment.SentenceCompletionExperiment.render(exp));
-            }
-        } else {
-            LeastUsedChunksAnswer leastUsedChunk = getLeastUsedChunk(expId);
-            DisjointGroup part = (DisjointGroup) AbstractGroup.byId(leastUsedChunk.partId);
-            return part.render(origin, leastUsedChunk.chunkId);
-        }
-        return notFound();
     }
 
     private static LeastUsedChunksAnswer getLeastUsedChunk(int expId) throws SQLException {
@@ -87,135 +51,102 @@ public class RenderController extends Controller {
         }
     }
 
-    static int plausiblityTestCounter = 0;
-
-    public static synchronized Result renderPB(int expId, String origin) throws SQLException {
-        LingoExpModel exp = LingoExpModel.byId(expId);
-        List<AbstractGroup> groups = exp.getParts();
-
-        AbstractGroup group = groups.get(plausiblityTestCounter);
-        plausiblityTestCounter++;
-        if (plausiblityTestCounter == groups.size()) {
-            plausiblityTestCounter = 0;
-        }
-
-        if (!(group instanceof FullGroup)) {
-            throw new RuntimeException("Wrong type");
-        } else {
-            FullGroup plausibilityGroup = (FullGroup) group;
-            // TODO: redo
-            return null;
-            //return plausibilityGroup.render(origin);
-        }
-    }
-
-    public static Result renderAMT(int questionId, int questionId2, int slot1, int slot2, String assignmentId, String hitId, String workerId, String turkSubmitTo) {
-        if (assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE") || workerId == null) {
-            return ok(views.html.renderExperiments.LinkingExperimentV2.linking_experimentV2_preview.render());
-        }
-
-        return PoolGroupV2.renderAMT(questionId, questionId2, slot1, slot2, assignmentId, hitId, workerId, turkSubmitTo);
-    }
-
+    /**
+     * Renders an experiment on Prolific Academic
+     *
+     * @param expId The experiment to display
+     * @return Result object containing the page.
+     */
     public static Result renderProlific(int expId) {
         LingoExpModel lingoExpModel = LingoExpModel.byId(expId);
-        return ok(views.html.renderExperiments.StoryCompletionExperiment.storyCompletionExperiment.render(lingoExpModel));
+        if (lingoExpModel == null) {
+            return internalServerError("Unknown experiment Id");
+        }
+        try {
+            Method m = getRenderMethod(lingoExpModel.getExperimentType());
+            Html webpage = (Html) m.invoke(null, null, null, null, null, null, null, lingoExpModel, null, "PROLIFIC");
+            return ok(webpage);
+        } catch (ClassNotFoundException e) {
+            return internalServerError("Unknown experiment name: " + lingoExpModel.getExperimentType());
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassCastException e) {
+            return internalServerError("Wrong type for name: " + lingoExpModel.getExperimentType());
+        }
+    }
+
+    public static Method getRenderMethod(String experimentType) throws NoSuchMethodException, ClassNotFoundException {
+        Class<?> c = Class.forName("views.html.renderExperiments." + experimentType + "." + experimentType + "_render");
+        return c.getMethod("render", Question.class, AbstractGroup.class, Worker.class, String.class, String.class, String.class, LingoExpModel.class, DynamicForm.class, String.class);
     }
 
     /**
      * Renders an experiment's worker-view of any type.
      *
-     * @param questionId   The question id in the database
+     * @param id           The id in the database
      * @param assignmentId The assignment ID submitted by AMT
      * @param hitId        The HIT ID submitted by AMT
      * @param workerId     The worker ID submitted by AMT or "null" if none submitted
      * @return The rendered page
      */
-    public static Result render(String Type, int questionId, int questionId2, String assignmentId, String hitId, String workerId, String turkSubmitTo) throws SQLException {
-        // Get right experiment model
-        LingoExpModel exp = null;
-        Question question = null;
-        AbstractGroup group = null;
+    public static Result renderAMT(String Type, int id, String assignmentId, String hitId, String workerId, String turkSubmitTo) {
+        try {
+            DynamicForm df = new DynamicForm().bindFromRequest();
 
-        if (Type.equals("question")) {
-            question = Question.byId(questionId);
-            exp = LingoExpModel.byId(question.getExperimentID());
-        } else if (Type.equals("part")) {
-            group = AbstractGroup.byId(questionId);
-            exp = LingoExpModel.byId(group.getExperimentUsedIn());
-        }
+            // Get right experiment model
+            LingoExpModel exp;
+            Question question;
+            AbstractGroup group;
 
-        // if worker id is not available (null) the site just shows an preview
-        if (assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE") || workerId == null) {
-            return ok(views.html.renderExperiments.LinkingExperimentV2.linking_experimentV2_preview.render());
-        }
-
-        Worker worker = Worker.getWorkerById(workerId);
-
-        if (worker == null) {
-            worker = Worker.createWorker(workerId);
-        }
-
-        // Worker is not allowed to participate in our experiments anymore
-        if (worker.getIsBlocked()) {
-            return ok(views.html.renderExperiments.bannedWorker.render());
-        }
-
-        if (Type.equals("question")) {
-            if (!(question instanceof Script)) {
-                return question.render(assignmentId, hitId, workerId, turkSubmitTo, exp.getAdditionalExplanations());
-            } else {
-                Script rhs = (Script) Question.byId(questionId2);
-                return Script.renderScripts((Script) question, rhs, assignmentId, hitId, workerId, turkSubmitTo, exp.getAdditionalExplanations());
+            // if worker id is not available (null) the site just shows an preview
+            if (assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE") || workerId == null) {
+                return ok(views.html.renderExperiments.LinkingExperimentV2.linking_experimentV2_preview.render());
             }
-        } else if (Type.equals("part")) {
-            return group.render(worker, assignmentId, hitId, workerId, turkSubmitTo, exp);
-        } else {
-            return Controller.badRequest();
+
+            // Retrieve worker from DB
+            Worker worker = Worker.getWorkerById(workerId);
+            if (worker == null) {
+                worker = Worker.createWorker(workerId);
+            }
+
+            // Worker is not allowed to participate in our experiments anymore
+            if (worker.getIsBanned()) {
+                return ok(views.html.renderExperiments.bannedWorker.render());
+            }
+
+            switch (Type) {
+                case "question":
+                    question = Question.byId(id);
+
+                    if (question == null) {
+                        return internalServerError("Unknown experimentId");
+                    }
+
+                    exp = LingoExpModel.byId(question.getExperimentID());
+
+                    if (worker.getIsBlockedFor(exp.getId())) {
+                        return ok(views.html.renderExperiments.blockedWorker.render());
+                    }
+
+                    return question.renderAMT(worker, assignmentId, hitId, turkSubmitTo, exp, df);
+                case "part":
+                    group = AbstractGroup.byId(id);
+
+                    if (group == null) {
+                        return internalServerError("Unknown groupId");
+                    }
+
+                    exp = LingoExpModel.byId(group.getExperimentUsedIn());
+
+                    if (worker.getIsBlockedFor(exp.getId())) {
+                        return ok(views.html.renderExperiments.blockedWorker.render());
+                    }
+
+                    return group.renderAMT(worker, assignmentId, hitId, turkSubmitTo, exp, df);
+                default:
+                    return internalServerError("Unknown Type specifier: " + Type);
+            }
+        } catch (SQLException e) {
+            return internalServerError("Can't connect to DB.");
         }
     }
 
-    public static Result generalRender(String Type, int questionId, int questionId2, String assignmentId, String hitId, String workerId, String turkSubmitTo) throws SQLException {
-        // Get right experiment model
-        LingoExpModel exp = null;
-        Question question = null;
-        AbstractGroup group = null;
-
-        if (Type.equals("question")) {
-            question = Question.byId(questionId);
-            exp = LingoExpModel.byId(question.getExperimentID());
-        } else if (Type.equals("part")) {
-            group = AbstractGroup.byId(questionId);
-            exp = LingoExpModel.byId(group.getExperimentUsedIn());
-        }
-
-        // if worker id is not available (null) the site just shows an preview
-        if (assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE") || workerId == null) {
-            return ok(views.html.renderExperiments.experiment_preview.render(exp));
-        }
-
-        Worker worker = Worker.getWorkerById(workerId);
-
-        if (worker == null) {
-            worker = Worker.createWorker(workerId);
-        }
-
-        // Worker is not allowed to participate in our experiments anymore
-        if (worker.getIsBlocked()) {
-            return ok(views.html.renderExperiments.bannedWorker.render());
-        }
-
-        if (Type.equals("question")) {
-            if (!(question instanceof Script)) {
-                return question.render(assignmentId, hitId, workerId, turkSubmitTo, exp.getAdditionalExplanations());
-            } else {
-                Script rhs = (Script) Question.byId(questionId2);
-                return Script.renderScripts((Script) question, rhs, assignmentId, hitId, workerId, turkSubmitTo, exp.getAdditionalExplanations());
-            }
-        } else if (Type.equals("part")) {
-            return group.render(worker, assignmentId, hitId, workerId, turkSubmitTo, exp);
-        } else {
-            return Controller.badRequest();
-        }
-    }
 }

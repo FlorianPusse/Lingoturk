@@ -133,9 +133,9 @@ CREATE TABLE IF NOT EXISTS PictureNamingResult(
 	id int DEFAULT nextval('PictureNaming_Seq') PRIMARY KEY,
 	WorkerId VARCHAR(60) NOT NULL,
 	timestamp timestamp DEFAULT now(),
-	partId int REFERENCES Groups,
-	chunkId int REFERENCES Questions,
-  pictureId int REFERENCES PictureNaming,
+	partId int REFERENCES Groups ON DELETE CASCADE,
+	chunkId int REFERENCES Questions ON DELETE CASCADE,
+  pictureId int REFERENCES PictureNaming ON DELETE CASCADE,
   answer VARCHAR
 );
 
@@ -144,8 +144,8 @@ CREATE TABLE IF NOT EXISTS PlausibilityResult(
 	id int DEFAULT nextval('PlausibilityResult_Seq') PRIMARY KEY,
 	workerId VARCHAR(60) NOT NULL,
 	timestamp timestamp DEFAULT now(),
-	partId int REFERENCES Groups,
-	questionId int REFERENCES Questions,
+	partId int REFERENCES Groups ON DELETE CASCADE,
+	questionId int REFERENCES Questions ON DELETE CASCADE,
 	answer int
 );
 
@@ -153,8 +153,8 @@ CREATE TABLE IF NOT EXISTS StoryCompletionResultV2(
 	id int DEFAULT nextval('StoryCompletionResultV2_Seq') PRIMARY KEY,
 	workerId VARCHAR(60) NOT NULL,
 	timestamp timestamp DEFAULT now(),
-	partId int REFERENCES Groups,
-	questionId int REFERENCES Questions,
+	partId int REFERENCES Groups ON DELETE CASCADE,
+	questionId int REFERENCES Questions ON DELETE CASCADE,
 	answer varchar(500)
 );
 
@@ -165,12 +165,12 @@ CREATE TABLE LinkingResult(
 	HitId VARCHAR(40) NOT NULL,
 	timestamp timestamp DEFAULT now(),
 	workingTimes int,
-	lhs_script int REFERENCES Questions,
-	rhs_script int REFERENCES Questions,
-	lhs_item int REFERENCES LinkingItem,
-	rhs_item int REFERENCES LinkingItem,
-	before int REFERENCES LinkingItem,
-	after int REFERENCES LinkingItem,
+	lhs_script int REFERENCES Questions ON DELETE CASCADE,
+	rhs_script int REFERENCES Questions ON DELETE CASCADE,
+	lhs_item int REFERENCES LinkingItem ON DELETE CASCADE,
+	rhs_item int REFERENCES LinkingItem ON DELETE CASCADE,
+	before int REFERENCES LinkingItem ON DELETE CASCADE,
+	after int REFERENCES LinkingItem ON DELETE CASCADE,
 	noLinkingPossible boolean DEFAULT false
 );
 
@@ -181,8 +181,8 @@ CREATE TABLE LinkingResultV2(
 	HitId VARCHAR(40) NOT NULL,
 	timestamp timestamp DEFAULT now(),
 	workingTimes int,
-	lhs_script int REFERENCES Questions,
-	rhs_script int REFERENCES Questions,
+	lhs_script int REFERENCES Questions ON DELETE CASCADE,
+	rhs_script int REFERENCES Questions ON DELETE CASCADE,
 	lhs_slot int,
 	rhs_slot int,
 	result VARCHAR(50)

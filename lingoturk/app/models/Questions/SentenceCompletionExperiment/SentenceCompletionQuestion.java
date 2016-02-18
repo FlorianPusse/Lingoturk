@@ -7,7 +7,9 @@ import models.LingoExpModel;
 import models.Questions.PartQuestion;
 import models.Repository;
 import models.Results.AssignmentResult;
+import models.Worker;
 import org.dom4j.DocumentException;
+import play.data.DynamicForm;
 import play.mvc.Result;
 
 import javax.json.Json;
@@ -111,7 +113,7 @@ public class SentenceCompletionQuestion extends PartQuestion {
     }
 
     @Override
-    public Result render(String assignmentId, String hitId, String workerId, String turkSubmitTo, String additionalExplanations) {
+    public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
         return null;
     }
 

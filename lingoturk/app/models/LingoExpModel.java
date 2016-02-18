@@ -233,10 +233,6 @@ public class LingoExpModel extends Model {
 
     @Override
     public void delete(){
-
-        // TODO: FIX
-        /*
-
         try {
             for (CheaterDetectionQuestion cheaterDetectionQuestion : getCheaterDetectionQuestions()) {
                 cheaterDetectionQuestion.delete();
@@ -245,15 +241,13 @@ public class LingoExpModel extends Model {
                 Question question = (Question) exampleQuestion;
                 question.delete();
             }
-            for (Part part : getParts()) {
+            for (AbstractGroup part : getParts()) {
                 part.delete();
             }
         } catch (SQLException sqlE){
-
+            throw new RuntimeException("An error occured while deleteing the experiment:\n" + sqlE.getMessage());
         }
-        this.delete(); */
-
-        System.out.println("TRIED TO DELETE");
+        super.delete();
     }
 
     public boolean isCurrentlyRunning() throws SQLException {

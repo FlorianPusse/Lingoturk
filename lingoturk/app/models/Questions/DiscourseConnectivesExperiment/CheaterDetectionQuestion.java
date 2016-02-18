@@ -7,6 +7,8 @@ import controllers.Application;
 import models.LingoExpModel;
 import models.Repository;
 import models.Word;
+import models.Worker;
+import play.data.DynamicForm;
 import play.mvc.Result;
 
 import javax.json.Json;
@@ -39,8 +41,8 @@ public class CheaterDetectionQuestion extends DiscourseConnectivesQuestion {
         this.sentenceType = sentenceType;
     }
 
-    public static CheaterDetectionQuestion createCheaterDetectionQuestion(String sentence1, String sentence2, List<Word> proposedConnectives, List<Word> mustNotHaveConnectives,int experimentID,String sentenceType) throws SQLException {
-        CheaterDetectionQuestion result = new CheaterDetectionQuestion(sentence1,sentence2,experimentID,sentenceType);
+    public static CheaterDetectionQuestion createCheaterDetectionQuestion(String sentence1, String sentence2, List<Word> proposedConnectives, List<Word> mustNotHaveConnectives, int experimentID, String sentenceType) throws SQLException {
+        CheaterDetectionQuestion result = new CheaterDetectionQuestion(sentence1, sentence2, experimentID, sentenceType);
         result.save();
 
         for (Word w : proposedConnectives) {
@@ -71,7 +73,7 @@ public class CheaterDetectionQuestion extends DiscourseConnectivesQuestion {
                 e.printStackTrace();
             }
 
-            CheaterDetectionQuestion cdq = CheaterDetectionQuestion.createCheaterDetectionQuestion(sentence1, sentence2, proposedConnectives, mustNotHaveConnectives, experiment.getId(),sentenceType);
+            CheaterDetectionQuestion cdq = CheaterDetectionQuestion.createCheaterDetectionQuestion(sentence1, sentence2, proposedConnectives, mustNotHaveConnectives, experiment.getId(), sentenceType);
             cdq.addUsedInExperiments(experiment);
             cheaterDetectionQuestions_tmp.add(cdq);
         }
@@ -139,11 +141,11 @@ public class CheaterDetectionQuestion extends DiscourseConnectivesQuestion {
     }
 
     @Override
-    public Result render(String assignmentId, String hitId, String workerId, String turkSubmitTo, String additionalExplanations) {
-        return ok(views.html.renderExperiments.DiscourseConnectivesExperiment.dc_dragndrop.render(this, assignmentId, workerId, turkSubmitTo,additionalExplanations));
+    public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
+        return ok(views.html.renderExperiments.DiscourseConnectivesExperiment.DiscourseConnectivesExperiment_render.render(this, null, worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK"));
     }
 
-    public String publish(RequesterService service, int publishedId,String hitTypeId, Long lifetime, Integer maxAssignments) throws SQLException {
+    public String publish(RequesterService service, int publishedId, String hitTypeId, Long lifetime, Integer maxAssignments) throws SQLException {
 
         String question = "<ExternalQuestion xmlns=\"http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd\">"
                 + "<ExternalURL> " + Application.getStaticIp() + "/render?id=" + getId() + "&amp;Type=question</ExternalURL>"
@@ -151,7 +153,7 @@ public class CheaterDetectionQuestion extends DiscourseConnectivesQuestion {
         HIT hit = service.createHIT(hitTypeId, null, null, null, question, null, null, null, lifetime, maxAssignments, null, null, null, null, null, null);
         String url = service.getWebsiteURL() + "/mturk/preview?groupId=" + hit.getHITTypeId();
 
-        insert(hit.getHITId(),publishedId);
+        insert(hit.getHITId(), publishedId);
 
         return url;
     }
@@ -160,19 +162,19 @@ public class CheaterDetectionQuestion extends DiscourseConnectivesQuestion {
     @Override
     public JsonObject returnJSON() throws SQLException {
         JsonObjectBuilder cheaterDetectionQuestionBuilder = Json.createObjectBuilder();
-        cheaterDetectionQuestionBuilder.add("sentence1",this.sentence1);
-        cheaterDetectionQuestionBuilder.add("sentence2",this.sentence2);
-        cheaterDetectionQuestionBuilder.add("type","CD_Q");
-        cheaterDetectionQuestionBuilder.add("sentenceType",this.getSentenceType());
+        cheaterDetectionQuestionBuilder.add("sentence1", this.sentence1);
+        cheaterDetectionQuestionBuilder.add("sentence2", this.sentence2);
+        cheaterDetectionQuestionBuilder.add("type", "CD_Q");
+        cheaterDetectionQuestionBuilder.add("sentenceType", this.getSentenceType());
 
         JsonArrayBuilder proposedConnectivesBuilder = Json.createArrayBuilder();
-        for(Word w : getProposedConnectives()){
+        for (Word w : getProposedConnectives()) {
             proposedConnectivesBuilder.add(w.getWord());
         }
-        cheaterDetectionQuestionBuilder.add("proposedConnectives",proposedConnectivesBuilder.build());
+        cheaterDetectionQuestionBuilder.add("proposedConnectives", proposedConnectivesBuilder.build());
 
         JsonArrayBuilder mustNotHaveConnectvesBuilder = Json.createArrayBuilder();
-        for(Word w : getMustNotHaveConnectives()){
+        for (Word w : getMustNotHaveConnectives()) {
             mustNotHaveConnectvesBuilder.add(w.getWord());
         }
         cheaterDetectionQuestionBuilder.add("mustNotHaveConnectives", mustNotHaveConnectvesBuilder.build());

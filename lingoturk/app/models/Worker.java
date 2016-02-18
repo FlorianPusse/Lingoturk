@@ -10,9 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.LinkedList;
-import java.util.List;
-
 
 @Entity
 @Table(name="Workers")
@@ -190,16 +187,17 @@ public class Worker extends Model {
         statement.execute();
     }
 
-    public List<Integer> getIsBannedFor() throws SQLException {
-        Statement statement = Repository.getConnection().createStatement();
-        ResultSet rs = statement.executeQuery("SELECT * FROM Workers_areBlockedFor_LingoExpModels WHERE WorkerID='" + this.getId() +"'");
+    public boolean getIsBlockedFor(int expId) throws SQLException {
+        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT * FROM Workers_areBlockedFor_LingoExpModels WHERE WorkerID=? AND LingoExpModelId=?");
+        statement.setString(1,getId());
+        statement.setInt(2,expId);
 
-        List<Integer> result = new LinkedList<Integer>();
-        while(rs.next()){
-            result.add(rs.getInt("LingoExpModelID"));
+
+        if(statement.executeQuery().next()){
+            return true;
+        }else{
+            return false;
         }
-
-        return result;
     }
 
     public void isBanned(boolean isBlocked) throws SQLException {
@@ -226,7 +224,7 @@ public class Worker extends Model {
 
      */
 
-    public boolean getIsBlocked(){
+    public boolean getIsBanned(){
         return banned;
     }
 
@@ -255,7 +253,7 @@ public class Worker extends Model {
 
     @Override
     public String toString(){
-        return "WorkerID:  " + id + "\tBlocked: " + getIsBlocked();
+        return "WorkerID:  " + id + "\tBlocked: " + getIsBanned();
     }
 
 }

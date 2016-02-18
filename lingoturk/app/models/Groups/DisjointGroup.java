@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import controllers.Application;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
+import models.Questions.Question;
+import models.Worker;
+import play.data.DynamicForm;
 import play.mvc.Result;
 
 import javax.json.Json;
@@ -17,6 +20,7 @@ import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import java.sql.SQLException;
 
+import static play.mvc.Results.internalServerError;
 import static play.mvc.Results.ok;
 
 @Entity
@@ -24,7 +28,8 @@ import static play.mvc.Results.ok;
 @DiscriminatorValue("DisjointGroup")
 public class DisjointGroup extends AbstractGroup {
 
-    public DisjointGroup(){}
+    public DisjointGroup() {
+    }
 
     @Override
     public String publishOnAMT(RequesterService service, int publishedId, String hitTypeId, Long lifetime, Integer maxAssignments) throws SQLException {
@@ -44,29 +49,53 @@ public class DisjointGroup extends AbstractGroup {
 
     @Override
     public void setJSONData(LingoExpModel experiment, JsonNode partNode) throws SQLException {
-        super.setJSONData(experiment,partNode);
+        super.setJSONData(experiment, partNode);
 
         JsonNode numberNode = partNode.get("number");
-        if(numberNode != null){
+        if (numberNode != null) {
             this.number = numberNode.asInt();
         }
     }
 
+    @Override
+    public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
+        String workerId = worker.getId();
+
+        try {
+            Worker.Participation participation = worker.getParticipatesInPart(this);
+
+            if (!assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE_TEST")) {
+                if (participation == null) {
+                    // Worker hasn't participated in the HIT already
+                    Question question = this.getNextQuestion();
+                    worker.addParticipatesInPart(this, question, null, assignmentId, hitId);
+                    return question.renderAMT(worker, assignmentId, hitId, turkSubmitTo, exp, df);
+                }else if (participation.getAssignmentID().equals(assignmentId)) {
+                    // Worker has already participated in a hit
+                    Question question = Question.byId(participation.getQuestionID());
+                    return question.renderAMT(worker, assignmentId, hitId, turkSubmitTo, exp, df);
+                }else{
+                    // Worker has already participated but assignmentId has changed
+                    return internalServerError("AssignmentId has changed for [workerId: " + workerId + ", assignmentId: " + assignmentId + "]");
+                }
+            }
+
+            // just a test -> return random question
+            return this.getRandomQuestion(worker, assignmentId, hitId, turkSubmitTo, exp, df);
+        } catch (SQLException e) {
+            return internalServerError("Can't communicate with DB.");
+        }
+    }
 
     public JsonObject returnJSON() throws SQLException {
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-        objectBuilder.add("id",id);
-        objectBuilder.add("number",number);
+        objectBuilder.add("id", id);
+        objectBuilder.add("number", number);
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        for(PartQuestion question : getQuestions()){
+        for (PartQuestion question : getQuestions()) {
             arrayBuilder.add(question.returnJSON());
         }
-        objectBuilder.add("questions",arrayBuilder.build());
+        objectBuilder.add("questions", arrayBuilder.build());
         return objectBuilder.build();
-    }
-
-    public Result render(String origin, int imporantChunk) {
-        // TODO: NOT ONLY PICUTRE NAMING?
-        return ok(views.html.renderExperiments.PictureNamingExperiment.pictureNaming.render(origin,this.getId(),imporantChunk));
     }
 }

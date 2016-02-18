@@ -8,9 +8,11 @@ import models.LingoExpModel;
 import models.Questions.Question;
 import models.Results.AssignmentResult;
 import models.Questions.PartQuestion;
+import models.Worker;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import play.data.DynamicForm;
 import play.mvc.Result;
 
 import javax.json.Json;
@@ -33,22 +35,23 @@ import static play.mvc.Results.ok;
 public class DiscourseConnectivesQuestion extends PartQuestion {
 
     @Basic
-    @Column(name="Sentence1", columnDefinition = "TEXT")
+    @Column(name = "Sentence1", columnDefinition = "TEXT")
     protected String sentence1;
 
     @Basic
-    @Column(name="Sentence2", columnDefinition = "TEXT")
+    @Column(name = "Sentence2", columnDefinition = "TEXT")
     protected String sentence2;
 
     @Basic
-    @Column(name="innerID")
+    @Column(name = "innerID")
     protected String innerID;
 
     @Basic
-    @Column(name="SentenceType")
+    @Column(name = "SentenceType")
     protected String sentenceType;
 
-    public DiscourseConnectivesQuestion(){}
+    public DiscourseConnectivesQuestion() {
+    }
 
     @Override
     public int hashCode() {
@@ -80,28 +83,28 @@ public class DiscourseConnectivesQuestion extends PartQuestion {
             Element elem = (Element) i.next();
             String questions = elem.element("QuestionIdentifier").getStringValue();
             if (questions.equals("category")) {
-                category = elem.element("FreeText").getStringValue().replace(" ","_");
+                category = elem.element("FreeText").getStringValue().replace(" ", "_");
             }
             if (questions.equals("manualAnswer")) {
-                manualAnswer = replaceOccurrences(elem.element("FreeText").getStringValue().split(",")," ","_");
+                manualAnswer = replaceOccurrences(elem.element("FreeText").getStringValue().split(","), " ", "_");
             }
             if (questions.equals("notRelevant")) {
-                notRelevant = replaceOccurrences(elem.element("FreeText").getStringValue().split(",")," ","_");
+                notRelevant = replaceOccurrences(elem.element("FreeText").getStringValue().split(","), " ", "_");
             }
             if (questions.equals("validConnectives")) {
-                validConnectives = replaceOccurrences(elem.element("FreeText").getStringValue().split(",")," ","_");
+                validConnectives = replaceOccurrences(elem.element("FreeText").getStringValue().split(","), " ", "_");
             }
             if (questions.equals("cantDecide")) {
-                cantDecide = replaceOccurrences(elem.element("FreeText").getStringValue().split(",")," ","_");
+                cantDecide = replaceOccurrences(elem.element("FreeText").getStringValue().split(","), " ", "_");
             }
         }
 
-        return new AssignmentResult(assignment.getAssignmentId(),workerId,category,manualAnswer,notRelevant,validConnectives,cantDecide, workingTime_seconds);
+        return new AssignmentResult(assignment.getAssignmentId(), workerId, category, manualAnswer, notRelevant, validConnectives, cantDecide, workingTime_seconds);
     }
 
-    public static String[] replaceOccurrences(String[] array, String expression, String replacement){
-        for(int i = 0; i < array.length; i++){
-            array[i] = array[i].replace(expression,replacement);
+    public static String[] replaceOccurrences(String[] array, String expression, String replacement) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] = array[i].replace(expression, replacement);
         }
         return array;
     }
@@ -121,8 +124,8 @@ public class DiscourseConnectivesQuestion extends PartQuestion {
     }
 
     @Override
-    public Result render(String assignmentId, String hitId, String workerId, String turkSubmitTo, String additionalExplanations) {
-        return ok(views.html.renderExperiments.DiscourseConnectivesExperiment.dc_dragndrop.render(this, assignmentId, workerId, turkSubmitTo,additionalExplanations));
+    public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
+        return ok(views.html.renderExperiments.DiscourseConnectivesExperiment.DiscourseConnectivesExperiment_render.render(this, null, worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK"));
     }
 
     @Override
@@ -131,14 +134,14 @@ public class DiscourseConnectivesQuestion extends PartQuestion {
         dragAndDropQuestionBuilder.add("id", innerID);
         dragAndDropQuestionBuilder.add("sentence1", sentence1);
         dragAndDropQuestionBuilder.add("sentence2", sentence2);
-        dragAndDropQuestionBuilder.add("type","DND_Q");
-        dragAndDropQuestionBuilder.add("sentenceType",this.getSentenceType());
+        dragAndDropQuestionBuilder.add("type", "DND_Q");
+        dragAndDropQuestionBuilder.add("sentenceType", this.getSentenceType());
 
         return dragAndDropQuestionBuilder.build();
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "DragAndDrop Question";
     }
 

@@ -1,4 +1,4 @@
-@(origin: String, partId : Int, importantChunk : Int)
+@(question : models.Questions.Question, part : models.Groups.AbstractGroup, worker: Worker, assignmentId: String, hitId: String, turkSubmitTo: String, exp: LingoExpModel, df: play.data.DynamicForm, origin: String)
 <!DOCTYPE html>
 <html style="height:100%">
     <head>
@@ -17,8 +17,8 @@
         }
         </style>
         <input type="hidden" id="origin" value="@origin">
-        <input type="hidden" id="partId" value="@partId">
-        <input type="hidden" id="importantChunk" value="@importantChunk">
+        <input type="hidden" id="questionId" value="@question.getId()">
+        <input type="hidden" id="importantChunk" value="-1">
     </head>
     <body style="height:100% " id="angularApp" ng-app="PictureNaming" ng-controller="RenderController as RC">
         <form method="POST" id="form" style="height:100%">
