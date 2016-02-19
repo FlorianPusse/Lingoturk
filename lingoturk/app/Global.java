@@ -19,7 +19,7 @@ public class Global extends GlobalSettings{
             e.printStackTrace();
         }
 
-        ActorRef asynchronousJob = Akka.system().actorOf(new Props(AsynchronousJob.class));
+        ActorRef asynchronousJob = Akka.system().actorOf(Props.create(AsynchronousJob.class));
         Akka.system().scheduler().schedule(
                 Duration.create(0, TimeUnit.MILLISECONDS), //Initial delay 0 milliseconds
                 Duration.create(10, TimeUnit.SECONDS),     //Frequency 5 seconds

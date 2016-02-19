@@ -43,13 +43,9 @@ GET         /modify/:id                             controllers.Application.modi
 
 GET         /changeSettings/:id                     controllers.Application.changeSettings(id:String)
 GET         /renderExampleQuestion/:id              controllers.RenderController.renderExampleQuestion(id: Int)
-GET         /render                                 controllers.RenderController.render(Type: String ?= null, id: Int, id2: Int ?= -1, assignmentId: String ?= null, hitId: String, workerId: String ?= null, turkSubmitTo ?= null)
-GET         /renderAMT                              controllers.RenderController.renderAMT(id: Int, id2: Int, slot1 : Int, slot2 : Int, assignmentId: String ?= null, hitId: String, workerId: String ?= null, turkSubmitTo ?= null)
+GET         /render			                        controllers.RenderController.renderAMT(Type: String, id: Int, assignmentId: String ?= null, hitId: String, workerId: String ?= null, turkSubmitTo ?= null)
+GET         /renderAMT                              controllers.RenderController.renderAMT(Type: String, id: Int, assignmentId: String ?= null, hitId: String, workerId: String ?= null, turkSubmitTo ?= null)
 GET         /renderProlific                         controllers.RenderController.renderProlific(expId: Int)
-GET         /generalRendering                       controllers.RenderController.generalRender(Type: String ?= null, id: Int, id2: Int ?= -1, assignmentId: String ?= null, hitId: String, workerId: String ?= null, turkSubmitTo ?= null)
-GET         /pictureNaming                          controllers.RenderController.renderPictureNaming(expId: Int, origin: String ?= null)
-GET         /renderPB                               controllers.RenderController.renderPB(expId: Int, origin: String ?= null)
-GET         /renderStoryCompletion                  controllers.RenderController.renderStoryCompletion(expId: Int, origin: String ?= null)
 
 GET         /renderLinkingProlific                  models.Questions.LinkingExperimentV1.Prolific.LinkingGroup.renderLinkingProlific(expId:Int)
 
