@@ -1,4 +1,4 @@
-# ** LingoTurk **
+# LingoTurk
 
   **LingoTurk** is an open-source, freely available crowdsourcing
   client/server system aimed primarily at psycholinguistic
@@ -16,7 +16,7 @@
 ## Getting started
   
 ### Requirements
-    
+
   - Java Development Kit 8: [[Download]](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html "JDK 8")
   
   - Play Framework 2.3.x [[Download]](https://downloads.typesafe.com/typesafe-activator/1.3.7/typesafe-activator-1.3.7-minimal.zip "Play Framework 2.3.x") [[Installation instructions]](https://www.playframework.com/documentation/2.3.x/Installing "Play Installation instructions")
@@ -27,15 +27,15 @@
   
   
 ### Configuring LingoTurk
-   
+
    1. Open the `lingoturk/conf/application.conf` file in any text editor.
    
    2. Create a new Application secret:
    	- Open console and enter: `play-generate-secret`
   	- Replace `APPLICATION_SECRET` in the line `application.secret="APPLICATION_SECRET"` by the freshly created ApplicationSecret.
-   
+ 
    3. Configure database connection:
-   	- Replace `db.default.url="postgres://USERNAME:PASSWORD@URL/DATABASE_NAME?characterEncoding=utf8" by the corresponding entries.
-    
+   	- Replace `db.default.url="postgres://USERNAME:PASSWORD@URL/DATABASE_NAME?characterEncoding=utf8`" by the corresponding entries.
+
 ### Running LingoTurk
 tba.
