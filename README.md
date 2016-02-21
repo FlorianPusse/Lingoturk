@@ -35,7 +35,7 @@
   	- Replace `APPLICATION_SECRET` in the line `application.secret="APPLICATION_SECRET"` by the freshly created ApplicationSecret.
  
    3. Configure database connection:
-   	- Replace `db.default.url="postgres://USERNAME:PASSWORD@URL/DATABASE_NAME?characterEncoding=utf8`" by the corresponding entries for `USERNAME`, `PASSWORD`, and `DATABASE_NAME`.
+   	- Replace `db.default.url="postgres://USERNAME:PASSWORD@URL/DATABASE_NAME?characterEncoding=utf8`" by the corresponding entries for `USERNAME`, `PASSWORD`, `URL` and `DATABASE_NAME`.
     
    4. (opt.) Configure SSL. An SSL certificate is necessary to run experiments on Amazon Mechanical Turk. It is possible to skip this step for testing purposes. You can find instructions how to configure SSL in Play directly here: [Play Framework SSL Configuration](https://www.playframework.com/documentation/2.3.x/ConfiguringHttps "Play Framework SSL Configuration")
    
@@ -51,7 +51,26 @@
    	You can specify parameters such as ports as additional arguments, e.g. `activator "run -Dhttps.port=443 -Dhttp.port=80"`. If no port is specified, Play will bind the application to port `9000`.
    4. Navigate to `PROTOCOL://SERVER_IP:PORT` in your browser. When testing the application locally, without specifying a port on startup, the correct URL would be `http://localhost:9000`.
    
+### Initial LingoTurk setup
+
+   1. Log in to Lingoturk. The default password is `admin`. You should change this password immediately.
+   2. Click on the `Settings` button. 
+   3. Enter your `Access key` and your `Secret Key`.
+   4. Change the `URL` to the URL that can be used to access the LingoTurk server.
+   5. Change the LingoTurk `password`.
+   6. Click `Apply changes`.
+ 
 ### Using LingoTurk
 
-   To be announced.
+   1. Click `Create experiment`. You now have the option to either:
++ Use one of the existing experiment templates to instantiate an experiment.
++ Create a new experiment
+   2. Click `Manage experiments`. You will be able to: 
++ publish
++ modify
++ or delete
 
+	 an experiment.
+   3.  ...
+   
+tba.
