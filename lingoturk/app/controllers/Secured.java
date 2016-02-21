@@ -38,11 +38,11 @@ public class Secured extends Security.Authenticator{
             throw new RuntimeException("Cannot load configuration properties file from " + "mturk.properties", e);
         }
         String store = props.getProperty(Application.PASSWORD);
-        if (store.equals(cookieValue)) {
-            return true;
-        } else {
-            return false;
+        if(store == null){
+            store = Crypto.encryptAES(Application.DEFAULT_PASSWORD);
         }
+
+        return store.equals(cookieValue);
     }
 
 

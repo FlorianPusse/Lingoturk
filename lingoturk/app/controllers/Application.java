@@ -24,6 +24,7 @@ public class Application extends Controller {
 
     // TODO: Variables will be refractored and removed
     public final static String PASSWORD = "password";
+    public final static String DEFAULT_PASSWORD = "admin";
     public static QualificationRequirement[] qualificationRequirements;
     public static int actCounter = 0;
 
