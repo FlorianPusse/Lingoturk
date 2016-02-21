@@ -49,7 +49,7 @@
    3. To start start the server in developing mode enter `activator run` and to start the server in production mode, enter `activator start`. In developing mode, "the server will be launched with the auto-reload feature enabled, meaning that for each request Play will check your project and recompile required sources. If needed the application will restart automatically. If there are any compilation errors you will see the result of the compilation directly in your browser." (Source: [Using the Play console](https://www.playframework.com/documentation/2.3.x/PlayConsole "Using the Play console")).
    
    	You can specify parameters such as ports as additional arguments, e.g. `activator "run -Dhttps.port=443 -Dhttp.port=80"`. If no port is specified, Play will bind the application to port `9000`.
-   4. Navigate to `PROTOCOL://SERVER_IP:PORT` in your browser. When testing the application locally, without specifying a port on startup, the correct URL would be `http://localhost:9000'.
+   4. Navigate to `PROTOCOL://SERVER_IP:PORT` in your browser. When testing the application locally, without specifying a port on startup, the correct URL would be `http://localhost:9000`.
    
 ### Using LingoTurk
 
