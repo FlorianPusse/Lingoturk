@@ -87,7 +87,7 @@ public class PlausibilityQuestion extends PartQuestion{
         int partId = resultNode.get("partId").asInt();
 
         PreparedStatement statement = Repository.getConnection().prepareStatement(
-                "INSERT INTO PlausibilityResults(WorkerId,partId,questionId,answer) VALUES(?,?,?,?)"
+                "INSERT INTO PlausibilityResults(id,WorkerId,partId,questionId,answer) VALUES(nextval('PlausibilityResults_seq'),?,?,?,?)"
         );
 
         statement.setString(1, workerId);

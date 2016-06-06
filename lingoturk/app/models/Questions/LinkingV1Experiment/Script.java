@@ -88,7 +88,7 @@ public class Script extends PartQuestion {
             if (rhs_item.startsWith("before")) {
                 String[] answer = rhs_item.split("_");
                 PreparedStatement statement = Repository.getConnection().prepareStatement(
-                        "INSERT INTO LinkingV1Results(WorkerId,AssignmentId,HitId,lhs_script,rhs_script,lhs_item,before,workingTimes) VALUES(?,?,?,?,?,?,?,?)"
+                        "INSERT INTO LinkingV1Results(id,WorkerId,AssignmentId,HitId,lhs_script,rhs_script,lhs_item,before,workingTimes) VALUES(nextval('LinkingV1Results_seq'),?,?,?,?,?,?,?,?)"
                 );
 
                 statement.setString(1, workerId);
@@ -105,7 +105,7 @@ public class Script extends PartQuestion {
             } else if (rhs_item.startsWith("after")) {
                 String[] answer = rhs_item.split("_");
                 PreparedStatement statement = Repository.getConnection().prepareStatement(
-                        "INSERT INTO LinkingV1Results(WorkerId,AssignmentId,HitId,lhs_script,rhs_script,lhs_item,after,workingTimes) VALUES(?,?,?,?,?,?,?,?)"
+                        "INSERT INTO LinkingV1Results(id,WorkerId,AssignmentId,HitId,lhs_script,rhs_script,lhs_item,after,workingTimes) VALUES(nextval('LinkingV1Results_seq'),?,?,?,?,?,?,?,?)"
                 );
 
                 statement.setString(1, workerId);
@@ -122,7 +122,7 @@ public class Script extends PartQuestion {
             } else if (rhs_item.startsWith("between")) {
                 String[] answer = rhs_item.split("_");
                 PreparedStatement statement = Repository.getConnection().prepareStatement(
-                        "INSERT INTO LinkingV1Results(WorkerId,AssignmentId,HitId,lhs_script,rhs_script,lhs_item,after,before,workingTimes) VALUES(?,?,?,?,?,?,?,?,?)"
+                        "INSERT INTO LinkingV1Results(id,WorkerId,AssignmentId,HitId,lhs_script,rhs_script,lhs_item,after,before,workingTimes) VALUES(nextval('LinkingV1Results_seq'),?,?,?,?,?,?,?,?,?)"
                 );
 
                 statement.setString(1, workerId);
@@ -139,7 +139,7 @@ public class Script extends PartQuestion {
                 statement.close();
             } else if (rhs_item.startsWith("noLinkingPossible")) {
                 PreparedStatement statement = Repository.getConnection().prepareStatement(
-                        "INSERT INTO LinkingV1Results(WorkerId,AssignmentId,HitId,lhs_script,rhs_script,lhs_item,noLinkingPossible,workingTimes) VALUES(?,?,?,?,?,?,?,?)"
+                        "INSERT INTO LinkingV1Results(id,WorkerId,AssignmentId,HitId,lhs_script,rhs_script,lhs_item,noLinkingPossible,workingTimes) VALUES(nextval('LinkingV1Results_seq'),?,?,?,?,?,?,?,?)"
                 );
 
                 statement.setString(1, workerId);
@@ -155,7 +155,7 @@ public class Script extends PartQuestion {
                 statement.close();
             } else {
                 PreparedStatement statement = Repository.getConnection().prepareStatement(
-                        "INSERT INTO LinkingV1Results(WorkerId,AssignmentId,HitId,lhs_script,rhs_script,lhs_item,rhs_item,workingTimes) VALUES(?,?,?,?,?,?,?,?)"
+                        "INSERT INTO LinkingV1Results(id,WorkerId,AssignmentId,HitId,lhs_script,rhs_script,lhs_item,rhs_item,workingTimes) VALUES(nextval('LinkingV1Results_seq'),?,?,?,?,?,?,?,?)"
                 );
 
                 statement.setString(1, workerId);

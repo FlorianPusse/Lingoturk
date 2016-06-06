@@ -94,7 +94,7 @@ public class StoryCompletionQuestion extends PartQuestion {
         System.out.println(workerId + " submitted results.");
 
         PreparedStatement statement = Repository.getConnection().prepareStatement(
-                "INSERT INTO StoryCompletionResults(WorkerId,itemId,result) VALUES(?,?,?)"
+                "INSERT INTO StoryCompletionResults(id,WorkerId,itemId,result) VALUES(nextval('StoryCompletionResults_seq'),?,?,?)"
         );
 
         statement.setString(1, workerId);

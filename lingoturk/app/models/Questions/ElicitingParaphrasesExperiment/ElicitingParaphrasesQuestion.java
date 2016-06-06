@@ -60,13 +60,13 @@ public class ElicitingParaphrasesQuestion extends PartQuestion {
     public void writeResults(JsonNode resultNode) throws SQLException {
         String workerId = resultNode.get("workerId").asText();
 
-        PreparedStatement statement = Repository.getConnection().prepareStatement(
-                "INSERT INTO ElicitingParaphrasesResults(WorkerId,questionId,answer) VALUES(?,?,?)"
-        );
-
-        statement.setString(1, workerId);
-
         for (Iterator<JsonNode> resultIterator = resultNode.get("answers").iterator(); resultIterator.hasNext(); ) {
+            PreparedStatement statement = Repository.getConnection().prepareStatement(
+                    "INSERT INTO ElicitingParaphrasesResults(id,WorkerId,questionId,answer) VALUES(nextval('ElicitingParaphrasesResults_seq'),?,?,?)"
+            );
+
+            statement.setString(1, workerId);
+
             JsonNode result = resultIterator.next();
             int questionId = result.get("questionId").asInt();
             String answer = result.get("answer").asText();
@@ -75,9 +75,8 @@ public class ElicitingParaphrasesQuestion extends PartQuestion {
             statement.setString(3, answer);
 
             statement.execute();
+            statement.close();
         }
-
-        statement.close();
     }
 
     @Override

@@ -33,7 +33,7 @@ public class ScriptV2 extends Script {
         String result = resultNode.get("result").asText();
 
         PreparedStatement statement = Repository.getConnection().prepareStatement(
-                "INSERT INTO LinkingV2Results(WorkerId,AssignmentId,HitId,lhs_script,rhs_script,lhs_slot,rhs_slot,result) VALUES(?,?,?,?,?,?,?,?)"
+                "INSERT INTO LinkingV2Results(id,WorkerId,AssignmentId,HitId,lhs_script,rhs_script,lhs_slot,rhs_slot,result) VALUES(nextval('LinkingV2Results_seq'),?,?,?,?,?,?,?,?)"
         );
 
         statement.setString(1, workerId);

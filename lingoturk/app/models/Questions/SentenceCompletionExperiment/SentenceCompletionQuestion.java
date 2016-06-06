@@ -101,7 +101,7 @@ public class SentenceCompletionQuestion extends PartQuestion {
         int partId = resultNode.get("partId").asInt();
 
         PreparedStatement statement = Repository.getConnection().prepareStatement(
-                "INSERT INTO SentenceCompletionResults(WorkerId,partId,questionId,answer) VALUES(?,?,?,?)"
+                "INSERT INTO SentenceCompletionResults(id,WorkerId,partId,questionId,answer) VALUES(nextval('SentenceCompletionResults_seq'),?,?,?,?)"
         );
 
         statement.setString(1, workerId);

@@ -73,7 +73,7 @@ public class PictureNamingChunk extends PartQuestion {
 
     public static Result submitMailAddress(String mailAddress, String workerId) throws SQLException {
         PreparedStatement statement = Repository.getConnection().prepareStatement(
-                "INSERT INTO PictureNamingMailAddress(workerId,mailAddress) VALUES(?,?)"
+                "INSERT INTO PictureNamingMailAddress(id,workerId,mailAddress) VALUES(nextval('PictureNamingResults_seq'),?,?)"
         );
         statement.setString(1, workerId);
         statement.setString(2, mailAddress);

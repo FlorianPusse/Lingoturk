@@ -2,10 +2,7 @@ package models.Questions.PlausibilityExperiment;
 
 import play.db.ebean.Model;
 
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -16,26 +13,34 @@ public class PlausibilityResults extends Model{
     int id;
 
     @Basic
+    @Column(name = "assignmentId")
     String assignmentId;
 
     @Basic
+    @Column(name = "hitId")
     String hitId;
 
     @Basic
+    @Column(name = "workerId")
     String workerId;
 
     @Basic
+    @Column(name = "origin")
     String origin;
 
     @Basic
+    @Column(name = "timestamp")
     Date timestamp;
 
     @Basic
+    @Column(name = "partId")
     int partId;
 
     @Basic
+    @Column(name = "questionId")
     int questionId;
 
     @Basic
+    @Column(name = "answer")
     int answer;
 }

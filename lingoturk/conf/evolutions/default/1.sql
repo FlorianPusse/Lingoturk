@@ -14,25 +14,25 @@ create table Groups (
 
 create table DiscourseConnectivesResults (
   id                        integer not null,
-  assignment_id             varchar(255),
-  hit_id                    varchar(255),
-  worker_id                 varchar(255),
+  assignmentId              varchar(255),
+  hitId                     varchar(255),
+  workerId                  varchar(255),
   origin                    varchar(255),
   timestamp                 timestamp,
-  part_id                   integer,
-  question_id               integer,
+  partId                    integer,
+  questionId                integer,
   constraint pk_DiscourseConnectivesResults primary key (id))
 ;
 
 create table ElicitingParaphrasesResults (
   id                        integer not null,
-  assignment_id             varchar(255),
-  hit_id                    varchar(255),
-  worker_id                 varchar(255),
+  assignmentId              varchar(255),
+  hitId                     varchar(255),
+  workerId                  varchar(255),
   origin                    varchar(255),
   timestamp                 timestamp,
-  part_id                   integer,
-  question_id               integer,
+  partId                    integer,
+  questionId                integer,
   answer                    TEXT,
   constraint pk_ElicitingParaphrasesResults primary key (id))
 ;
@@ -60,33 +60,33 @@ create table LingoExpModels (
 
 create table LinkingV1Results (
   id                        integer not null,
-  assignment_id             varchar(255),
-  hit_id                    varchar(255),
-  worker_id                 varchar(255),
+  assignmentId              varchar(255),
+  hitId                     varchar(255),
+  workerId                  varchar(255),
   origin                    varchar(255),
   timestamp                 timestamp,
-  part_id                   integer,
-  question_id               integer,
+  partId                    integer,
+  questionId                integer,
   lhs_script                integer,
   rhs_script                integer,
   lhs_item                  integer,
   rhs_item                  integer,
   before                    integer,
   after                     integer,
-  no_linking_possible       boolean,
+  noLinkingPossible         boolean,
   constraint pk_LinkingV1Results primary key (id))
 ;
 
 create table LinkingV2Results (
   id                        integer not null,
-  assignment_id             varchar(255),
-  hit_id                    varchar(255),
-  worker_id                 varchar(255),
+  assignmentId              varchar(255),
+  hitId                     varchar(255),
+  workerId                  varchar(255),
   origin                    varchar(255),
   timestamp                 timestamp,
-  part_id                   integer,
-  question_id               integer,
-  working_times             integer,
+  partId                    integer,
+  questionId                integer,
+  workingTimes              integer,
   lhs_script                integer,
   rhs_script                integer,
   lhs_slot                  integer,
@@ -138,13 +138,13 @@ create table PictureNamingExperiment_PictureNaming (
 
 create table PictureNamingResults (
   id                        integer not null,
-  assignment_id             varchar(255),
-  hit_id                    varchar(255),
-  worker_id                 varchar(255),
+  assignmentId              varchar(255),
+  hitId                     varchar(255),
+  workerId                  varchar(255),
   origin                    varchar(255),
   timestamp                 timestamp,
-  part_id                   integer,
-  question_id               integer,
+  partId                    integer,
+  questionId                integer,
   chunk_id                  integer,
   picture_id                integer,
   answer                    TEXT,
@@ -153,13 +153,13 @@ create table PictureNamingResults (
 
 create table PlausibilityResults (
   id                        integer not null,
-  assignment_id             varchar(255),
-  hit_id                    varchar(255),
-  worker_id                 varchar(255),
+  assignmentId              varchar(255),
+  hitId                     varchar(255),
+  workerId                  varchar(255),
   origin                    varchar(255),
   timestamp                 timestamp,
-  part_id                   integer,
-  question_id               integer,
+  partId                    integer,
+  questionId                integer,
   answer                    integer,
   constraint pk_PlausibilityResults primary key (id))
 ;
@@ -222,44 +222,44 @@ create table Questions (
 
 create table RephrasingResults (
   id                        integer not null,
-  assignment_id             varchar(255),
-  hit_id                    varchar(255),
-  worker_id                 varchar(255),
+  assignmentId              varchar(255),
+  hitId                     varchar(255),
+  workerId                  varchar(255),
   origin                    varchar(255),
   timestamp                 timestamp,
-  part_id                   integer,
-  question_id               integer,
-  choice1                   integer,
-  choice2                   integer,
+  partId                    integer,
+  questionId                integer,
+  choice1                   TEXT,
+  choice2                   TEXT,
   answer1                   TEXT,
   answer2                   TEXT,
-  reading_time1             integer,
-  reading_time2             integer,
+  readingTime1              integer,
+  readingTime2              integer,
   constraint pk_RephrasingResults primary key (id))
 ;
 
 create table SentenceCompletionResults (
   id                        integer not null,
-  assignment_id             varchar(255),
-  hit_id                    varchar(255),
-  worker_id                 varchar(255),
+  assignmentId              varchar(255),
+  hitId                     varchar(255),
+  workerId                  varchar(255),
   origin                    varchar(255),
   timestamp                 timestamp,
-  part_id                   integer,
-  question_id               integer,
+  partId                    integer,
+  questionId                integer,
   answer                    TEXT,
   constraint pk_SentenceCompletionResults primary key (id))
 ;
 
 create table StoryCompletionResults (
   id                        integer not null,
-  assignment_id             varchar(255),
-  hit_id                    varchar(255),
-  worker_id                 varchar(255),
+  assignmentId              varchar(255),
+  hitId                     varchar(255),
+  workerId                  varchar(255),
   origin                    varchar(255),
   timestamp                 timestamp,
-  part_id                   integer,
-  question_id               integer,
+  partId                    integer,
+  questionId                integer,
   result                    TEXT,
   constraint pk_StoryCompletionResults primary key (id))
 ;

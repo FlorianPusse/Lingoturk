@@ -13,43 +13,54 @@ public class RephrasingResults extends Model{
     int id;
 
     @Basic
+    @Column(name = "assignmentId")
     String assignmentId;
 
     @Basic
+    @Column(name = "hitId")
     String hitId;
 
     @Basic
+    @Column(name = "workerId")
     String workerId;
 
     @Basic
+    @Column(name = "origin")
     String origin;
 
     @Basic
+    @Column(name = "timestamp")
     Date timestamp;
 
     @Basic
+    @Column(name = "partId")
     int partId;
 
     @Basic
+    @Column(name = "questionId")
     int questionId;
 
     @Basic
+    @Column(columnDefinition = "TEXT", name = "choice1")
     int choice1;
 
     @Basic
+    @Column(columnDefinition = "TEXT", name = "choice2")
     int choice2;
 
     @Basic
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", name = "answer1")
     String answer1;
 
     @Basic
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", name = "answer2")
     String answer2;
 
     @Basic
+    @Column(name = "readingTime1")
     int readingTime1;
 
     @Basic
+    @Column(name = "readingTime2")
     int readingTime2;
 }
