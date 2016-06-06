@@ -1,5 +1,5 @@
 (function () {
-    var app = angular.module('DC_DND_Rendering', []);
+    var app = angular.module('DiscourseConnectivesExperimentApp', []);
 
     app.controller('RenderController', ['$http', '$timeout', function ($http, $timeout) {
         var self = this;
@@ -56,7 +56,7 @@
         };
 
         this.init = function () {
-            var id = $("#partID").val();
+            var id = $("#questionId").val();
             if (id != "") {
                 $http.get("/getQuestion/" + id).success(function (data) {
                     self.id = data.id;

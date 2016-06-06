@@ -1,0 +1,139 @@
+@(experimentName : String)
+
+@main("LINGOturk") {
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/ExperimentCreation/createExperiment.js")"> </script>
+
+    <style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    th {
+        text-align:center
+    }
+    </style>
+
+    @** used as anchor for angular.js **@
+    <div id="angularApp" ng-app="CreateExperiment" ng-controller="CreationController as cc">
+        <p> Create new <strong>@experimentName</strong> experiment: </p>
+
+        <input type="hidden" id="experimentName" value="@experimentName">
+
+        <div style="margin-top : 10px ; margin-bottom : 30px ; padding : 5px" id="tabs">
+
+            @********
+
+            List all tabs
+
+            ********@
+
+            <ol>
+                <li><a href="#fragment-1">Main</a></li>
+                <li><a href="#fragment-2">Instructions</a></li>
+                <li><a href="#fragment-3">Questions</a></li>
+            </ol>
+
+            @********
+
+            Name, Name for MTurk, Description
+
+            ********@
+
+            <div id="fragment-1">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input ng-model="cc.name" type="text" class="form-control" id="name" placeholder="Experiment Name">
+                </div>
+
+                <div class="form-group">
+                    <label for="nameOnAmt">Name on AMT</label>
+                    <input ng-model="cc.nameOnAmt" type="text" class="form-control" id="nameOnAmt" placeholder="Name on AMT">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea ng-model="cc.description" type="text" class="form-control" id="description" placeholder="Experiment Description" cols="50" rows="5"></textarea>
+                </div>
+            </div>
+
+            @********
+
+            Example Sentences
+
+            ********@
+
+            <div id="fragment-2">
+                <div class="form-group">
+                    <label> Additional explanations</label>
+                    <textarea ng-model="cc.additionalExplanations" rows="4" cols="50" class="form-control" name="additionalExplanations"></textarea>
+                </div>
+            </div>
+
+            @********
+
+            Questions
+
+            ********@
+
+            <div id="fragment-3">
+
+                @********
+
+                Manual Input
+
+                ********@
+
+                <div id="allquestions">
+                    <h3 ng-repeat-start="group in cc.groups track by $index">Part {{$index}}</h3>
+                    <div class="repeatBody" ng-repeat-end>
+                        <div ng-if="field != 'questions' && field != 'type' && field != 'questionFieldNames' && field != 'parsedContent' && field != 'questionColumnNames'" ng-repeat="(field,value) in group" class="form-group">
+                            <label for="{{field}}">{{field}}</label>
+                            <input type="text" class="form-control" id="{{field}}" ng-model="group[field]">
+                        </div>
+
+                        <p>Questions:</p>
+                        <table class="table table-over" width="100%">
+                            <thead>
+                                <tr>
+                                    <th ng-repeat="i in range(cc.questionColumnNames.length)">
+                                        <select ng-model="cc.questionColumnNames[i]" ng-change="cc.newFieldSelected(cc.questionColumnNames[i],'{{cc.questionColumnNames[i]}}')">
+                                            <option selected value> -- select field -- </option>
+                                            <option  ng-if="cc.usedNames.indexOf(field.name) == -1 || field.name == cc.questionColumnNames[i]" ng-repeat="field in cc.questionFieldNames track by $index">{{field.name}}</option>
+                                        </select>
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr class="question" ng-repeat="row in group.parsedContent track by $index">
+                                    <td ng-repeat="cell in row track by $index">
+                                        {{cell}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <button type="button" class="btn btn-default" ng-click="cc.deleteGroup(group)" style="margin-top : 10px;float:right">Delete group</button>
+                    </div>
+                </div>
+
+                @********
+
+                CSV Input
+
+                ********@
+
+                <div style="margin-top: 20px">
+                    <file-input content="cc.fileLoaded(data)" style="display:inline-block">Load .csv</file-input>
+                    <select ng-model="cc.delimiter" ng-change="cc.delimiterChanged()" ng-trim="false" ng-options="del.val as del.name for del in cc.delimiters" style="width:80px;display:inline-block" class="form-control">
+                    </select>
+                    <button type="button" class="btn btn-default" ng-click="cc.resetGroups()" style="display:inline-block;float:right;">Reset Groups </button>
+                    <div style="clear: both;"></div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <button type="submit" ng-click="cc.submit()" class="btn btn-default" style="float : right ; margin-bottom : 100px">Save in Database</button>
+        </div>
+    </div>
+}

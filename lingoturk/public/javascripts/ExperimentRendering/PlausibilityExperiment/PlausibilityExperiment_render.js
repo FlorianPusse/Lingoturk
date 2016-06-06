@@ -1,5 +1,5 @@
 (function () {
-    var app = angular.module('PlausibilityTest', []);
+    var app = angular.module('PlausibilityExperimentApp', []);
 
     app.controller('RenderController', ['$http', '$timeout', function ($http, $timeout) {
         var self = this;

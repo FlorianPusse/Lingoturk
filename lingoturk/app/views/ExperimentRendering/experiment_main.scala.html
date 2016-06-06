@@ -1,0 +1,56 @@
+@(experimentName : String)(content: Html)
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
+        <link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/jquery-ui.css")">
+
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-2.1.1.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-ui.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/bootbox.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/angular.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/CSV_Parser.js")"> </script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/Lingoturk.js")"> </script>
+        <script>
+                Array.prototype.contains = function(obj) {
+                    var i = this.length;
+                    while (i--) {
+                        if (this[i] == obj) {
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+                /*
+                 *	Taken from: http://stackoverflow.com/questions/20789373/shuffle-array-in-ng-repeat-angular
+                 *	-> Fisher Yates shuffle algorithm
+                 */
+                function shuffleArray(array) {
+                    var m = array.length, t, i;
+
+                    // While there remain elements to shuffle
+                    while (m) {
+                        // Pick a remaining element�
+                        i = Math.floor(Math.random() * m--);
+
+                        // And swap it with the current element.
+                        t = array[m];
+                        array[m] = array[i];
+                        array[i] = t;
+                    }
+
+                    return array;
+                }
+            </script>
+
+        @if(experimentName != null){
+            <link rel="stylesheet" type="text/css" href="/assets/stylesheets/ExperimentRendering/@experimentName/@{experimentName + "_render.css"}"/>
+            <script type="text/javascript" src="/assets/javascripts/ExperimentRendering/@experimentName/@{experimentName + "_render.js"}"></script>
+        }
+    </head>
+    <body style="height:100%;width:100%" id="angularApp" @if(experimentName != null){ng-app="@{experimentName + "App"}"} ng-controller="RenderController as RC">
+        @content
+    </body>
+</html>

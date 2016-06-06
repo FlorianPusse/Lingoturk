@@ -1,5 +1,6 @@
 package models.Questions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import models.LingoExpModel;
 import models.Repository;
 import models.Worker;
@@ -18,7 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 @Entity
 @Inheritance
-@DiscriminatorColumn(length = 30)
+@DiscriminatorColumn(length = 100)
 @Table(name = "Questions")
 @MappedSuperclass
 public abstract class Question extends Model {
@@ -27,14 +28,17 @@ public abstract class Question extends Model {
     @Column(name = "QuestionID")
     protected int id;
 
+    @JsonIgnore
     @Basic
     @Constraints.Required
     @Column(name = "LingoExpModelId")
     protected int experimentID;
 
+    @JsonIgnore
     @Column(name = "Availability", columnDefinition = "integer default 1")
     protected int availability = 1;
 
+    @JsonIgnore
     private static Finder<Integer, Question> finder = new Finder<>(Integer.class, Question.class);
 
     public static Question byId(int id) {

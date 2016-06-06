@@ -26,33 +26,30 @@ import static play.mvc.Results.ok;
 
 @Entity
 @Inheritance
-@DiscriminatorValue("ChunkQuestion")
+@DiscriminatorValue("PictureNamingExperiment.ChunkQuestion")
 public class PictureNamingChunk extends PartQuestion {
 
+    /* BEGIN OF VARIABLES BLOCK */
+
     @Basic
-    String number;
+    @Column(columnDefinition = "TEXT", name = "PictureNaming_text")
+    public String number;
 
     @OneToMany(cascade = CascadeType.ALL)
-    List<PictureNamingQuestion> pictureNamingQuestions = new LinkedList<>();
+    public List<PictureNamingQuestion> pictures = new LinkedList<>();
+
+    /* END OF VARIABLES BLOCK */
 
     public PictureNamingChunk(){}
 
     @Override
     public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
-        return ok(views.html.renderExperiments.PictureNamingExperiment.PictureNamingExperiment_render.render(this, null,worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK"));
+        return ok(views.html.ExperimentRendering.PictureNamingExperiment.PictureNamingExperiment_render.render(this, null,worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK"));
     }
 
     @Override
     public JsonObject returnJSON() throws SQLException {
-        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-        objectBuilder.add("number",Integer.parseInt(number));
-        objectBuilder.add("id",id);
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        for(PictureNamingQuestion question : pictureNamingQuestions){
-            arrayBuilder.add(question.returnJSON());
-        }
-        objectBuilder.add("pictures",arrayBuilder.build());
-        return objectBuilder.build();
+        return super.returnJSON();
     }
 
     @Override
@@ -71,7 +68,7 @@ public class PictureNamingChunk extends PartQuestion {
         }
 
         this.number = number;
-        this.pictureNamingQuestions = questions;
+        this.pictures = questions;
     }
 
     public static Result submitMailAddress(String mailAddress, String workerId) throws SQLException {
@@ -92,7 +89,7 @@ public class PictureNamingChunk extends PartQuestion {
         int chunkId = resultNode.get("chunkId").asInt();
 
         PreparedStatement statement = Repository.getConnection().prepareStatement(
-                "INSERT INTO PictureNamingResult(WorkerId,partId,chunkId,pictureId,answer) VALUES(?,?,?,?,?)"
+                "INSERT INTO PictureNamingResults(WorkerId,partId,chunkId,pictureId,answer) VALUES(?,?,?,?,?)"
         );
 
         statement.setString(1, workerId);

@@ -1,6 +1,5 @@
 package models.Questions.StoryCompletionExperiment;
 
-import au.com.bytecode.opencsv.CSVWriter;
 import com.amazonaws.mturk.requester.Assignment;
 import com.fasterxml.jackson.databind.JsonNode;
 import models.LingoExpModel;
@@ -22,17 +21,43 @@ import java.util.Iterator;
 
 @Entity
 @Inheritance
-@DiscriminatorValue("StoryCompletionQ")
+@DiscriminatorValue("StoryCompletionExperiment.StoryCompletionQuestion")
 public class StoryCompletionQuestion extends PartQuestion {
 
-    @Basic
-    String itemId;
+    /* BEGIN OF VARIABLES BLOCK */
 
-    @Basic
-    String storyType;
+	@Basic
+	@Column(name="StoryCompletion_itemId", columnDefinition = "TEXT")
+	public java.lang.String itemId = "";
 
-    @Column(columnDefinition = "TEXT")
-    String story;
+	@Basic
+	@Column(name="StoryCompletion_storyType", columnDefinition = "TEXT")
+	public java.lang.String storyType = "";
+
+	@Basic
+	@Column(name="StoryCompletion_story", columnDefinition = "TEXT")
+	public java.lang.String story = "";
+
+    @Override
+    public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {
+	    JsonNode itemIdNode = questionNode.get("itemId");
+		if (itemIdNode != null){
+			this.itemId = itemIdNode.asText();
+		}
+
+	    JsonNode storyTypeNode = questionNode.get("storyType");
+		if (storyTypeNode != null){
+			this.storyType = storyTypeNode.asText();
+		}
+
+	    JsonNode storyNode = questionNode.get("story");
+		if (storyNode != null){
+			this.story = storyNode.asText();
+		}
+    }
+
+	/* END OF VARIABLES BLOCK */
+
 
     public static StoryCompletionQuestion[] fillers = new StoryCompletionQuestion[]{
             new StoryCompletionQuestion("fill_01", "Filler", "Toby's coworker called in sick to work today, so now Toby is dreading his day. He has to work a double shift, because nobody else is able to fill in at such short notice. Luckily, he has a day off tomorrow, so he can sleep in and relax."),
@@ -95,25 +120,8 @@ public class StoryCompletionQuestion extends PartQuestion {
     }
 
     @Override
-    public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {
-        String story = questionNode.get("story").asText();
-        String itemId = questionNode.get("itemId").asText();
-        String storyType = questionNode.get("storyType").asText();
-
-        this.story = story;
-        this.itemId = itemId;
-        this.storyType = storyType;
-    }
-
-    @Override
-    public JsonObject returnJSON(){
-        JsonObjectBuilder question = Json.createObjectBuilder();
-        question.add("itemId",itemId);
-        question.add("storyType",storyType);
-        question.add("story",story);
-        question.add("id",id);
-
-        return question.build();
+    public JsonObject returnJSON() throws SQLException {
+        return super.returnJSON();
     }
 
     @Override

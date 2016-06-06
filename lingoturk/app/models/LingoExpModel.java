@@ -28,30 +28,34 @@ import static play.mvc.Results.ok;
 @Table(name="LingoExpModels")
 public class LingoExpModel extends Model {
 
+    /* BEGIN OF VARIABLES BLOCK */
+
     @Id
     @Column(name="LingoExpModelID")
     protected int id;
 
-    @Column(name="name")
     @Basic
+    @Column(name="name")
     @Constraints.Required
     protected String name;
 
-    @Column(name="description")
     @Basic
+    @Column(name="description")
     protected String description;
 
-    @Column(name="nameOnAmt")
     @Basic
+    @Column(name="nameOnAmt")
     protected String nameOnAmt;
 
-    @Column(name="additionalExplanations", columnDefinition = "TEXT")
     @Constraints.Required
+    @Column(name="additionalExplanations", columnDefinition = "TEXT")
     protected String additionalExplanations;
 
-    @Column(name="experimentType")
     @Basic
+    @Column(name="experimentType")
     protected String experimentType;
+
+    /* END OF VARIABLES BLOCK */
 
     private static Finder<Integer,LingoExpModel> finder = new Finder<Integer,LingoExpModel>(Integer.class,LingoExpModel.class);
 

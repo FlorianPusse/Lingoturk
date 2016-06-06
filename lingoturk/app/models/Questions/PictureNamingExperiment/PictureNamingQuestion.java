@@ -10,17 +10,23 @@ import javax.persistence.*;
 import java.sql.SQLException;
 
 @Entity
-@Table(name="PictureNaming")
+@Table(name="PictureNamingExperiment_PictureNaming")
 public class PictureNamingQuestion extends Model {
 
+    /* BEGIN OF VARIABLES BLOCK */
+
     @Id
-    int id;
+    public int id;
 
     @Basic
-    String fileName;
+    @Column(name="fileName", columnDefinition = "TEXT")
+    public String fileName;
 
+    @Basic
     @Column(name="additionalExplanations", columnDefinition = "TEXT")
-    String text;
+    public String text;
+
+    /* END OF VARIABLES BLOCK */
 
     public PictureNamingQuestion(JsonNode node){
         this.fileName = node.get("fileName").asText();

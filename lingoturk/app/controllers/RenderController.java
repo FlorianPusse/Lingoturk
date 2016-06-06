@@ -1,11 +1,8 @@
 package controllers;
 
-import models.Groups.DisjointGroup;
 import models.Groups.AbstractGroup;
-import models.Groups.FullGroup;
 import models.LingoExpModel;
 import models.Questions.ExampleQuestion;
-import models.Questions.LinkingExperimentV1.Script;
 import models.Questions.Question;
 import models.Repository;
 import models.Worker;
@@ -70,12 +67,13 @@ public class RenderController extends Controller {
         } catch (ClassNotFoundException e) {
             return internalServerError("Unknown experiment name: " + lingoExpModel.getExperimentType());
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassCastException e) {
+            e.printStackTrace();
             return internalServerError("Wrong type for name: " + lingoExpModel.getExperimentType());
         }
     }
 
     public static Method getRenderMethod(String experimentType) throws NoSuchMethodException, ClassNotFoundException {
-        Class<?> c = Class.forName("views.html.renderExperiments." + experimentType + "." + experimentType + "_render");
+        Class<?> c = Class.forName("views.html.ExperimentRendering." + experimentType + "." + experimentType + "_render");
         return c.getMethod("render", Question.class, AbstractGroup.class, Worker.class, String.class, String.class, String.class, LingoExpModel.class, DynamicForm.class, String.class);
     }
 
@@ -99,7 +97,7 @@ public class RenderController extends Controller {
 
             // if worker id is not available (null) the site just shows an preview
             if (assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE") || workerId == null) {
-                return ok(views.html.renderExperiments.LinkingExperimentV2.linking_experimentV2_preview.render());
+                return ok(views.html.ExperimentRendering.LinkingV2Experiment.LinkingV2Experiment_preview.render());
             }
 
             // Retrieve worker from DB
@@ -110,7 +108,7 @@ public class RenderController extends Controller {
 
             // Worker is not allowed to participate in our experiments anymore
             if (worker.getIsBanned()) {
-                return ok(views.html.renderExperiments.bannedWorker.render());
+                return ok(views.html.ExperimentRendering.bannedWorker.render());
             }
 
             switch (Type) {
@@ -124,7 +122,7 @@ public class RenderController extends Controller {
                     exp = LingoExpModel.byId(question.getExperimentID());
 
                     if (worker.getIsBlockedFor(exp.getId())) {
-                        return ok(views.html.renderExperiments.blockedWorker.render());
+                        return ok(views.html.ExperimentRendering.blockedWorker.render());
                     }
 
                     return question.renderAMT(worker, assignmentId, hitId, turkSubmitTo, exp, df);
@@ -138,7 +136,7 @@ public class RenderController extends Controller {
                     exp = LingoExpModel.byId(group.getExperimentUsedIn());
 
                     if (worker.getIsBlockedFor(exp.getId())) {
-                        return ok(views.html.renderExperiments.blockedWorker.render());
+                        return ok(views.html.ExperimentRendering.blockedWorker.render());
                     }
 
                     return group.renderAMT(worker, assignmentId, hitId, turkSubmitTo, exp, df);

@@ -1,0 +1,14 @@
+<div id="statisticsSlide">
+    <div class="panel panel-primary">
+        <div class="panel-heading">Please enter your age for statistical purposes:</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <blockquote style="font-size : 112% ; border-right : 5px solid #FF9500 ;">
+                    <input type="number" placeholder="enter your age here" ng-maxlength="3" ng-minlength="1" oninput='$("#statisticsButton").removeAttr("disabled"); return event.charCode >= 48 && event.charCode <= 57' ng-model="RC.age" class="form-control">
+                </blockquote>
+            </div>
+            <button disabled="disabled" type="button" id="statisticsButton" onclick="$('#statisticsSlide').hide();$('#statisticsSlide1').show()" class="btn btn-default" style="float : right">
+                continue</button>
+        </div>
+    </div>
+</div>

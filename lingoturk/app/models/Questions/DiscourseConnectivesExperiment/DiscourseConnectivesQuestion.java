@@ -1,6 +1,5 @@
 package models.Questions.DiscourseConnectivesExperiment;
 
-import au.com.bytecode.opencsv.CSVWriter;
 import com.amazonaws.mturk.requester.Assignment;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,35 +30,55 @@ import static play.mvc.Results.ok;
 
 @Entity
 @Inheritance
-@DiscriminatorValue("DCQuestion")
+@DiscriminatorValue("DiscourseConnectivesExperiment.DiscourseConnectivesQuestion")
 public class DiscourseConnectivesQuestion extends PartQuestion {
 
-    @Basic
-    @Column(name = "Sentence1", columnDefinition = "TEXT")
-    protected String sentence1;
+    /* BEGIN OF VARIABLES BLOCK */
 
-    @Basic
-    @Column(name = "Sentence2", columnDefinition = "TEXT")
-    protected String sentence2;
+	@Basic
+	@Column(name="DiscourseConnectives_sentence1", columnDefinition = "TEXT")
+	public java.lang.String sentence1 = "";
 
-    @Basic
-    @Column(name = "innerID")
-    protected String innerID;
+	@Basic
+	@Column(name="DiscourseConnectives_sentence2", columnDefinition = "TEXT")
+	public java.lang.String sentence2 = "";
 
-    @Basic
-    @Column(name = "SentenceType")
-    protected String sentenceType;
+	@Basic
+	@Column(name="DiscourseConnectives_innerID", columnDefinition = "TEXT")
+	public java.lang.String innerID = "";
 
-    public DiscourseConnectivesQuestion() {
-    }
+	@Basic
+	@Column(name="DiscourseConnectives_sentenceType", columnDefinition = "TEXT")
+	public java.lang.String sentenceType = "";
 
     @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + sentence1.hashCode();
-        result = 31 * result + sentence2.hashCode();
-        return result;
+    public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {
+	    JsonNode sentence1Node = questionNode.get("sentence1");
+		if (sentence1Node != null){
+			this.sentence1 = sentence1Node.asText();
+		}
+
+	    JsonNode sentence2Node = questionNode.get("sentence2");
+		if (sentence2Node != null){
+			this.sentence2 = sentence2Node.asText();
+		}
+
+	    JsonNode innerIDNode = questionNode.get("innerID");
+		if (innerIDNode != null){
+			this.innerID = innerIDNode.asText();
+		}
+
+	    JsonNode sentenceTypeNode = questionNode.get("sentenceType");
+		if (sentenceTypeNode != null){
+			this.sentenceType = sentenceTypeNode.asText();
+		}
+
     }
+
+	/* END OF VARIABLES BLOCK */
+
+
+    public DiscourseConnectivesQuestion() {}
 
     @Override
     public AssignmentResult parseAssignment(Assignment assignment) throws DocumentException {
@@ -110,34 +129,13 @@ public class DiscourseConnectivesQuestion extends PartQuestion {
     }
 
     @Override
-    public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {
-        String sentence1 = questionNode.get("sentence1").asText();
-        String sentence2 = questionNode.get("sentence2").asText();
-        String innerID = questionNode.get("id").asText();
-        String sentenceType = questionNode.get("sentenceType").asText();
-
-        this.sentence1 = sentence1;
-        this.sentence2 = sentence2;
-        this.innerID = innerID;
-        this.sentenceType = sentenceType;
-        this.experimentID = experiment.getId();
-    }
-
-    @Override
     public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
-        return ok(views.html.renderExperiments.DiscourseConnectivesExperiment.DiscourseConnectivesExperiment_render.render(this, null, worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK"));
+        return ok(views.html.ExperimentRendering.DiscourseConnectivesExperiment.DiscourseConnectivesExperiment_render.render(this, null, worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK"));
     }
 
     @Override
     public JsonObject returnJSON() throws SQLException {
-        JsonObjectBuilder dragAndDropQuestionBuilder = Json.createObjectBuilder();
-        dragAndDropQuestionBuilder.add("id", innerID);
-        dragAndDropQuestionBuilder.add("sentence1", sentence1);
-        dragAndDropQuestionBuilder.add("sentence2", sentence2);
-        dragAndDropQuestionBuilder.add("type", "DND_Q");
-        dragAndDropQuestionBuilder.add("sentenceType", this.getSentenceType());
-
-        return dragAndDropQuestionBuilder.build();
+       return super.returnJSON();
     }
 
     @Override
@@ -349,6 +347,11 @@ public class DiscourseConnectivesQuestion extends PartQuestion {
         return ok(actualObj);
     }
 
+    @Override
+    public void writeResults(JsonNode resultNode) {
+        // TODO: Implement
+    }
+
     public int getId() {
         return id;
     }
@@ -365,23 +368,7 @@ public class DiscourseConnectivesQuestion extends PartQuestion {
         return experimentID;
     }
 
-    @Override
-    public void writeResults(JsonNode resultNode) {
-        // TODO: Implement
-    }
-
     public String getSentenceType() {
         return sentenceType;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DiscourseConnectivesQuestion)) return false;
-        if (!super.equals(o)) return false;
-
-        DiscourseConnectivesQuestion question = (DiscourseConnectivesQuestion) o;
-
-        return sentence1.equals(question.sentence1) && sentence2.equals(question.sentence2);
     }
 }

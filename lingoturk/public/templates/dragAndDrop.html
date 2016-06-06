@@ -1,0 +1,49 @@
+<div ng-if="!noneOfThese && !noConnectives" id="top">
+    <label ng-if="!categorySet">Please drag the best-suited connective into the green target box below.</label>
+    <label ng-if="categorySet">You can now drag one more connective into the box below.</label>
+    <div class="panel panel-warning">
+        <div class="panel-heading" style="color:#000000 ; padding-bottom: 6px ; padding-top: 6px">Candidate connectives</div>
+        <div class="panel-body" id="sortableBody" style="padding-bottom: 10px ; padding-top: 10px">
+            <ul ng-if="!categorySet" class="list-inline sortable" id="category" style="margin-bottom:0px">
+                <li class="ui-state-default draggable" ng-repeat="connective in connectives track by $index">{{connective}}</li>
+                <li ng-if="!categorySet" ng-click="setNoneOfThese(true)" style="float:right ; color:#292929 ; cursor: pointer">none of these</li>
+            </ul>
+            <ul ng-if="categorySet" class="list-inline sortable" id="sortableConnectives" style="margin-bottom:0px">
+                <li ng-if="suitableCategories.indexOf(connective) == -1" class="ui-state-default draggable" ng-repeat="connective in connectives track by $index">{{connective}}</li>
+                <li ng-click="setNoneOfThese2(true)" style="float:right ; color:#292929 ; cursor: pointer">none of these</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<blockquote id="Sentence1" style="padding-bottom:7px ; padding-top:7px">
+    <span style="color:grey">{{content.context1}}</span>{{content.sentence1}}
+    <div ng-if="!categorySet" class="panel panel-warning" style="margin-bottom:0;display:inline-block" id="sortableDiv">
+        <div class="panel-body" style="background-color: #DFFFBF ; padding-bottom: 0px ; padding-top: 0px">
+            <!-- for Category Connective -->
+            <ul ng-if="!noneOfThese" class="list-inline sortable" id="suitableCategory"></ul>
+            <!-- no suiting connective in first phase -> manual input -->
+            <div ng-if="noneOfThese" class="form-group" >
+                <input placeholder="enter connective here" class="form-control" style="width: 70% ; display: inline" type="text" ng-model="answer.manualAnswer1"/>
+                <button type="button" ng-click="setNoneOfThese(false)" class="btn btn-default" style="float:right ; display: inline">I changed my mind</button>
+            </div>
+        </div>
+    </div>
+    <div ng-if="categorySet && !noneOfThese" class="panel panel-warning" style="margin-bottom:0;display:inline-block">
+        <div class="panel-body sortable" style="background-color: #DFFFBF ; padding-bottom: 0px ; padding-top: 0px">
+            <!-- for Category Connective -->
+            <ul ng-if="!noneOfThese2" class="list-inline sortable" id="secondPhase"></ul>
+            <!-- no suiting connective in first phase -> manual input -->
+            <div ng-if="noneOfThese2" class="form-group" >
+                <input placeholder="enter connective here" class="form-control" style="width: 70% ; display: inline" type="text" ng-model="answer.manualAnswer2"/>
+                <button type="button" ng-click="setNoneOfThese2(false)" class="btn btn-default" style="float:right ; display: inline">I changed my mind</button>
+            </div>
+        </div>
+    </div>
+    {{content.sentence2}}<span style="color:grey">{{content.context2}}</span>
+</blockquote>
+
+<div style="text-align: center">
+    <button type="button" ng-click="setAnswers();click()" style="display:inline-block" class="btn btn-default continue-button" id="submitButton" disabled="disabled">Submit</button>
+    <button ng-if="!categorySet" style="display: inline-block" ng-click="categoriesChosen()" type="button" class="btn btn-default continue-button" disabled="disabled">Add another connective</button>
+</div>

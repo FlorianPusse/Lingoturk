@@ -17,6 +17,16 @@
 		<script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>
 		<script type="text/javascript" src="@routes.Assets.at("javascripts/bootbox.min.js")"></script>
 		<script type="text/javascript" src="@routes.Assets.at("javascripts/angular.min.js")"></script>
+		<script type="text/javascript" src="@routes.Assets.at("javascripts/CSV_Parser.js")"> </script>
+		<script type="text/javascript" src="@routes.Assets.at("javascripts/Lingoturk.js")"> </script>
+
+		<script>
+		if (typeof String.prototype.startsWith != 'function') {
+			String.prototype.startsWith = function (str){
+				return this.slice(0, str.length) == str;
+			};
+		}
+    	</script>
 
 		<style>
 			.icon_create{
@@ -70,8 +80,7 @@
 
 		</div>
 
-		<div class="container" style="margin-right:auto; margin-left:auto; margin-top: 50px;">
-
+		<div class="container" style="margin-right:auto; margin-left:auto; margin-top: 50px; padding-bottom: 100px;">
 
 			@content
 		

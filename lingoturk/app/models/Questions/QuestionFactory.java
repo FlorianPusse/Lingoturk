@@ -33,6 +33,8 @@ public class QuestionFactory extends AbstractFactory{
             question.save();
             question.setJSONData(experiment, node);
             question.update();
+            question.experimentID = experiment.getId();
+            question.update();
 
             return question;
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | ClassCastException e) {

@@ -24,15 +24,16 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.locks.ReentrantLock;
 
 
 @Entity
 @Inheritance
-@DiscriminatorColumn(length=30)
+@DiscriminatorColumn(length=50)
 @Table(name = "Groups")
 @DiscriminatorValue("DistinctGroup")
 public abstract class AbstractGroup extends Model {
+
+    /* BEGIN OF VARIABLES BLOCK */
 
     @Id
     @Column(name = "PartId")
@@ -45,8 +46,9 @@ public abstract class AbstractGroup extends Model {
     protected
     String fileName;
 
-    @Basic
-    int number;
+    /* END OF VARIABLES BLOCK */
+
+    public AbstractGroup(){}
 
     private static Finder<Integer, AbstractGroup> finder = new Finder<>(Integer.class, AbstractGroup.class);
 
@@ -54,33 +56,23 @@ public abstract class AbstractGroup extends Model {
 
     protected List<PartQuestion> questions = null;
 
-    private static ReentrantLock lock = new ReentrantLock();
-
-    public AbstractGroup(){}
-
     public abstract String publishOnAMT(RequesterService service, int publishedId, String hitTypeId, Long lifetime, Integer maxAssignments) throws SQLException;
 
-    public boolean decreaseIfAvailable() throws SQLException {
-        boolean answer = false;
-        lock.lock();
-        int availability;
-        try{
-            availability = getAvailability();
-            if(availability > 0){
-                setAvailability(availability - 1);
-                answer = true;
-            }else{
-                answer = false;
-            }
-        }finally{
-            lock.unlock();
+    public synchronized boolean decreaseIfAvailable() throws SQLException {
+        boolean answer;
+        int availability = getAvailability();
+        if(availability > 0){
+            setAvailability(availability - 1);
+            answer = true;
+        }else{
+            answer = false;
         }
 
         System.out.println("Part " + getId() + " availability: " + (availability) + " -> return " + answer);
         return answer;
     }
 
-    public int getAvailability() throws SQLException {
+    public synchronized int getAvailability() throws SQLException {
         PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT availability FROM Groups WHERE PartId=" + this.getId());
         ResultSet rs = statement.executeQuery();
 
@@ -93,7 +85,7 @@ public abstract class AbstractGroup extends Model {
         return result;
     }
 
-    public void setAvailability(int availability) throws SQLException {
+    public synchronized void setAvailability(int availability) throws SQLException {
         PreparedStatement statement = Repository.getConnection().prepareStatement("UPDATE Groups SET availability = ? WHERE PartId=" + this.getId());
         statement.setInt(1,availability);
         statement.execute();

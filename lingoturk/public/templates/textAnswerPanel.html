@@ -1,0 +1,10 @@
+<div class="panel panel-primary">
+    <div class="panel-heading" style="font-weight: bolder ;">{{content.heading}}</div>
+    <div class="panel-body">
+        {{content.text}}
+        <hr style="margin-bottom : 15px ; margin-top : 15px"/>
+        <strong>{{content.instructions}}</strong>
+        <input type="text" ng-model="answer" class="form-control">
+        <button ng-click="click()" type="button" ng-disabled="answer === undefined || answer == '' || !matches" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
+    </div>
+</div>

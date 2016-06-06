@@ -2,8 +2,8 @@ SELECT WorkerId, timestamp, partNumber, number AS chunkNumber, picFileName, resu
 FROM
 	(
 	SELECT * FROM
-		(SELECT *, PictureNamingResult.answer AS result FROM Questions
-		JOIN PictureNamingResult
+		(SELECT *, PictureNamingResults.answer AS result FROM Questions
+		JOIN PictureNamingResults
 		ON QuestionId = chunkId) AS chunkIdSubquery
 	JOIN
 		(SELECT number AS partNumber,partId FROM Groups) AS partIdSubquery

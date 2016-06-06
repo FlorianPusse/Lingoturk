@@ -4,8 +4,8 @@ FROM   (SELECT Cast(item_nr AS INT),
                item_length,
                item_type,
                workerid,
-               storycompletionresultv2.answer
-        FROM   storycompletionresultv2
+               SentenceCompletionResults.answer
+        FROM   SentenceCompletionResults
                JOIN questions using (questionid)
         ORDER  BY list,
                   item_nr,

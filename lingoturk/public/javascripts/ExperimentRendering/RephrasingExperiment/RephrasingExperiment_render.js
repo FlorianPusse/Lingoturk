@@ -1,5 +1,5 @@
 (function () {
-    var app = angular.module('DC_DND_Rendering', []);
+    var app = angular.module('RephrasingExperimentApp', ["Lingoturk"]);
 
     app.controller('RenderController', ['$http', '$timeout', function ($http, $timeout) {
         var self = this;
@@ -126,7 +126,7 @@
                 }
             });
 
-            var id = $("#questionID").val();
+            var id = $("#questionId").val();
             if (id != "") {
                 $http.get("/getQuestion/" + id).success(function (data) {
                     var question1 = data.question1;

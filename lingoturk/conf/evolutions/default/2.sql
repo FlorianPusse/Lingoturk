@@ -3,24 +3,12 @@
 # --- !Ups
 
 DROP SEQUENCE IF EXISTS LingoExpModelPublished_Seq CASCADE;
-DROP SEQUENCE IF EXISTS LinkingResult_Seq CASCADE;
-DROP SEQUENCE IF EXISTS LinkingResultV2_Seq CASCADE;
 DROP SEQUENCE IF EXISTS ErrorMessages_Seq CASCADE;
-DROP SEQUENCE IF EXISTS StoryCompletionResults_Seq CASCADE;
 DROP SEQUENCE IF EXISTS StoryCompletionResultV2_Seq CASCADE;
-DROP SEQUENCE IF EXISTS PictureNaming_Seq CASCADE;
-DROP SEQUENCE IF EXISTS PictureNamingMailAddress_Seq CASCADE;
-DROP SEQUENCE IF EXISTS PlausibilityResult_Seq CASCADE;
 
 CREATE SEQUENCE LingoExpModelPublished_Seq START 1;
 CREATE SEQUENCE ErrorMessages_Seq START 1;
 CREATE SEQUENCE PictureNamingMailAddress_Seq START 1;
-CREATE SEQUENCE PictureNaming_Seq START 1;
-CREATE SEQUENCE LinkingResult_Seq START 1;
-CREATE SEQUENCE LinkingResultV2_Seq START 1;
-CREATE SEQUENCE StoryCompletionResults_Seq START 1;
-CREATE SEQUENCE StoryCompletionResultV2_Seq START 1;
-CREATE SEQUENCE PlausibilityResult_Seq START 1;
 
 CREATE TABLE pendingAssignments(
 	assignmentID varchar PRIMARY KEY
@@ -128,74 +116,6 @@ CREATE TABLE PictureNamingMailAddress(
 	mailAddress VARCHAR(100)
 );
 
-DROP TABLE IF EXISTS PictureNamingResult;
-CREATE TABLE IF NOT EXISTS PictureNamingResult(
-	id int DEFAULT nextval('PictureNaming_Seq') PRIMARY KEY,
-	WorkerId VARCHAR(60) NOT NULL,
-	timestamp timestamp DEFAULT now(),
-	partId int REFERENCES Groups ON DELETE CASCADE,
-	chunkId int REFERENCES Questions ON DELETE CASCADE,
-  pictureId int REFERENCES PictureNaming ON DELETE CASCADE,
-  answer VARCHAR
-);
-
-DROP TABLE IF EXISTS PlausibilityResult;
-CREATE TABLE IF NOT EXISTS PlausibilityResult(
-	id int DEFAULT nextval('PlausibilityResult_Seq') PRIMARY KEY,
-	workerId VARCHAR(60) NOT NULL,
-	timestamp timestamp DEFAULT now(),
-	partId int REFERENCES Groups ON DELETE CASCADE,
-	questionId int REFERENCES Questions ON DELETE CASCADE,
-	answer int
-);
-
-CREATE TABLE IF NOT EXISTS StoryCompletionResultV2(
-	id int DEFAULT nextval('StoryCompletionResultV2_Seq') PRIMARY KEY,
-	workerId VARCHAR(60) NOT NULL,
-	timestamp timestamp DEFAULT now(),
-	partId int REFERENCES Groups ON DELETE CASCADE,
-	questionId int REFERENCES Questions ON DELETE CASCADE,
-	answer varchar(500)
-);
-
-CREATE TABLE LinkingResult(
-	id int DEFAULT nextval('LinkingResult_Seq') PRIMARY KEY,
-	WorkerId VARCHAR(40) NOT NULL,
-	AssignmentId VARCHAR(40) NOT NULL,
-	HitId VARCHAR(40) NOT NULL,
-	timestamp timestamp DEFAULT now(),
-	workingTimes int,
-	lhs_script int REFERENCES Questions ON DELETE CASCADE,
-	rhs_script int REFERENCES Questions ON DELETE CASCADE,
-	lhs_item int REFERENCES LinkingItem ON DELETE CASCADE,
-	rhs_item int REFERENCES LinkingItem ON DELETE CASCADE,
-	before int REFERENCES LinkingItem ON DELETE CASCADE,
-	after int REFERENCES LinkingItem ON DELETE CASCADE,
-	noLinkingPossible boolean DEFAULT false
-);
-
-CREATE TABLE LinkingResultV2(
-	id int DEFAULT nextval('LinkingResultV2_Seq') PRIMARY KEY,
-	WorkerId VARCHAR(40) NOT NULL,
-	AssignmentId VARCHAR(40) NOT NULL,
-	HitId VARCHAR(40) NOT NULL,
-	timestamp timestamp DEFAULT now(),
-	workingTimes int,
-	lhs_script int REFERENCES Questions ON DELETE CASCADE,
-	rhs_script int REFERENCES Questions ON DELETE CASCADE,
-	lhs_slot int,
-	rhs_slot int,
-	result VARCHAR(50)
-);
-
-CREATE TABLE StoryCompletionResults(
-	id int DEFAULT nextval('StoryCompletionResults_Seq') PRIMARY KEY,
-	WorkerId VARCHAR(50) NOT NULL,
-	timestamp timestamp DEFAULT now(),
-	itemId VARCHAR(100) NOT NULL,
-	result VARCHAR(400) NOT NULL
-);
-
 CREATE TABLE QuestionPublishedAs(
 	publishedId int REFERENCES LingoExpModelPublishedAs ON DELETE CASCADE,
 	QuestionID int REFERENCES Questions ON DELETE CASCADE,
@@ -300,13 +220,8 @@ $$ LANGUAGE plpgsql;
 # --- !Downs
 
 DROP SEQUENCE IF EXISTS LingoExpModelPublished_Seq CASCADE;
-DROP SEQUENCE IF EXISTS LinkingResult_Seq CASCADE;
-DROP SEQUENCE IF EXISTS LinkingResultV2_Seq CASCADE;
 DROP SEQUENCE IF EXISTS ErrorMessages_Seq CASCADE;
-DROP SEQUENCE IF EXISTS StoryCompletionResults_Seq CASCADE;
-DROP SEQUENCE IF EXISTS PictureNaming_Seq CASCADE;
 DROP SEQUENCE IF EXISTS PictureNamingMailAddress_Seq CASCADE;
-DROP SEQUENCE IF EXISTS PlausibilityResult_Seq CASCADE;
 DROP TABLE IF EXISTS ErrorMessages;
 DROP TABLE IF EXISTS Workers_participateIn_Parts CASCADE;
 DROP TABLE IF EXISTS Workers_areBlockedFor_LingoExpModels CASCADE;
@@ -320,17 +235,15 @@ DROP TABLE IF EXISTS CheaterDetectionQuestions_mustNotHave_Words CASCADE;
 DROP TABLE IF EXISTS CheaterDetectionQuestions_mustHave_Words CASCADE;
 DROP TABLE IF EXISTS LingoExpModelPublishedAs CASCADE;
 DROP TABLE IF EXISTS QuestionPublishedAs CASCADE;
-DROP TABLE IF EXISTS LinkingResult CASCADE;
-DROP TABLE IF EXISTS LinkingResultV2 CASCADE;
 DROP TABLE IF EXISTS participatesInCD_Question CASCADE;
-DROP TABLE IF EXISTS StoryCompletionResults CASCADE;
 DROP TABLE IF EXISTS pendingAssignments;
 DROP TABLE IF EXISTS failedAssignments;
 DROP TABLE IF EXISTS PartPublishedAs;
 DROP TABLE IF EXISTS examplequestions_haverightanswer_words;
+DROP TABLE IF EXISTS PictureNamingMailAddress;
 DROP FUNCTION IF EXISTS publishLingoExpModel(int,bigint,varchar,varchar);
-DROP FUNCTION IF EXISTS pwrongAnswersCount(varchar);
-DROP FUNCTION IF EXISTS pgetStandart(int,int);
-DROP FUNCTION IF EXISTS pgetScenarioName(int);
-DROP FUNCTION IF EXISTS pgetItemSlot(int);
-DROP FUNCTION IF EXISTS pgetScriptId(int);
+DROP FUNCTION IF EXISTS wrongAnswersCount(varchar);
+DROP FUNCTION IF EXISTS getStandart(int,int);
+DROP FUNCTION IF EXISTS getScenarioName(int);
+DROP FUNCTION IF EXISTS getItemSlot(int);
+DROP FUNCTION IF EXISTS getScriptId(int);

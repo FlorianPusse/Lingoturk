@@ -1,5 +1,5 @@
 (function () {
-    var app = angular.module('StoryCompletion', []);
+    var app = angular.module('SentenceCompletionExperimentApp', []);
 
     app.controller('RenderController', ['$http', '$timeout', function ($http, $timeout) {
         var self = this;

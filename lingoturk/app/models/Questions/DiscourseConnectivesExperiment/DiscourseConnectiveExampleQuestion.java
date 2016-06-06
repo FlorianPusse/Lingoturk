@@ -30,7 +30,7 @@ import static play.mvc.Results.redirect;
 
 @Entity
 @Inheritance
-@DiscriminatorValue("DNDExpEQuestion")
+@DiscriminatorValue("DiscourseConnectivesExperiment.DNDExpEQuestion")
 public class DiscourseConnectiveExampleQuestion extends DiscourseConnectivesQuestion implements ExampleQuestion {
 
     private static Finder<Integer, DiscourseConnectiveExampleQuestion> finder = new Finder<Integer, DiscourseConnectiveExampleQuestion>(Integer.class, DiscourseConnectiveExampleQuestion.class);

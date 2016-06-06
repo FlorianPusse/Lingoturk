@@ -3,6 +3,8 @@
 # ~~~~
 
 
+GET         /getExperimentDetails                   controllers.ManageExperiments.getExperimentDetails(experimentName: String)
+
 # Home page
 GET         /                                       controllers.Application.index()
 GET         /contact                                controllers.Application.contact()
@@ -22,6 +24,11 @@ POST        /submitNew_Experiment                   controllers.ManageExperiment
 
 ######      Manage/Publish ######
 
+GET         /experimentCreationInterface            controllers.ManageExperiments.experimentCreationInterface()
+POST        /createNewExperimentType                controllers.ManageExperiments.createNewExperimentType()
+GET         /changeExperimentFields                 controllers.ManageExperiments.changeExperimentFields(experimentName: String)
+POST        /submitNewFields                        controllers.ManageExperiments.submitNewFields()
+
 GET         /editInstructions                       controllers.ManageExperiments.editInstructions(expId:Int)
 POST        /submitNewInstructions                  controllers.ManageExperiments.submitNewInstructions()
 
@@ -37,17 +44,16 @@ POST        /publish                                controllers.Application.publ
 GET         /publishingPlatform                     controllers.Application.publishingPlatform(expId: Int)
 GET         /publishOnMturk                         controllers.Application.publishOnMturk(expId:Int)
 GET         /publishOnProlific                      controllers.Application.publishOnProlific(expId:Int)
-GET         /publishProlific                        models.Questions.LinkingExperimentV1.Prolific.LinkingGroup.publishProlific(expId:Int)
+GET         /publishProlific                        models.Questions.LinkingV1Experiment.Prolific.LinkingGroup.publishProlific(expId:Int)
 
 GET         /modify/:id                             controllers.Application.modify(id:Int)
 
-GET         /changeSettings/:id                     controllers.Application.changeSettings(id:String)
 GET         /renderExampleQuestion/:id              controllers.RenderController.renderExampleQuestion(id: Int)
 GET         /render			                        controllers.RenderController.renderAMT(Type: String, id: Int, assignmentId: String ?= null, hitId: String, workerId: String ?= null, turkSubmitTo ?= null)
 GET         /renderAMT                              controllers.RenderController.renderAMT(Type: String, id: Int, assignmentId: String ?= null, hitId: String, workerId: String ?= null, turkSubmitTo ?= null)
 GET         /renderProlific                         controllers.RenderController.renderProlific(expId: Int)
 
-GET         /renderLinkingProlific                  models.Questions.LinkingExperimentV1.Prolific.LinkingGroup.renderLinkingProlific(expId:Int)
+GET         /renderLinkingProlific                  models.Questions.LinkingV1Experiment.Prolific.LinkingGroup.renderLinkingProlific(expId:Int)
 
 POST        /submitResult                           controllers.ManageExperiments.submitResult()
 

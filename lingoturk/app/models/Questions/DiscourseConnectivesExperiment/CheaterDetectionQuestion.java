@@ -30,7 +30,7 @@ import static play.mvc.Results.ok;
 
 @Entity
 @Inheritance
-@DiscriminatorValue("CDQuestion")
+@DiscriminatorValue("DiscourseConnectivesExperiment.CDQuestion")
 public class CheaterDetectionQuestion extends DiscourseConnectivesQuestion {
 
 
@@ -142,7 +142,7 @@ public class CheaterDetectionQuestion extends DiscourseConnectivesQuestion {
 
     @Override
     public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
-        return ok(views.html.renderExperiments.DiscourseConnectivesExperiment.DiscourseConnectivesExperiment_render.render(this, null, worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK"));
+        return ok(views.html.ExperimentRendering.DiscourseConnectivesExperiment.DiscourseConnectivesExperiment_render.render(this, null, worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK"));
     }
 
     public String publish(RequesterService service, int publishedId, String hitTypeId, Long lifetime, Integer maxAssignments) throws SQLException {

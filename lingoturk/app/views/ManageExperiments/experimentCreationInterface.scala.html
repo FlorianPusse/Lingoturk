@@ -1,0 +1,81 @@
+@main("Experiment creation interface"){
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/ExperimentManagement/experimentCreationInterface.js")"></script>
+    <script>
+        $(document).ready(function(){
+            $(".btn-group > .btn").click(function(){
+                $(this).addClass("active").siblings().removeClass("active");
+            });
+        });
+    </script>
+    <style>
+    .div-wrapper {
+        border-radius: 12px 12px 12px 12px;
+        -moz-border-radius: 12px 12px 12px 12px;
+        -webkit-border-radius: 12px 12px 12px 12px;
+        border: 1px solid #000000;
+        box-shadow: 3px 3px 10px 0px rgba(122,122,122,1);
+        overflow: auto;
+        padding : 10px;
+    }
+    .interfaceContainer {
+        margin-top : 10px ;
+        margin-bottom : 10px ;
+        padding : 0px;
+    }
+    </style>
+
+    <div ng-app="ExperimentCreationInterface" ng-controller="InterfaceController as IC">
+        <div class="btn-group" style="margin: 15px auto; display: table">
+            <button type="button" class="btn btn-primary active" ng-click="IC.experimentType = 'COPY'">Copy existing experiment</button>
+            <button type="button" class="btn btn-primary" ng-click="IC.experimentType = 'NEW'">Create new experiment type</button>
+        </div>
+
+        <div class="div-wrapper">
+            <div ng-if="IC.experimentType == 'COPY'" class="interfaceContainer">
+                <strong style="margin-bottom:20px;margin-top:20px; display:block;">Existing experiment type:</strong>
+
+                <div class="form-group">
+                    <label for="sourceTypeName">Source type name</label>
+                    <input id="sourceTypeName" type="text" class="form-control" ng-model="IC.sourceTypeName">
+                </div>
+                <div class="form-group">
+                    <label for="newTypeName">Experiment type name</label>
+                    <input id="newTypeName" type="text" class="form-control" ng-model="IC.newTypeName">
+                </div>
+            </div>
+
+            <div ng-if="IC.experimentType == 'NEW' || IC.experimentType == 'REUSE'" class="interfaceContainer">
+                <strong style="margin-bottom:20px;margin-top:20px; display:block;">Create new experiment type:</strong>
+
+                <div class="form-group">
+                    <label for="newTypeName">Experiment type name</label>
+                    <input id="newTypeName" type="text" class="form-control" ng-model="IC.newTypeName">
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label style="font-weight: bold"><input type="checkbox" ng-model="IC.reuseCheckbox" ng-change="IC.experimentType = IC.reuseCheckbox" ng-true-value="'REUSE'" ng-false-value="'NEW'">Reuse existing group</label>
+                    </div>
+                    <input id="sourceGroupName" ng-disabled="IC.experimentType != 'REUSE'" type="text" class="form-control" ng-model="IC.sourceGroupName">
+                </div>
+
+                <hr style="border: 0; height: 1px; background: #333; background-image: linear-gradient(to right, #ccc, #333, #ccc);"/>
+
+                <strong style="margin-bottom:20px;margin-top:20px; display:block;">Fields:</strong>
+
+                <div style="margin-bottom: 20px;" ng-repeat="field in IC.questionFields track by $index" class="form-group">
+                    <label id="{{field + $index}}"><input placeholder="field {{$index}} name" style="border:none; font-weight: bolder; -webkit-box-shadow: none;box-shadow: none;-webkit-transition: none;" type="text" class="form-control" ng-model="field.name"></label>
+                    <select class="form-control" ng-model="field.type" ng-options="type.val as type.name for type in IC.types" id="{{field + $index}}">
+                        <option disabled="disabled"selected value> -- select field -- </option>
+                    </select>
+                </div>
+
+                <div style="text-align:center">
+                    <button ng-click="IC.addField()" class="btn btn-primary">+</button>
+                </div>
+            </div>
+
+            <button ng-click="IC.submit()" type="button" class="btn btn-default" style="float:right">Submit</button>
+        </div>
+    </div>
+}

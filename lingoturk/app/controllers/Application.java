@@ -47,7 +47,7 @@ public class Application extends Controller {
      */
     @Security.Authenticated(Secured.class)
     public static Result overviewPage() {
-        return ok(views.html.CreateExperiments.overviewPage.render(ManageExperiments.getExperimentNames()));
+        return ok(views.html.ExperimentCreation.overviewPage.render(ManageExperiments.getExperimentNames()));
     }
 
 	/*
@@ -225,17 +225,6 @@ public class Application extends Controller {
     @Security.Authenticated(Secured.class)
     public static Result contact() {
         return ok(contact.render());
-    }
-
-    /**
-     * Renders the settings-page of an experiment
-     *
-     * @param id the experiments id
-     * @return the rendered page
-     */
-    @Security.Authenticated(Secured.class)
-    public static Result changeSettings(String id) {
-        return ok(views.html.ManageExperiments.changeSettings.render(id));
     }
 
     /**

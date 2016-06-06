@@ -22,21 +22,19 @@
                     @for(exp <- offlineExperiments) {
                         <div class="col-md-8 experimentSelection" style="width : 100%; line-height:50px">
                             <div style="float : left ;">
-                            @exp.getName()
-                            </div>
-
-                            @**
-                                TODO
-                            <div style="float : right">
-                                <a href="editInstructions?expId=@exp.getId()" class="noLinkColor">edit </a>
-                            </div>**@
-
-                            <div style="float : right ; margin-right : 10px ;">
-                                <a href="publishingPlatform?expId=@exp.getId()" class="noLinkColor"> publish </a>
+                                @exp.getName()
                             </div>
 
                             <div style="float : right ; margin-right : 10px ;">
-                                <a href="delete?id=@exp.getId()" class="noLinkColor"> delete </a>
+                                <a title="publish experiment" href="publishingPlatform?expId=@exp.getId()" class="noLinkColor"><span class="glyphicon glyphicon-share" aria-hidden="true"></span></a>
+                            </div>
+
+                            <div style="float : right ; margin-right : 10px ;">
+                                <a title="edit instructions" href="editInstructions?expId=@exp.getId()" class="noLinkColor"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                            </div>
+
+                            <div style="float : right ; margin-right : 10px ;">
+                                <a title="delete experiment" href="delete?id=@exp.getId()" class="noLinkColor"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
                             </div>
                         </div>
                     }

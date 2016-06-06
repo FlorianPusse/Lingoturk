@@ -14,7 +14,7 @@
                 for(var i = 0; i < files.length; i++){
                     var file = files[i];
                     var reader = new FileReader();
-                    reader.onload = (function(fileName) {
+                    reader.onload = (function() {
                         return function(f){
                             var workerIds = [];
                             var content = f.target.result;
@@ -50,7 +50,6 @@
     <div class="panel panel-success" style="margin-bottom : 70px; width : 100%">
         <div class="panel-heading">
             <h3 class="panel-title">Set publishing options <strong style="float:right">account balance: @if(balance != -1){$@balance}else{temporarily not available}</strong></h3>
-            @if(balance == -1){<h2>Service temporarily not available!</h2>}
         </div>
 
         <form action="@routes.Application.publish()" method="POST" role="form" enctype="multipart/form-data" align="center">
@@ -115,7 +114,8 @@
                         </div>
                         <div id="part" style="height:450px">
                             @if(!exp.getParts.isEmpty) {
-                                <iframe src="@Application.getStaticIp()/render?id=@exp.getParts.get(0).getId&assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE_TEST&hitId=2DDOX7H57DZKRJGLCO4HGM25YA70AL&workerId=TEST&Type=part" style="margin : 0 ; padding : 0 ; border : none ; width : 100% ; height : 100%" name="seite"></iframe>
+                                <iframe src="/render?id=@exp.getParts.get(0).getId&assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE_TEST&hitId=2DDOX7H57DZKRJGLCO4HGM25YA70AL&workerId=TEST&Type=part" style="margin : 0 ; padding : 0 ; border : none ; width : 100% ; height : 100%" name="seite"></iframe>
+                                <button type="button" class="btn btn-default" onclick="window.open('/render?id=@exp.getParts.get(0).getId&assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE_TEST&hitId=2DDOX7H57DZKRJGLCO4HGM25YA70AL&workerId=TEST&Type=part','_blank');">Open Fullscreen</button>
                             }else{
                                 <p>Preview not available, since there are no parts used in this experiment.</p>
                             }

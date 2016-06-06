@@ -21,10 +21,10 @@ import static play.mvc.Results.ok;
 
 @Entity
 @Inheritance
-@DiscriminatorValue("NewExpEQuestion")
+@DiscriminatorValue("PlausibilityExperiment.RephrasingExampleQuestion")
 public class RephrasingExampleQuestion extends RephrasingQuestion implements ExampleQuestion {
 
-    private static Random random = new Random();
+    /* BEGIN OF VARIABLES BLOCK */
 
     @Column(name="restatement", columnDefinition = "TEXT")
     @Constraints.Required
@@ -41,6 +41,10 @@ public class RephrasingExampleQuestion extends RephrasingQuestion implements Exa
 
     @Basic
     private boolean questionFirst;
+
+    /* END OF VARIABLES BLOCK */
+
+    private static Random random = new Random();
 
     private static Finder<Integer, RephrasingExampleQuestion> finder = new Finder<Integer, RephrasingExampleQuestion>(Integer.class, RephrasingExampleQuestion.class);
 
@@ -74,18 +78,12 @@ public class RephrasingExampleQuestion extends RephrasingQuestion implements Exa
     }
 
     public Result render() {
-        return ok(views.html.renderExperiments.RephrasingExperiment.RephrasingExperimentExampleQuestion.render(this));
+        return ok(views.html.ExperimentRendering.RephrasingExperiment.RephrasingExperimentExampleQuestion.render(this));
     }
 
     @Override
     public JsonObject returnJSON() throws SQLException {
-        JsonObjectBuilder exampleQuestionBuilder = Json.createObjectBuilder();
-        exampleQuestionBuilder.add("sentence", this.sentence);
-        exampleQuestionBuilder.add("question", this.question);
-        exampleQuestionBuilder.add("restatement", this.restatement);
-        exampleQuestionBuilder.add("answer", this.answer);
-
-        return exampleQuestionBuilder.build();
+        return super.returnJSON();
     }
 
     public String getRestatement() {

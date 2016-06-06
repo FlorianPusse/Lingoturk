@@ -1,5 +1,5 @@
 (function () {
-    var app = angular.module('PictureNaming', []);
+    var app = angular.module('PictureNamingExperimentApp', []);
 
     app.controller('RenderController', ['$http', '$timeout', function ($http, $timeout) {
         var self = this;

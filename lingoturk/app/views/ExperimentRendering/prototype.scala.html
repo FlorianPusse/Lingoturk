@@ -1,0 +1,96 @@
+@views.html.ExperimentRendering.experiment_main(null){
+            <style type="text/css">
+            .noselect {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            }
+            fieldset{
+            background-color: aliceblue;
+            }
+            fieldset.scheduler-border {
+            border: 1px solid #7D7474 !important;
+            border-radius: 4px !important;
+            padding: 0 1.4em 1.4em 1.4em !important;
+            margin: 0 0 1.5em 0 !important;
+            }
+            legend.scheduler-border {
+            font-size: 1.2em !important;
+            font-weight: bold !important;
+            text-align: left !important;
+            width:inherit;
+            padding:0 10px;
+            border-bottom:none;
+            }
+            .item-active {
+            background-color : #FFFFE1 ;
+            border: 1px solid #949494;
+            border-radius : 4px ;
+            margin-bottom : 5px ;
+            cursor : pointer ;
+            padding : 5px ;
+            color:black;
+            }
+            #selectable .ui-selected {
+            background-color : #B7F7B2 ;
+            border: 1px solid #949494;
+            border-radius : 4px ;
+            margin-bottom : 5px ;
+            padding : 5px ;
+            cursor : pointer ;
+            color:black;
+            }
+            #selectable .ui-selecting {
+            background-color : #D5FFD2 ;
+            border: 1px solid #949494;
+            border-radius : 4px ;
+            margin-bottom : 5px ;
+            padding : 5px ;
+            cursor : pointer ;
+            color:black;
+            }
+            canvas {
+            position : absolute ;
+            top : 0px ;
+            left : 0px ;
+            width : 100% ;
+            height : 100% ;
+            z-index : 1 ;
+            }
+            </style>
+        <body id="angularApp" class="noselect" ng-mousemove="RC.mousemove($event)" ng-app="StackExperiment" ng-controller="RenderController as RC" style="overflow : hidden ; width : 100%">
+            <canvas id="canvas"></canvas>
+            <div style=" position : absolute ; top : 0px ; left : 0px ; width : 100% ; height : 100% ; z-index : 2">
+                <div style="width : 40% ; height : 100% ; float : left">
+                    <div class="panel panel-primary" style="width : 100% ; height : 100% ; overflow-y : auto ; background-color : transparent ; border-right-color : rgba ( 66, 139, 202, 0.3 )" id="leftBox">
+                        <div class="panel-body question" style="padding:0;width : 100% ; height : 100%; display:table">
+                            <div style="display:table-cell; vertical-align: middle;">
+                                <div id="selectable" style="padding:15px;display:inline-block;width: 100%;">
+                                    <div class="item-active" ng-mousedown="RC.mousedown($event,word)" ng-repeat="word in RC.words">
+                                        {{word.word}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="width : 40% ; height : 100% ; float : right ;">
+                    <div class="panel panel-primary" style="width : 100% ; height : 100% ; overflow-y : auto ; background-color : transparent ; border-left-color : rgba ( 66, 139, 202, 0.3 )" id="rightBox">
+                        <div class="panel-body question" style="width : 100% ; height : 100%; display:table">
+                            <div style="display:table-cell; vertical-align: middle; text-align: center;">
+                                <div style="display:inline-block;width: 100%;">
+                                    <fieldset ng-mouseup="RC.mouseup($event)" class="scheduler-border" ng-repeat="stack in RC.stacks">
+                                        <legend class="scheduler-border">{{stack.attribute}}</legend>
+                                        <div ng-mouseup="RC.mouseup($event)" class="item-active">{{stack.value}}</div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </body>
+}

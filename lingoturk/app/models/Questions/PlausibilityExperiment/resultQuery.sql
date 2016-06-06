@@ -1,3 +1,3 @@
-SELECT number,condition,workerId,PlausibilityResult.answer
-FROM PlausibilityResult
+SELECT number,condition,workerId,PlausibilityResults.answer
+FROM PlausibilityResults
 JOIN Questions USING (QuestionId);

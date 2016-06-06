@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import controllers.Application;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
-import models.Questions.Question;
-import models.Questions.StoryCompletionExperiment.StoryCompletionQuestion;
 import models.Worker;
 import play.data.DynamicForm;
 import play.mvc.Result;
@@ -36,11 +34,11 @@ import static play.mvc.Results.ok;
 @DiscriminatorValue("FullGroup")
 public class FullGroup extends AbstractGroup {
 
-    public FullGroup(){}
+    /* BEGIN OF VARIABLES BLOCK */
 
-    public FullGroup(String fileName) {
-        this.fileName = fileName;
-    }
+    /* END OF VARIABLES BLOCK */
+
+    public FullGroup(){}
 
     public String publishOnAMT(RequesterService service, int publishedId, String hitTypeId, Long lifetime, Integer maxAssignments) throws SQLException {
 
@@ -53,7 +51,7 @@ public class FullGroup extends AbstractGroup {
         insert(hit.getHITId(), publishedId);
 
         availability = maxAssignments;
-        this.update();
+        update();
 
         return url;
     }
@@ -62,10 +60,10 @@ public class FullGroup extends AbstractGroup {
     public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df){
         try {
             Method m = getRenderMethod(exp.getExperimentType());
-
             Html webpage = (Html) m.invoke(null, null, this, worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK");
             return ok(webpage);
         } catch (NoSuchMethodException | ClassNotFoundException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
             return internalServerError("Could not load experiment of type: " + exp.getExperimentType());
         }
     }
@@ -86,7 +84,7 @@ public class FullGroup extends AbstractGroup {
         JsonArrayBuilder questionsBuilder = Json.createArrayBuilder();
 
         List<PartQuestion> questions = getQuestions();
-        Collections.addAll(questions, StoryCompletionQuestion.fillers);
+        //Collections.addAll(questions, StoryCompletionQuestion.fillers);
         Collections.shuffle(questions);
 
         for (PartQuestion partQuestion : getQuestions()) {

@@ -21,17 +21,44 @@ import java.util.Iterator;
 
 @Entity
 @Inheritance
-@DiscriminatorValue("PlausibilityQuestion")
+@DiscriminatorValue("PlausibilityExperiment.PlausibilityQuestion")
 public class PlausibilityQuestion extends PartQuestion{
 
-    @Basic
-    String number;
+    /* BEGIN OF VARIABLES BLOCK */
 
-    @Basic
-    String condition;
+	@Basic
+	@Column(name="Plausibility_number", columnDefinition = "TEXT")
+	public java.lang.String number = "";
 
-    @Column(columnDefinition = "TEXT")
-    String text;
+	@Basic
+	@Column(name="Plausibility_condition", columnDefinition = "TEXT")
+	public java.lang.String condition = "";
+
+	@Basic
+	@Column(name="Plausibility_text", columnDefinition = "TEXT")
+	public java.lang.String text = "";
+
+    @Override
+    public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {
+		JsonNode numberNode = questionNode.get("number");
+		if (numberNode != null){
+			this.number = numberNode.asText();
+		}
+
+		JsonNode conditionNode = questionNode.get("condition");
+		if (conditionNode != null){
+			this.condition = conditionNode.asText();
+		}
+
+		JsonNode textNode = questionNode.get("text");
+		if (textNode != null){
+			this.text = textNode.asText();
+		}
+
+    }
+
+	/* END OF VARIABLES BLOCK */
+
 
     public PlausibilityQuestion(String number, String condition, String text){
         this.number = number;
@@ -40,24 +67,8 @@ public class PlausibilityQuestion extends PartQuestion{
     }
 
     @Override
-    public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {
-        String number = questionNode.get("number").asText();
-        String condition = questionNode.get("condition").asText();
-        String text = questionNode.get("text").asText();
-
-        this.number = number;
-        this.condition = condition;
-        this.text = text;
-    }
-
-    @Override
     public JsonObject returnJSON() throws SQLException {
-        JsonObjectBuilder partBuilder = Json.createObjectBuilder();
-        partBuilder.add("id",getId());
-        partBuilder.add("number",getNumber());
-        partBuilder.add("condition",getCondition());
-        partBuilder.add("text",getText());
-        return partBuilder.build();
+        return super.returnJSON();
     }
 
     @Override
@@ -76,7 +87,7 @@ public class PlausibilityQuestion extends PartQuestion{
         int partId = resultNode.get("partId").asInt();
 
         PreparedStatement statement = Repository.getConnection().prepareStatement(
-                "INSERT INTO PlausibilityResult(WorkerId,partId,questionId,answer) VALUES(?,?,?,?)"
+                "INSERT INTO PlausibilityResults(WorkerId,partId,questionId,answer) VALUES(?,?,?,?)"
         );
 
         statement.setString(1, workerId);

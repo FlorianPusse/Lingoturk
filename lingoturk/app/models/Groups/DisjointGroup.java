@@ -15,21 +15,25 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
+import javax.persistence.*;
 import java.sql.SQLException;
 
 import static play.mvc.Results.internalServerError;
-import static play.mvc.Results.ok;
 
 @Entity
 @Inheritance
 @DiscriminatorValue("DisjointGroup")
 public class DisjointGroup extends AbstractGroup {
 
-    public DisjointGroup() {
-    }
+    /* BEGIN OF VARIABLES BLOCK */
+
+    @Basic
+    @Column(name = "DisjointGroup_number")
+    int number;
+
+    /* END OF VARIABLES BLOCK */
+
+    public DisjointGroup(){}
 
     @Override
     public String publishOnAMT(RequesterService service, int publishedId, String hitTypeId, Long lifetime, Integer maxAssignments) throws SQLException {
