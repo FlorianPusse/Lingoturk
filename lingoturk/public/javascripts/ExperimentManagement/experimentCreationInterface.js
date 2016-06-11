@@ -5,12 +5,10 @@
         var self = this;
 
         this.newTypeName = "";
-        this.experimentType = "COPY";
+        this.experimentType = "REUSE";
         this.sourceTypeName = "";
-        this.sourceGroupName = "";
-        this.types =  [{name: "String", val: "String"},{name: "Integer", val: "int"},{name: "Float", val: "float"}];
-
-        this.reuseCheckbox = "NEW";
+        this.sourceGroupName = "FullGroup";
+        this.types =  [{name: "String (can also be an image path)", val: "String"},{name: "Number (Integer)", val: "int"},{name: "Number (Float)", val: "float"}];
 
         this.questionFields = [{name : "", type : ""}];
 

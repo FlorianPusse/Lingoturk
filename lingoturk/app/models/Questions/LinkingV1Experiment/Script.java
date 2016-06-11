@@ -44,22 +44,27 @@ public class Script extends PartQuestion {
 
     @Basic
     @Column(name = "LinkingV1_scriptId", columnDefinition = "TEXT")
-    public String scriptId;
+    public String LinkingV1_scriptId;
 
     @Basic
     @Column(name = "LinkingV1_side", columnDefinition = "TEXT")
-    public String side;
+    public String LinkingV1_side;
 
     @OneToMany(cascade = CascadeType.ALL)
     public List<Item> itemList = new LinkedList<>();
+
+    @Override
+    public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {
+        throw new RuntimeException("Method \"setJSONData\" not implemented for class \"Script\"");
+    }
 
     /* END OF VARIABLES BLOCK */
 
     private static final int MAX_FALSE_ANSWERS = 20;
 
     public Script(String scriptId, String side, LingoExpModel exp) {
-        this.scriptId = scriptId;
-        this.side = side;
+        this.LinkingV1_scriptId = scriptId;
+        this.LinkingV1_side = side;
         this.experimentID = exp.getId();
     }
 
@@ -189,11 +194,6 @@ public class Script extends PartQuestion {
         return ok(views.html.ExperimentRendering.LinkingV1Experiment.LinkingV1Experiment_render.render(this, null, worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK"));
     }
 
-    @Override
-    public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {
-        throw new RuntimeException("Method \"setJSONData\" not implemented for class \"Script\"");
-    }
-
     public void addItem(Item item) {
         itemList.add(item);
     }
@@ -294,7 +294,7 @@ public class Script extends PartQuestion {
     }
 
     public String getScriptId() {
-        return scriptId;
+        return LinkingV1_scriptId;
     }
 
     public boolean containsActiveItem() {

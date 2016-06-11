@@ -16,22 +16,31 @@ public class _TEMPLATE_Results extends Model{
     int id;
 
     @Basic
+    @Column(name = "assignmentId")
     String assignmentId;
 
     @Basic
+    @Column(name = "hitId")
     String hitId;
 
     @Basic
+    @Column(name = "workerId")
     String workerId;
 
     @Basic
+    @Column(name = "origin")
     String origin;
 
     @Basic
+    @Column(name = "timestamp", columnDefinition = "timestamp default now()")
     Date timestamp;
 
     @Basic
+    @Column(name = "partId")
     int partId;
 
-    
+    @Basic
+    @Column(name = "questionId")
+    int questionId;
+
 }

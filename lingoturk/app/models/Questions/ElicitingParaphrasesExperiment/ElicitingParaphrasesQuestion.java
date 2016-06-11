@@ -18,6 +18,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Iterator;
 
+import static play.mvc.Results.ok;
+
 // _IMPORT_PLACEHOLDER_
 
 @Entity
@@ -29,27 +31,28 @@ public class ElicitingParaphrasesQuestion extends PartQuestion {
 
 	@Basic
 	@Column(name="ElicitingParaphrases_text", columnDefinition = "TEXT")
-	public java.lang.String text = "";
+	public java.lang.String ElicitingParaphrases_text = "";
 
 	@Basic
 	@Column(name="ElicitingParaphrases_fileName", columnDefinition = "TEXT")
-	public java.lang.String fileName = "";
+	public java.lang.String ElicitingParaphrases_fileName = "";
 
     @Override
     public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {
 		JsonNode textNode = questionNode.get("text");
 		if (textNode != null){
-			this.text = textNode.asText();
+			this.ElicitingParaphrases_text = textNode.asText();
 		}
 
 		JsonNode fileNameNode = questionNode.get("fileName");
 		if (fileNameNode != null){
-			this.fileName = fileNameNode.asText();
+			this.ElicitingParaphrases_fileName = fileNameNode.asText();
 		}
 
     }
 
 	/* END OF VARIABLES BLOCK */
+
 
     @Override
     public AssignmentResult parseAssignment(Assignment assignment) throws DocumentException {
@@ -86,7 +89,7 @@ public class ElicitingParaphrasesQuestion extends PartQuestion {
 
     @Override
     public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
-        return null;
+        return ok(views.html.ExperimentRendering.ElicitingParaphrasesExperiment.ElicitingParaphrasesExperiment_render.render(this, null, worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK"));
     }
 
 }

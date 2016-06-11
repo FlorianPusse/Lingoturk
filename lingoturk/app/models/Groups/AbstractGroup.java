@@ -142,18 +142,13 @@ public abstract class AbstractGroup extends Model {
 
     public JsonObject returnJSON() throws SQLException {
         JsonObjectBuilder partBuilder = Json.createObjectBuilder();
-
-        partBuilder.add("newId", "");
-        partBuilder.add("newSentence1", "");
-        partBuilder.add("newSentence2", "");
-        partBuilder.add("newConnectives", "");
-
         JsonArrayBuilder questionsBuilder = Json.createArrayBuilder();
 
         for (PartQuestion partQuestion : getQuestions()) {
             questionsBuilder.add(partQuestion.returnJSON());
         }
 
+        partBuilder.add("id", id);
         partBuilder.add("questions", questionsBuilder.build());
 
         return partBuilder.build();
@@ -175,7 +170,7 @@ public abstract class AbstractGroup extends Model {
             PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT * FROM Parts_contain_Questions WHERE PartID=" + this.getId());
             ResultSet rs = statement.executeQuery();
 
-            List<PartQuestion> result = new LinkedList<PartQuestion>();
+            List<PartQuestion> result = new LinkedList<>();
             while (rs.next()) {
                 result.add((PartQuestion) Question.byId(rs.getInt("QuestionID")));
             }

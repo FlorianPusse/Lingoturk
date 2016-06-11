@@ -3,7 +3,6 @@ package models.Questions;
 import com.fasterxml.jackson.databind.JsonNode;
 import models.AbstractFactory;
 import models.LingoExpModel;
-import models.Questions.DiscourseConnectivesExperiment.DiscourseConnectiveExampleQuestion;
 import models.Questions.RephrasingExperiment.RephrasingExampleQuestion;
 
 import java.io.File;
@@ -39,18 +38,6 @@ public class QuestionFactory extends AbstractFactory{
             return question;
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | ClassCastException e) {
             return null;
-        }
-    }
-
-    // TODO: REIMPLEMENT
-    public static ExampleQuestion createExampleQuestion(String type, LingoExpModel experiment, JsonNode node) throws SQLException {
-        switch (type) {
-            case "DNDQuestion":
-                return DiscourseConnectiveExampleQuestion.createExampleQuestion(experiment, node);
-            case "NewExpQuestion":
-                return RephrasingExampleQuestion.createExampleQuestion(experiment, node);
-            default:
-                throw new RuntimeException("Unknown example question type: " + type);
         }
     }
 

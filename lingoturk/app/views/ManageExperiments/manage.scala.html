@@ -7,7 +7,14 @@
             $ ( "#tabs" ).tabs ( ) ;
             $ ( "#tabs2" ).tabs ( ) ;
             $ ( "#accordion" ).accordion ( ) ;
-        })
+        });
+        function deleteExperiment(nr){
+            bootbox.confirm("Are you sure you want to delete this experiment? It will not be possible to restore it afterwards.", function(result) {
+                if(result){
+                    window.location.href = "/delete?id=" + nr;
+                }
+            });
+        }
         </script>
 
         <div id="accordion" style="margin-bottom : 70px">
@@ -26,15 +33,21 @@
                             </div>
 
                             <div style="float : right ; margin-right : 10px ;">
+                                <a title="download results" href="/extractResult?id=@exp.getId()" class="noLinkColor"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
+                            </div>
+                            <div style="float : right ; margin-right : 10px ;">
                                 <a title="publish experiment" href="publishingPlatform?expId=@exp.getId()" class="noLinkColor"><span class="glyphicon glyphicon-share" aria-hidden="true"></span></a>
+                            </div>
+                            <div style="float : right ; margin-right : 10px ;">
+                                <a title="view experiment" href="/render?id=@exp.getParts.get(0).getId&assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE_TEST&hitId=2DDOX7H57DZKRJGLCO4HGM25YA70AL&workerId=TEST&Type=part" class="noLinkColor"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
                             </div>
 
                             <div style="float : right ; margin-right : 10px ;">
                                 <a title="edit instructions" href="editInstructions?expId=@exp.getId()" class="noLinkColor"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
                             </div>
 
-                            <div style="float : right ; margin-right : 10px ;">
-                                <a title="delete experiment" href="delete?id=@exp.getId()" class="noLinkColor"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+                            <div style="float : right ; margin-right : 10px ; cursor: pointer">
+                                <a title="delete experiment" onclick="deleteExperiment(@exp.getId())" class="noLinkColor"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
                             </div>
                         </div>
                     }
@@ -55,18 +68,16 @@
                         @exp.getName()
                         </div>
 
-                        @**
-                        TODO
-                        <div style="float : right">
-                        <a href="editInstructions?expId=@exp.getId()" class="noLinkColor">edit </a>
-                        </div>**@
-
                         <div style="float : right ; margin-right : 10px ;">
-                            <a href="publishingPlatform?expId=@exp.getId()" class="noLinkColor"> publish </a>
+                            <a title="publish experiment" href="publishingPlatform?expId=@exp.getId()" class="noLinkColor"><span class="glyphicon glyphicon-share" aria-hidden="true"></span></a>
                         </div>
 
                         <div style="float : right ; margin-right : 10px ;">
-                            <a href="delete?id=@exp.getId()" class="noLinkColor"> delete </a>
+                            <a title="edit instructions" href="editInstructions?expId=@exp.getId()" class="noLinkColor"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                        </div>
+
+                        <div style="float : right ; margin-right : 10px ;">
+                            <a title="delete experiment" onclick="deleteExperiment(@exp.getId())" class="noLinkColor"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
                         </div>
                     </div>
                 }

@@ -29,7 +29,7 @@ public class StoryCompletionResults extends Model{
     String origin;
 
     @Basic
-    @Column(name = "timestamp")
+    @Column(name = "timestamp", columnDefinition = "timestamp default now()")
     Date timestamp;
 
     @Basic
@@ -39,6 +39,10 @@ public class StoryCompletionResults extends Model{
     @Basic
     @Column(name = "questionId")
     int questionId;
+
+    @Basic
+    @Column(name = "itemId")
+    String itemId;
 
     @Basic
     @Column(columnDefinition = "TEXT", name = "result")

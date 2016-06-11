@@ -14,7 +14,6 @@ import javax.json.JsonObjectBuilder;
 import javax.persistence.*;
 
 import models.Groups.AbstractGroup;
-import models.Questions.DiscourseConnectivesExperiment.CheaterDetectionQuestion;
 import models.Questions.ExampleQuestion;
 
 import models.Questions.Question;
@@ -152,7 +151,7 @@ public class LingoExpModel extends Model {
         this.additionalExplanations = additionalExplanations;
     }
 
-    public List<CheaterDetectionQuestion> getCheaterDetectionQuestions() throws SQLException {
+    /*public List<CheaterDetectionQuestion> getCheaterDetectionQuestions() throws SQLException {
         List<CheaterDetectionQuestion> result = new LinkedList<CheaterDetectionQuestion>();
 
         PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT * FROM LingoExpModels_contain_CheaterDetectionQuestions WHERE LingoExpModelID=" + this.getId());
@@ -172,7 +171,7 @@ public class LingoExpModel extends Model {
         for (CheaterDetectionQuestion cdq : cheaterDetectionQuestions) {
             cdq.addUsedInExperiments(this);
         }
-    }
+    }*/
 
     public List<ExampleQuestion> getExampleQuestions() throws SQLException {
         List<ExampleQuestion> result = new LinkedList<ExampleQuestion>();
@@ -238,9 +237,9 @@ public class LingoExpModel extends Model {
     @Override
     public void delete(){
         try {
-            for (CheaterDetectionQuestion cheaterDetectionQuestion : getCheaterDetectionQuestions()) {
+            /*for (CheaterDetectionQuestion cheaterDetectionQuestion : getCheaterDetectionQuestions()) {
                 cheaterDetectionQuestion.delete();
-            }
+            }*/
             for (ExampleQuestion exampleQuestion : getExampleQuestions()) {
                 Question question = (Question) exampleQuestion;
                 question.delete();
@@ -309,11 +308,12 @@ public class LingoExpModel extends Model {
         }
         experimentBuilder.add("exampleQuestions", exampleQuestionsBuilder.build());
 
-        JsonArrayBuilder cheaterDetectionQuestionsBuilder = Json.createArrayBuilder();
+        /*JsonArrayBuilder cheaterDetectionQuestionsBuilder = Json.createArrayBuilder();
         for (CheaterDetectionQuestion cdq : getCheaterDetectionQuestions()) {
             cheaterDetectionQuestionsBuilder.add(cdq.returnJSON());
         }
         experimentBuilder.add("cheaterDetectionQuestions", cheaterDetectionQuestionsBuilder.build());
+        */
 
         JsonArrayBuilder partBuilder = Json.createArrayBuilder();
         for (AbstractGroup p : getParts()) {

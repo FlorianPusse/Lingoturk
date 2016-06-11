@@ -33,7 +33,7 @@ public class PictureNamingChunk extends PartQuestion {
 
     @Basic
     @Column(columnDefinition = "TEXT", name = "PictureNaming_text")
-    public String number;
+    public String PictureNamingChunk_number;
 
     @OneToMany(cascade = CascadeType.ALL)
     public List<PictureNamingQuestion> pictures = new LinkedList<>();
@@ -67,7 +67,7 @@ public class PictureNamingChunk extends PartQuestion {
             questions.add(new PictureNamingQuestion(pictureNode));
         }
 
-        this.number = number;
+        this.PictureNamingChunk_number = number;
         this.pictures = questions;
     }
 
@@ -89,7 +89,7 @@ public class PictureNamingChunk extends PartQuestion {
         int chunkId = resultNode.get("chunkId").asInt();
 
         PreparedStatement statement = Repository.getConnection().prepareStatement(
-                "INSERT INTO PictureNamingResults(WorkerId,partId,chunkId,pictureId,answer) VALUES(?,?,?,?,?)"
+                "INSERT INTO PictureNamingResults(id,WorkerId,partId,chunkId,pictureId,answer) VALUES(nextval('PictureNamingResults_seq'), ?,?,?,?,?)"
         );
 
         statement.setString(1, workerId);

@@ -80,20 +80,7 @@ public class FullGroup extends AbstractGroup {
 
     @Override
     public JsonObject returnJSON() throws SQLException {
-        JsonObjectBuilder partBuilder = Json.createObjectBuilder();
-        JsonArrayBuilder questionsBuilder = Json.createArrayBuilder();
-
-        List<PartQuestion> questions = getQuestions();
-        //Collections.addAll(questions, StoryCompletionQuestion.fillers);
-        Collections.shuffle(questions);
-
-        for (PartQuestion partQuestion : getQuestions()) {
-            questionsBuilder.add(partQuestion.returnJSON());
-        }
-
-        partBuilder.add("questions", questionsBuilder.build());
-
-        return partBuilder.build();
+        return super.returnJSON();
     }
 
 }

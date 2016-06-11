@@ -37,7 +37,7 @@
 
         <blockquote id="Sentence1" style="padding-bottom:7px ; padding-top:7px">
             <p><strong>
-                Part 1: </strong>@Html(question.asInstanceOf[models.Questions.DiscourseConnectivesExperiment.DiscourseConnectivesQuestion].getSentence1())</p>
+                Part 1: </strong>@Html(question.asInstanceOf[models.Questions.DiscourseConnectivesExperiment.DiscourseConnectivesQuestion].DiscourseConnectives_sentence1)</p>
         </blockquote>
 
         <div ng-if="!RC.categorySet" class="panel panel-warning" id="sortableDiv">
@@ -119,7 +119,7 @@
 
         <blockquote id="Sentence2" style="padding-bottom:7px ; padding-top:7px">
             <p><strong>
-                Part 2: </strong>@Html(question.asInstanceOf[models.Questions.DiscourseConnectivesExperiment.DiscourseConnectivesQuestion].getSentence2())</p>
+                Part 2: </strong>@Html(question.asInstanceOf[models.Questions.DiscourseConnectivesExperiment.DiscourseConnectivesQuestion].DiscourseConnectives_sentence2)</p>
         </blockquote>
 
         @if(turkSubmitTo != null) {
@@ -127,19 +127,21 @@
         }
         <button ng-if="!RC.categorySet" id="categoriesChosenButton" ng-click="RC.categoriesChosen()" type="button" class="btn btn-default" disabled="disabled">That's it</button>
 
-        ()
-
         @if(question != null) {
             <input type="hidden" name="questionId" id="questionId" value="@question.getId()"/>
         }
         @if(part != null) {
             <input type="hidden" name="partId" id="partId" value="@part.getId()"/>
         }
-        <input type="hidden" name="questionId" id="questionId" value="@question.getId"/>
+        @if(worker != null){
+            <input type="hidden" name="workerId" id="workerId" value="@worker.getId()">
+        }
+        @if(exp != null){
+            <input type="hidden" id="expId" value="@exp.getId()">
+        }
+        <input type="hidden" name="origin" id="origin" value="@origin">
         <input type="hidden" name="assignmentId" id="assignmentId" value="@assignmentId">
-        <input type="hidden" name="workerId" value="@worker.getId()">
-        <input type="hidden" name="hitId" value="@hitId">
-        <input type="hidden" id="expId" value="@exp.getId()">
+        <input type="hidden" name="hitId" id="hitId" value="@hitId">
 
             <!-- You can add more input elements here -->
         <input type="hidden" name="category" id="category" value="">

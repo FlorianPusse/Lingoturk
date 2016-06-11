@@ -7,7 +7,7 @@
     <div class="div-wrapper" ng-app="Settings" ng-controller="SettingsController as SC">
         <div class="btn-group-wrap">
             <div class="btn-group">
-                <button type="button" class="btn btn-default active" data-optionType="#keySettings">Keys</button>
+                <button type="button" class="btn btn-default active" data-optionType="#keySettings">Mechanical Turk Keys</button>
                 <button type="button" class="btn btn-default" data-optionType="#ipSettings">URL</button>
                 <button type="button" class="btn btn-default" data-optionType="#passwordSettings">Change password</button>
             </div>
@@ -15,6 +15,9 @@
 
         @** Change keys **@
         <div id="keySettings" class="settingsContainer">
+            <span style="display:block; margin-bottom: 10px">These keys are required to publish an experiment via Mechanical Turk. In order to get these keys you need an Mechanical Turk. Then you can retrieve these keys from the <a href="https://aws.amazon.com/de/">AWS Site</a></span>
+            <p style="text-align:center"><strong>Note: </strong> These keys are only required if you plan to use Mechanical Turk.</p>
+
             <div class="form-group">
                 <label for="newAccKey">Access key</label>
                 <input id="newAccKey" type="text" class="form-control" ng-model="SC.accessKey" placeholder=@accKey>
@@ -28,6 +31,8 @@
 
         @** Change IP **@
         <div id="ipSettings" class="settingsContainer">
+            <span style="display:block; margin-bottom: 10px">Set the URL that can be used to access the machine this LingoTurk installation is running on (e.g. "http://localhost:9000" if you use the default options on your own development machine):</span>
+
             <div class="form-group">
                 <label for="ip">URL</label>
                 <input id="ip" type="text" class="form-control" ng-model="SC.ipAddress" placeholder=@staticIP>
@@ -36,6 +41,8 @@
 
         @** Change password **@
         <div id="passwordSettings" class="settingsContainer">
+            <span style="display:block; margin-bottom: 10px">Set a new password to access the LingoTurk admin interface:</span>
+
             <div class="form-group">
                 <label for="oldPassword">Old password</label>
                 <input id="oldPassword" type="text" class="form-control" ng-model="SC.oldPassword" placeholder="Old password">

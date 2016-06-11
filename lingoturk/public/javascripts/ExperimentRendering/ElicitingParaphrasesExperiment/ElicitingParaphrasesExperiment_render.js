@@ -39,7 +39,7 @@
                 .error(function () {
                     setTimeout(function () {
                         self.submitting = false;
-                        self.submitResults()
+                        self.submitResults();
                     }, 2000);
                 });
         };

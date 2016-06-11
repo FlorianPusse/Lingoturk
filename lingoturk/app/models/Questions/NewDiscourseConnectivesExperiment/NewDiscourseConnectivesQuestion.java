@@ -29,112 +29,114 @@ public class NewDiscourseConnectivesQuestion extends PartQuestion {
 
     /* BEGIN OF VARIABLES BLOCK */
 
-    @Basic
-    @Column(name = "NewDiscourseConnectives_sentence1", columnDefinition = "TEXT")
-    public java.lang.String sentence1 = "";
+	@Basic
+	@Column(name="NewDiscourseConnectives_sentence1", columnDefinition = "TEXT")
+	public java.lang.String NewDiscourseConnectives_sentence1 = "";
 
-    @Basic
-    @Column(name = "NewDiscourseConnectives_sentence2", columnDefinition = "TEXT")
-    public java.lang.String sentence2 = "";
+	@Basic
+	@Column(name="NewDiscourseConnectives_sentence2", columnDefinition = "TEXT")
+	public java.lang.String NewDiscourseConnectives_sentence2 = "";
 
-    @Basic
-    @Column(name = "NewDiscourseConnectives_context1", columnDefinition = "TEXT")
-    public java.lang.String context1 = "";
+	@Basic
+	@Column(name="NewDiscourseConnectives_context1", columnDefinition = "TEXT")
+	public java.lang.String NewDiscourseConnectives_context1 = "";
 
-    @Basic
-    @Column(name = "NewDiscourseConnectives_context2", columnDefinition = "TEXT")
-    public java.lang.String context2 = "";
+	@Basic
+	@Column(name="NewDiscourseConnectives_context2", columnDefinition = "TEXT")
+	public java.lang.String NewDiscourseConnectives_context2 = "";
 
-    @Basic
-    @Column(name = "NewDiscourseConnectives_condition", columnDefinition = "TEXT")
-    public java.lang.String condition = "";
+	@Basic
+	@Column(name="NewDiscourseConnectives_condition", columnDefinition = "TEXT")
+	public java.lang.String NewDiscourseConnectives_condition = "";
 
-    @Basic
-    @Column(name = "NewDiscourseConnectives_WSJID", columnDefinition = "TEXT")
-    public java.lang.String WSJID = "";
+	@Basic
+	@Column(name="NewDiscourseConnectives_WSJID", columnDefinition = "TEXT")
+	public java.lang.String NewDiscourseConnectives_WSJID = "";
 
-    @Basic
-    @Column(name = "NewDiscourseConnectives_relation", columnDefinition = "TEXT")
-    public java.lang.String relation = "";
+	@Basic
+	@Column(name="NewDiscourseConnectives_relation", columnDefinition = "TEXT")
+	public java.lang.String NewDiscourseConnectives_relation = "";
 
-    @Basic
-    @Column(name = "NewDiscourseConnectives_pdtbConn", columnDefinition = "TEXT")
-    public java.lang.String pdtbConn = "";
+	@Basic
+	@Column(name="NewDiscourseConnectives_pdtbConn", columnDefinition = "TEXT")
+	public java.lang.String NewDiscourseConnectives_pdtbConn = "";
 
-    @Basic
-    @Column(name = "NewDiscourseConnectives_pdtbSense", columnDefinition = "TEXT")
-    public java.lang.String pdtbSense = "";
+	@Basic
+	@Column(name="NewDiscourseConnectives_pdtbSense", columnDefinition = "TEXT")
+	public java.lang.String NewDiscourseConnectives_pdtbSense = "";
 
-    @Basic
-    @Column(name = "NewDiscourseConnectives_rstSense", columnDefinition = "TEXT")
-    public java.lang.String rstSense = "";
+	@Basic
+	@Column(name="NewDiscourseConnectives_rstSense", columnDefinition = "TEXT")
+	public java.lang.String NewDiscourseConnectives_rstSense = "";
 
-    @Basic
-    @Column(name = "NewDiscourseConnectives_nr", columnDefinition = "TEXT")
-    public java.lang.String nr = "";
+	@Basic
+	@Column(name="NewDiscourseConnectives_nr", columnDefinition = "TEXT")
+	public java.lang.String NewDiscourseConnectives_nr = "";
+
+    @Override
+    public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {
+		JsonNode sentence1Node = questionNode.get("sentence1");
+		if (sentence1Node != null){
+			this.NewDiscourseConnectives_sentence1 = sentence1Node.asText();
+		}
+
+		JsonNode sentence2Node = questionNode.get("sentence2");
+		if (sentence2Node != null){
+			this.NewDiscourseConnectives_sentence2 = sentence2Node.asText();
+		}
+
+		JsonNode context1Node = questionNode.get("context1");
+		if (context1Node != null){
+			this.NewDiscourseConnectives_context1 = context1Node.asText();
+		}
+
+		JsonNode context2Node = questionNode.get("context2");
+		if (context2Node != null){
+			this.NewDiscourseConnectives_context2 = context2Node.asText();
+		}
+
+		JsonNode conditionNode = questionNode.get("condition");
+		if (conditionNode != null){
+			this.NewDiscourseConnectives_condition = conditionNode.asText();
+		}
+
+		JsonNode WSJIDNode = questionNode.get("WSJID");
+		if (WSJIDNode != null){
+			this.NewDiscourseConnectives_WSJID = WSJIDNode.asText();
+		}
+
+		JsonNode relationNode = questionNode.get("relation");
+		if (relationNode != null){
+			this.NewDiscourseConnectives_relation = relationNode.asText();
+		}
+
+		JsonNode pdtbConnNode = questionNode.get("pdtbConn");
+		if (pdtbConnNode != null){
+			this.NewDiscourseConnectives_pdtbConn = pdtbConnNode.asText();
+		}
+
+		JsonNode pdtbSenseNode = questionNode.get("pdtbSense");
+		if (pdtbSenseNode != null){
+			this.NewDiscourseConnectives_pdtbSense = pdtbSenseNode.asText();
+		}
+
+		JsonNode rstSenseNode = questionNode.get("rstSense");
+		if (rstSenseNode != null){
+			this.NewDiscourseConnectives_rstSense = rstSenseNode.asText();
+		}
+
+		JsonNode nrNode = questionNode.get("nr");
+		if (nrNode != null){
+			this.NewDiscourseConnectives_nr = nrNode.asText();
+		}
+
+    }
 
 	/* END OF VARIABLES BLOCK */
 
 
+
     public NewDiscourseConnectivesQuestion() {
-    }
-
-    @Override
-    public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {
-        JsonNode sentence1Node = questionNode.get("sentence1");
-        if (sentence1Node != null) {
-            this.sentence1 = sentence1Node.asText();
-        }
-
-        JsonNode sentence2Node = questionNode.get("sentence2");
-        if (sentence2Node != null) {
-            this.sentence2 = sentence2Node.asText();
-        }
-
-        JsonNode context1Node = questionNode.get("context1");
-        if (context1Node != null) {
-            this.context1 = context1Node.asText();
-        }
-
-        JsonNode context2Node = questionNode.get("context2");
-        if (context2Node != null) {
-            this.context2 = context2Node.asText();
-        }
-
-        JsonNode conditionNode = questionNode.get("condition");
-        if (conditionNode != null) {
-            this.condition = conditionNode.asText();
-        }
-
-        JsonNode WSJIDNode = questionNode.get("WSJID");
-        if (WSJIDNode != null) {
-            this.WSJID = WSJIDNode.asText();
-        }
-
-        JsonNode relationNode = questionNode.get("relation");
-        if (relationNode != null) {
-            this.relation = relationNode.asText();
-        }
-
-        JsonNode pdtbConnNode = questionNode.get("pdtbConn");
-        if (pdtbConnNode != null) {
-            this.pdtbConn = pdtbConnNode.asText();
-        }
-
-        JsonNode pdtbSenseNode = questionNode.get("pdtbSense");
-        if (pdtbSenseNode != null) {
-            this.pdtbSense = pdtbSenseNode.asText();
-        }
-
-        JsonNode rstSenseNode = questionNode.get("rstSense");
-        if (rstSenseNode != null) {
-            this.rstSense = rstSenseNode.asText();
-        }
-
-        JsonNode nrNode = questionNode.get("nr");
-        if (nrNode != null) {
-            this.nr = nrNode.asText();
-        }
     }
 
     @Override
@@ -174,14 +176,6 @@ public class NewDiscourseConnectivesQuestion extends PartQuestion {
 
             statement.close();
         }
-    }
-
-    public String getSentence1() {
-        return sentence1;
-    }
-
-    public String getSentence2() {
-        return sentence2;
     }
 
     public int getExperimentID() {

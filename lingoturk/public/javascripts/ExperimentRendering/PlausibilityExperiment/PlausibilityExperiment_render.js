@@ -5,6 +5,7 @@
         var self = this;
         this.assignmentId = -1;
         this.part = null;
+        this.partId = null;
         this.questions = [];
         this.currentChunk = 0;
         this.origin = "";
@@ -64,7 +65,6 @@
                 workerId = self.workerId;
             }
 
-            var partId = self.part.id;
             var answerList = [];
 
             for(var i = 0; i < self.questions.length; i++){
@@ -77,7 +77,7 @@
             var result = {
                 experimentType : "PlausibilityExperiment",
                 workerId : workerId,
-                partId : partId,
+                partId : self.partId,
                 answers : answerList
             };
 
@@ -139,6 +139,7 @@
             self.origin = $("#origin").val();
 
             var partId = $("#partId").val();
+            self.partId = partId;
             if (partId != "") {
                 $http.get("/returnPart?partId=" + partId).success(function (data) {
                     var json = data;

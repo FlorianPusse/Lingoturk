@@ -19,6 +19,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Iterator;
 
+import static play.mvc.Results.ok;
+
 @Entity
 @Inheritance
 @DiscriminatorValue("PlausibilityExperiment.PlausibilityQuestion")
@@ -28,31 +30,31 @@ public class PlausibilityQuestion extends PartQuestion{
 
 	@Basic
 	@Column(name="Plausibility_number", columnDefinition = "TEXT")
-	public java.lang.String number = "";
+	public java.lang.String Plausibility_number = "";
 
 	@Basic
 	@Column(name="Plausibility_condition", columnDefinition = "TEXT")
-	public java.lang.String condition = "";
+	public java.lang.String Plausibility_condition = "";
 
 	@Basic
 	@Column(name="Plausibility_text", columnDefinition = "TEXT")
-	public java.lang.String text = "";
+	public java.lang.String Plausibility_text = "";
 
     @Override
     public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {
 		JsonNode numberNode = questionNode.get("number");
 		if (numberNode != null){
-			this.number = numberNode.asText();
+			this.Plausibility_number = numberNode.asText();
 		}
 
 		JsonNode conditionNode = questionNode.get("condition");
 		if (conditionNode != null){
-			this.condition = conditionNode.asText();
+			this.Plausibility_condition = conditionNode.asText();
 		}
 
 		JsonNode textNode = questionNode.get("text");
 		if (textNode != null){
-			this.text = textNode.asText();
+			this.Plausibility_text = textNode.asText();
 		}
 
     }
@@ -60,11 +62,8 @@ public class PlausibilityQuestion extends PartQuestion{
 	/* END OF VARIABLES BLOCK */
 
 
-    public PlausibilityQuestion(String number, String condition, String text){
-        this.number = number;
-        this.condition = condition;
-        this.text = text;
-    }
+
+    public PlausibilityQuestion(){}
 
     @Override
     public JsonObject returnJSON() throws SQLException {
@@ -78,7 +77,7 @@ public class PlausibilityQuestion extends PartQuestion{
 
     @Override
     public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
-        throw new RuntimeException("This method should not be called");
+        return ok(views.html.ExperimentRendering.PlausibilityExperiment.PlausibilityExperiment_render.render(this, null, worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK"));
     }
 
     @Override
@@ -105,17 +104,5 @@ public class PlausibilityQuestion extends PartQuestion{
         }
 
         statement.close();
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public String getCondition() {
-        return condition;
-    }
-
-    public String getText() {
-        return text;
     }
 }

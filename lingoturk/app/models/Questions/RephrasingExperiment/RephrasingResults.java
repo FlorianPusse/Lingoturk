@@ -29,7 +29,7 @@ public class RephrasingResults extends Model{
     String origin;
 
     @Basic
-    @Column(name = "timestamp")
+    @Column(name = "timestamp", columnDefinition = "timestamp default now()")
     Date timestamp;
 
     @Basic
@@ -41,12 +41,12 @@ public class RephrasingResults extends Model{
     int questionId;
 
     @Basic
-    @Column(columnDefinition = "TEXT", name = "choice1")
-    int choice1;
+    @Column(name = "choice1")
+    boolean choice1;
 
     @Basic
-    @Column(columnDefinition = "TEXT", name = "choice2")
-    int choice2;
+    @Column(name = "choice2")
+    boolean choice2;
 
     @Basic
     @Column(columnDefinition = "TEXT", name = "answer1")

@@ -5,12 +5,17 @@ import models.LingoExpModel;
 import models.Questions.LinkingV1Experiment.Item;
 import models.Questions.LinkingV1Experiment.Script;
 import models.Repository;
+import models.Worker;
+import play.data.DynamicForm;
+import play.mvc.Result;
 
 import javax.persistence.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+
+import static play.mvc.Results.ok;
 
 @Entity
 @Inheritance
@@ -50,5 +55,10 @@ public class ScriptV2 extends Script {
 
     public ScriptV2(String scriptId, String side, LingoExpModel exp) {
         super(scriptId, side, exp);
+    }
+
+    @Override
+    public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
+        return ok(views.html.ExperimentRendering.LinkingV2Experiment.LinkingV2Experiment_render.render(this, null, worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK"));
     }
 }

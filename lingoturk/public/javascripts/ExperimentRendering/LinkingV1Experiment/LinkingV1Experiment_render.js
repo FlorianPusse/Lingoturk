@@ -69,8 +69,9 @@
                     //parent.postMessage("FINISHED",document.location.origin);
                 })
                 .error(function () {
+                    self.submitted = false;
                     setTimeout(function () {
-                        self.submit()
+                        self.submit();
                     }, 2000);
                 });
         };

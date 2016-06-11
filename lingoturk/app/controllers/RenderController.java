@@ -77,6 +77,11 @@ public class RenderController extends Controller {
         return c.getMethod("render", Question.class, AbstractGroup.class, Worker.class, String.class, String.class, String.class, LingoExpModel.class, DynamicForm.class, String.class);
     }
 
+    public static Method getPreviewMethod(String experimentType) throws NoSuchMethodException, ClassNotFoundException {
+        Class<?> c = Class.forName("views.html.ExperimentRendering." + experimentType + "." + experimentType + "_preview");
+        return c.getMethod("render",LingoExpModel.class);
+    }
+
     /**
      * Renders an experiment's worker-view of any type.
      *
@@ -90,14 +95,23 @@ public class RenderController extends Controller {
         try {
             DynamicForm df = new DynamicForm().bindFromRequest();
 
+            if(!(Type.equals("question") || Type.equals("part"))){
+                return internalServerError("Unknown Type specifier: " + Type);
+            }
+
             // Get right experiment model
-            LingoExpModel exp;
-            Question question;
-            AbstractGroup group;
+            Question question = Type.equals("question") ? Question.byId(id) : null;
+            AbstractGroup group = Type.equals("part") ? AbstractGroup.byId(id) : null;
+            LingoExpModel exp = LingoExpModel.byId(Type.equals("question") ? question.getExperimentID() : group.getExperimentUsedIn());
 
             // if worker id is not available (null) the site just shows an preview
             if (assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE") || workerId == null) {
-                return ok(views.html.ExperimentRendering.LinkingV2Experiment.LinkingV2Experiment_preview.render());
+                try {
+                    return ok((Html) getPreviewMethod(exp.getExperimentType()).invoke(null,exp));
+                }catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
+                    // No preview available, try to continue
+                    workerId = (workerId != null) ? workerId : "NA";
+                }
             }
 
             // Retrieve worker from DB
@@ -113,13 +127,9 @@ public class RenderController extends Controller {
 
             switch (Type) {
                 case "question":
-                    question = Question.byId(id);
-
                     if (question == null) {
                         return internalServerError("Unknown experimentId");
                     }
-
-                    exp = LingoExpModel.byId(question.getExperimentID());
 
                     if (worker.getIsBlockedFor(exp.getId())) {
                         return ok(views.html.ExperimentRendering.blockedWorker.render());
@@ -127,13 +137,9 @@ public class RenderController extends Controller {
 
                     return question.renderAMT(worker, assignmentId, hitId, turkSubmitTo, exp, df);
                 case "part":
-                    group = AbstractGroup.byId(id);
-
                     if (group == null) {
                         return internalServerError("Unknown groupId");
                     }
-
-                    exp = LingoExpModel.byId(group.getExperimentUsedIn());
 
                     if (worker.getIsBlockedFor(exp.getId())) {
                         return ok(views.html.ExperimentRendering.blockedWorker.render());

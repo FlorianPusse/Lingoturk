@@ -6,7 +6,11 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import models.Groups.AbstractGroup;
 import models.LingoExpModel;
@@ -65,10 +69,23 @@ public abstract class PartQuestion extends PublishableQuestion {
         }
     }
 
+    private class JsonNaming extends PropertyNamingStrategy {
+        @Override
+        public String nameForField(MapperConfig config, AnnotatedField field, String defaultName) {
+            if(PartQuestion.class.isAssignableFrom(field.getDeclaringClass())){
+                String className = field.getDeclaringClass().getSimpleName();
+                String experimentName = className.substring(0,className.length() - "Question".length());
+                return defaultName.replaceFirst(experimentName + "_","");
+            }
+            return defaultName;
+        }
+    }
+
     @Override
     public JsonObject returnJSON() throws SQLException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setAnnotationIntrospector(new JsonRestriction());
+        mapper.setPropertyNamingStrategy(new JsonNaming());
         mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
         mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
 

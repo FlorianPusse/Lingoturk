@@ -8,7 +8,6 @@ import java.util.*;
 
 import com.amazonaws.mturk.requester.*;
 import models.Groups.*;
-import models.Questions.DiscourseConnectivesExperiment.CheaterDetectionQuestion;
 import models.Worker;
 import play.mvc.*;
 import views.html.*;
@@ -206,11 +205,6 @@ public class Application extends Controller {
 
         String url = "";
 
-        for (CheaterDetectionQuestion q : experiment.getCheaterDetectionQuestions()) {
-            actCounter++;
-            url = q.publish(service, publishedId, hitTYPE, lifetime, maxAssign);
-        }
-
         for (AbstractGroup p : experiment.getParts()) {
             actCounter++;
             url = p.publishOnAMT(service, publishedId, hitTYPE, lifetime, maxAssign);
@@ -219,12 +213,12 @@ public class Application extends Controller {
     }
 
     /**
-     * Renders the contact information page
+     * Renders the about information page
      * @return Result object containing the page
      */
     @Security.Authenticated(Secured.class)
-    public static Result contact() {
-        return ok(contact.render());
+    public static Result about() {
+        return ok(about.render());
     }
 
     /**

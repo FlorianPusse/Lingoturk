@@ -43,7 +43,17 @@
         });
         $("button[name='dest']").click(function(){
             $("#destination").val($(this).attr("id"));
-        })
+        });
+
+        $('form').submit(function(e) {
+            var currentForm = this;
+            e.preventDefault();
+            bootbox.confirm("Are you sure you want to publish this experiment on Mechanical Turk?", function(result) {
+                if (result) {
+                    currentForm.submit();
+                }
+            });
+        });
     }) ;
     </script>
 
@@ -89,8 +99,8 @@
                     <div class="form-group text-center">
                         <label for="destinationDiv"> Choose destination: </label><br/>
                         <div id="destinationDiv" class="btn-group">
-                            <button type="button" name="dest" id="sandbox" class="btn btn-default active">Upload to Sandbox</button>
-                            <button type="button" name="dest" id="amt" class="btn btn-default">Upload to Mechanical Turk</button>
+                            <button type="button" name="dest" id="sandbox" class="btn btn-default active">Sandbox</button>
+                            <button type="button" name="dest" id="amt" class="btn btn-default"> Mechanical Turk</button>
                             <input id="destination" type="hidden" name="destination" value="sandbox">
                         </div>
                     </div>

@@ -119,7 +119,7 @@ public class LinkingV2PoolGroup extends AbstractGroup {
             String fileName = partNode.get("fileName").asText();
             System.out.println(fileName);
 
-            String descriptionJson = partNode.get("lhs").asText();
+            String descriptionJson = partNode.get("description").asText();
             List<Script> descriptionList = Script.createScripts(descriptionJson, null, experiment, false);
 
             questions = new LinkedList<>(descriptionList);

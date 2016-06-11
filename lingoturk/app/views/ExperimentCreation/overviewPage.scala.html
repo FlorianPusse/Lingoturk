@@ -1,19 +1,88 @@
 @(experimentNames : java.util.List[String])
 
 @main("Create New Experiment"){
-    <p style="font-size: 1.2em;">Which kind of experiment do you want to create?<br></p>
+    <style>
+        .navBox {
+            height: 250px;
+            width: 250px;
+            display: inline-block;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        .navBox > b {
+            line-height: initial;
+        }
+    </style>
+    <script>
+        function deleteExperimentType(name){
+            bootbox.confirm("Are you sure you want to delete this experiment type? It will not be possible to restore it afterwards.", function(result) {
+                if(result){
+                    window.location.href = "/deleteExperimentType?experimentName=" + name;
+                }
+            });
+        }
+        function copyExperimentType(oldExperimentType){
+            bootbox.prompt("Base new experiment type on existing type: How do you want to name the new experiment type? (Names may only consist of alpha numeric characters!)", function(result) {
+                if (result !== null) {
+                    if(result.trim() != "" && /^[a-z0-9]+$/i.test(result.trim())){
+                        var data = {
+                            experimentType : "COPY",
+                            newTypeName : result,
+                            sourceTypeName : oldExperimentType.substring(0,oldExperimentType.length - "Experiment".length),
+                            questionFields : []
+                        };
+                        var stringData = JSON.stringify(data);
+                        $.ajax({
+                            type: "POST",
+                            url : "/createNewExperimentType",
+                            data : stringData,
+                            contentType: "application/json"
+                        }).done(function() {
+                            bootbox.alert("Experiment type created. You will be redirected to the index page!", function() {
+                                window.location.href = "/";
+                            });
+                        }).fail(function(data) {
+                            bootbox.alert("Could not create experiment: " + data.responseText);
+                        })
+                    }else{
+                        bootbox.alert("Error! New type name is either empty or non alphanumeric.");
+                    }
+                }
+            });
+        }
+        function zoomPicture(path){
+            bootbox.dialog({
+                message: "<img style='display: block;margin: 0 auto; width: 100%' src='" + path + "'>",
+                backdrop: true,
+                onEscape: function() {}
+            });
+        }
+    </script>
 
     <div class="row" style="padding-bottom:30px">
-        @for(experimentName <- experimentNames){
-        <a href="/createExperiment?name=@experimentName" class="noLinkColor">
-            <div class="experimentSelection navBox">
-                <b>@experimentName</b><br/>
-            </div>
-        </a>
-        }
-    </div>
-
-    <div style="margin-bottom:120px">
-        <button class="btn btn-success" style="float:right" type="button" onclick="window.location='/experimentCreationInterface'">Create new experiment type</button>
+        <p style="font-size: 1.2em; text-align: center;">Which kind of experiment do you want to create?</p>
+        <div style="display:inline-block; text-align:center">
+            <a href="/experimentCreationInterface" class="noLinkColor">
+                <div class="experimentSelection navBox" style="background-color: rgba(177, 177, 177, 0.22) !important;">
+                    <b>Create new experiment type</b><br/>
+                </div>
+            </a>
+            @for(experimentName <- experimentNames){
+            <a href="/createExperiment?name=@experimentName" class="noLinkColor">
+                <div class="experimentSelection navBox">
+                    <b>@experimentName.substring(0,experimentName.length() - "Experiment".length())</b><br/>
+                    <div style="position:relative">
+                        <img src="/assets/images/Experiments/@experimentName/preview.png" style="max-width: 200px; max-height: 150px" onerror="$(this).parent().hide()">
+                        <span onclick="zoomPicture('/assets/images/Experiments/@experimentName/preview.png'); return false;" style="position: absolute; right: 22px; top: 5px; display: table; font-size: 20px" class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+                    </div>
+                    <div>
+                        <span title="Base new experiment type on existing type" onclick="copyExperimentType('@experimentName'); return false;" class="glyphicon glyphicon-duplicate" aria-hidden="true"></span>
+                        <span title="Delete experiment type" onclick="deleteExperimentType('@experimentName'); return false;" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </div>
+                </div>
+            </a>
+            }
+        </div>
     </div>
 }

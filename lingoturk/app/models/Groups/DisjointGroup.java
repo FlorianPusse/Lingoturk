@@ -68,7 +68,7 @@ public class DisjointGroup extends AbstractGroup {
         try {
             Worker.Participation participation = worker.getParticipatesInPart(this);
 
-            if (!assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE_TEST")) {
+            if (!assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE") && !assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE_TEST")) {
                 if (participation == null) {
                     // Worker hasn't participated in the HIT already
                     Question question = this.getNextQuestion();
@@ -87,6 +87,7 @@ public class DisjointGroup extends AbstractGroup {
             // just a test -> return random question
             return this.getRandomQuestion(worker, assignmentId, hitId, turkSubmitTo, exp, df);
         } catch (SQLException e) {
+            e.printStackTrace();
             return internalServerError("Can't communicate with DB.");
         }
     }

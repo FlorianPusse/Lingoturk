@@ -1,12 +1,5 @@
 @main("Experiment creation interface"){
     <script type="text/javascript" src="@routes.Assets.at("javascripts/ExperimentManagement/experimentCreationInterface.js")"></script>
-    <script>
-        $(document).ready(function(){
-            $(".btn-group > .btn").click(function(){
-                $(this).addClass("active").siblings().removeClass("active");
-            });
-        });
-    </script>
     <style>
     .div-wrapper {
         border-radius: 12px 12px 12px 12px;
@@ -25,27 +18,9 @@
     </style>
 
     <div ng-app="ExperimentCreationInterface" ng-controller="InterfaceController as IC">
-        <div class="btn-group" style="margin: 15px auto; display: table">
-            <button type="button" class="btn btn-primary active" ng-click="IC.experimentType = 'COPY'">Copy existing experiment</button>
-            <button type="button" class="btn btn-primary" ng-click="IC.experimentType = 'NEW'">Create new experiment type</button>
-        </div>
-
         <div class="div-wrapper">
-            <div ng-if="IC.experimentType == 'COPY'" class="interfaceContainer">
-                <strong style="margin-bottom:20px;margin-top:20px; display:block;">Existing experiment type:</strong>
-
-                <div class="form-group">
-                    <label for="sourceTypeName">Source type name</label>
-                    <input id="sourceTypeName" type="text" class="form-control" ng-model="IC.sourceTypeName">
-                </div>
-                <div class="form-group">
-                    <label for="newTypeName">Experiment type name</label>
-                    <input id="newTypeName" type="text" class="form-control" ng-model="IC.newTypeName">
-                </div>
-            </div>
-
             <div ng-if="IC.experimentType == 'NEW' || IC.experimentType == 'REUSE'" class="interfaceContainer">
-                <strong style="margin-bottom:20px;margin-top:20px; display:block;">Create new experiment type:</strong>
+                <strong style="margin-bottom:20px;margin-top:20px; display:block;">Create empty experiment type:</strong>
 
                 <div class="form-group">
                     <label for="newTypeName">Experiment type name</label>
@@ -53,10 +28,15 @@
                 </div>
 
                 <div class="form-group">
-                    <div class="checkbox">
-                        <label style="font-weight: bold"><input type="checkbox" ng-model="IC.reuseCheckbox" ng-change="IC.experimentType = IC.reuseCheckbox" ng-true-value="'REUSE'" ng-false-value="'NEW'">Reuse existing group</label>
+                    <div class="radio">
+                        <label><input type="radio" value="FullGroup" ng-model="IC.sourceGroupName" name="sourceGroupName" checked>Participants should do all of the questions in a list <strong>(default)</strong></label>
                     </div>
-                    <input id="sourceGroupName" ng-disabled="IC.experimentType != 'REUSE'" type="text" class="form-control" ng-model="IC.sourceGroupName">
+                    <div class="radio">
+                        <label><input type="radio" value="DisjointGroup" ng-model="IC.sourceGroupName" name="sourceGroupName">Participants should only see one of the questions in a list</label>
+                    </div>
+                    <div class="radio">
+                        <label><input type="radio" value="PoolGroup" ng-model="IC.sourceGroupName" name="sourceGroupName">Participants should be able see multiple questions in a list</label>
+                    </div>
                 </div>
 
                 <hr style="border: 0; height: 1px; background: #333; background-image: linear-gradient(to right, #ccc, #333, #ccc);"/>

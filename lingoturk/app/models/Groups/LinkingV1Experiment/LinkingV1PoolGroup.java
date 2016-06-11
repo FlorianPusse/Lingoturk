@@ -106,7 +106,7 @@ public class LinkingV1PoolGroup extends AbstractGroup {
         List<Script> tmp = new LinkedList<>();
         for (PartQuestion s : getQuestions()) {
             Script s_tmp = (Script) s;
-            if (s_tmp.side.equals("lhs")) {
+            if (s_tmp.LinkingV1_side.equals("lhs")) {
                 tmp.add(s_tmp);
             }
         }
@@ -121,7 +121,7 @@ public class LinkingV1PoolGroup extends AbstractGroup {
         List<Script> tmp = new LinkedList<>();
         for (PartQuestion s : getQuestions()) {
             Script s_tmp = (Script) s;
-            if (s_tmp.side.equals("rhs")) {
+            if (s_tmp.LinkingV1_side.equals("rhs")) {
                 tmp.add(s_tmp);
             }
         }

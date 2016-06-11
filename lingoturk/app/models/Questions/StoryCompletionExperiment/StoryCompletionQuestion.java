@@ -19,6 +19,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Iterator;
 
+import static play.mvc.Results.ok;
+
 @Entity
 @Inheritance
 @DiscriminatorValue("StoryCompletionExperiment.StoryCompletionQuestion")
@@ -28,32 +30,33 @@ public class StoryCompletionQuestion extends PartQuestion {
 
 	@Basic
 	@Column(name="StoryCompletion_itemId", columnDefinition = "TEXT")
-	public java.lang.String itemId = "";
+	public java.lang.String StoryCompletion_itemId = "";
 
 	@Basic
 	@Column(name="StoryCompletion_storyType", columnDefinition = "TEXT")
-	public java.lang.String storyType = "";
+	public java.lang.String StoryCompletion_storyType = "";
 
 	@Basic
 	@Column(name="StoryCompletion_story", columnDefinition = "TEXT")
-	public java.lang.String story = "";
+	public java.lang.String StoryCompletion_story = "";
 
     @Override
     public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {
-	    JsonNode itemIdNode = questionNode.get("itemId");
+		JsonNode itemIdNode = questionNode.get("itemId");
 		if (itemIdNode != null){
-			this.itemId = itemIdNode.asText();
+			this.StoryCompletion_itemId = itemIdNode.asText();
 		}
 
-	    JsonNode storyTypeNode = questionNode.get("storyType");
+		JsonNode storyTypeNode = questionNode.get("storyType");
 		if (storyTypeNode != null){
-			this.storyType = storyTypeNode.asText();
+			this.StoryCompletion_storyType = storyTypeNode.asText();
 		}
 
-	    JsonNode storyNode = questionNode.get("story");
+		JsonNode storyNode = questionNode.get("story");
 		if (storyNode != null){
-			this.story = storyNode.asText();
+			this.StoryCompletion_story = storyNode.asText();
 		}
+
     }
 
 	/* END OF VARIABLES BLOCK */
@@ -74,9 +77,9 @@ public class StoryCompletionQuestion extends PartQuestion {
     };
 
     public StoryCompletionQuestion(String itemId,String storyType,String story){
-        this.itemId = itemId;
-        this.storyType = storyType;
-        this.story = story;
+        this.StoryCompletion_itemId = itemId;
+        this.StoryCompletion_storyType = storyType;
+        this.StoryCompletion_story = story;
     }
 
     public static PartQuestion createQuestion(LingoExpModel experiment, JsonNode questionNode) throws SQLException{
@@ -91,10 +94,9 @@ public class StoryCompletionQuestion extends PartQuestion {
     @Override
     public void writeResults(JsonNode resultNode) throws SQLException {
         String workerId = resultNode.get("workerId").asText();
-        System.out.println(workerId + " submitted results.");
 
         PreparedStatement statement = Repository.getConnection().prepareStatement(
-                "INSERT INTO StoryCompletionResults(id,WorkerId,itemId,result) VALUES(nextval('StoryCompletionResults_seq'),?,?,?)"
+                "INSERT INTO StoryCompletionResults(id, WorkerId,itemId,result) VALUES(nextval('StoryCompletionResults_seq'),?,?,?)"
         );
 
         statement.setString(1, workerId);
@@ -103,18 +105,10 @@ public class StoryCompletionQuestion extends PartQuestion {
             JsonNode r = resultIterator.next();
             String itemId = r.get("itemId").asText();
             String result = r.get("result").asText();
-            try {
-                statement.setString(2, itemId);
-                statement.setString(3, result);
-                statement.execute();
-            } catch (SQLException exception) {
-                Repository.saveErrorMessage(
-                        "[" + statement.toString() + "], " +
-                                "[" + workerId + "], " +
-                                "[" + itemId + "], " +
-                                "[" + result + "]"
-                );
-            }
+
+            statement.setString(2, itemId);
+            statement.setString(3, result);
+            statement.execute();
         }
         statement.close();
     }
@@ -131,10 +125,6 @@ public class StoryCompletionQuestion extends PartQuestion {
 
     @Override
     public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
-        return null;
-    }
-
-    public String getStory() {
-        return story;
+        return ok(views.html.ExperimentRendering.StoryCompletionExperiment.StoryCompletionExperiment_render.render(this, null, worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK"));
     }
 }

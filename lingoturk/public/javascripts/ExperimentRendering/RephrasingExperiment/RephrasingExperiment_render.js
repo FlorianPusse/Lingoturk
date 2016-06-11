@@ -4,6 +4,8 @@
     app.controller('RenderController', ['$http', '$timeout', function ($http, $timeout) {
         var self = this;
         self.questions = [];
+        self.questionId = null;
+        self.workerId = null;
 
         this.begin = function(index){
             var date = new Date();
@@ -30,13 +32,49 @@
             self.questions[index].startTime = date.getTime();
         };
 
+        self.submitting = false;
+        this.submitResults = function () {
+            if(self.submitting == true){
+                return;
+            }
+
+            self.submitting = true;
+
+            var answer = {};
+
+            for (var i = 0; i < self.questions.length; i++) {
+                var question = self.questions[i];
+                answer["choice" + (i + 1)] = question.choice;
+                answer["answer" + (i + 1)] = question.answer;
+                answer["readingTime" + (i + 1)] = question.readingTime;
+            }
+
+            var result = {
+                experimentType : "RephrasingExperiment",
+                questionId: self.questionId,
+                workerId: self.workerId,
+                answer: answer
+            };
+
+            $http.post("/submitResults", result)
+                .success(function () {
+                    $("#form").submit();
+                })
+                .error(function () {
+                    setTimeout(function () {
+                        self.submitting = false;
+                        self.submitResults();
+                    }, 2000);
+                });
+        };
+
         this.questionFinished = function(index){
             $(self.questions[index].order[1]).hide();
             $("#question" + index).hide();
             if(index + 1 < self.questions.length){
                 $("#question" + (index + 1)).show();
             }else{
-                $("#form").submit();
+                self.submitResults();
             }
         };
 
@@ -126,7 +164,10 @@
                 }
             });
 
+            self.workerId = $("#workerId").val();
+
             var id = $("#questionId").val();
+            self.questionId = id;
             if (id != "") {
                 $http.get("/getQuestion/" + id).success(function (data) {
                     var question1 = data.question1;

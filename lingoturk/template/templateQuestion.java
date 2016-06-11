@@ -17,6 +17,8 @@ import java.sql.SQLException;
 
 import java.util.*;
 
+import static play.mvc.Results.ok;
+
 // _IMPORT_PLACEHOLDER_
 
 @Entity
@@ -25,11 +27,6 @@ import java.util.*;
 public class _TEMPLATE_Question extends PartQuestion {
 
 // _VARIABLES_PLACEHOLDER_
-
-    @Override
-    public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {
-        super.setJSONData(experiment, questionNode);
-    }
 
     @Override
     public AssignmentResult parseAssignment(Assignment assignment) throws DocumentException {
@@ -48,7 +45,7 @@ public class _TEMPLATE_Question extends PartQuestion {
 
     @Override
     public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
-        return null;
+        return ok(views.html.ExperimentRendering._TEMPLATE_Experiment._TEMPLATE_Experiment_render.render(this, null, worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK"));
     }
 
 }

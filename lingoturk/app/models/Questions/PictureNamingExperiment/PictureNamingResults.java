@@ -29,7 +29,7 @@ public class PictureNamingResults extends Model{
     String origin;
 
     @Basic
-    @Column(name = "timestamp")
+    @Column(name = "timestamp", columnDefinition = "timestamp default now()")
     Date timestamp;
 
     @Basic
@@ -41,12 +41,14 @@ public class PictureNamingResults extends Model{
     int questionId;
 
     @Basic
+    @Column(name = "chunkId")
     int chunkId;
 
     @Basic
+    @Column(name = "pictureId")
     int pictureId;
 
     @Basic
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", name = "answer")
     String answer;
 }

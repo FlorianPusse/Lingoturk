@@ -86,7 +86,10 @@
         };
 
         this.resetParts = function () {
-            this.parts = [];
+            self.parts = [];
+            self.parts.push(new self.Part(1));
+            self.parts.push(new self.Part(2));
+            self.parts.push(new self.Part(3));
             $timeout(function () {
                 angular.element($("#angularApp")).scope().$apply()
             });

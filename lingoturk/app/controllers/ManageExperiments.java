@@ -15,13 +15,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import models.LingoExpModel;
 import models.Groups.AbstractGroup;
 import models.Groups.GroupFactory;
-import models.Questions.DiscourseConnectivesExperiment.CheaterDetectionQuestion;
-import models.Questions.ExampleQuestion;
 import models.Questions.LinkingV1Experiment.Prolific.Combination;
 import models.Questions.LinkingV1Experiment.Prolific.LinkingGroup;
 import models.Questions.PartQuestion;
 import models.Questions.Question;
-import models.Questions.QuestionFactory;
 import models.Repository;
 import models.Worker;
 import org.apache.commons.io.FileUtils;
@@ -45,6 +42,30 @@ import static org.apache.commons.io.FileUtils.listFiles;
 import static play.libs.Json.stringify;
 
 public class ManageExperiments extends Controller {
+
+    public static Result deleteExperimentType(String experimentName){
+        List<File> directories = new LinkedList<>();
+        directories.add(new File("app/models/Groups/" + experimentName));
+        directories.add(new File("app/models/Questions/" + experimentName));
+        directories.add(new File("app/views/ExperimentCreation/" + experimentName));
+        directories.add(new File("app/views/ExperimentRendering/" + experimentName));
+        directories.add(new File("public/javascripts/ExperimentCreation/" + experimentName));
+        directories.add(new File("public/javascripts/ExperimentRendering/" + experimentName));
+        directories.add(new File("public/stylesheets/ExperimentRendering/" + experimentName));
+
+        for(File d : directories){
+            if(d.exists() && d.isDirectory()){
+                try {
+                    FileUtils.deleteDirectory(d);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return internalServerError(e.getMessage());
+                }
+            }
+        }
+
+        return redirect("/");
+    }
 
     public static Result changeExperimentFields(String experimentName){
         return ok(views.html.ManageExperiments.changeExperimentFields.render(experimentName));
@@ -131,42 +152,42 @@ public class ManageExperiments extends Controller {
             if(fieldType.equals("java.lang.String") || fieldType.equals("String")){
                 createdFields += "\t@Basic\n";
                 createdFields += "\t@Column(name=\"" + experimentName + "_" + field[0] +  "\", columnDefinition = \"TEXT\")\n";
-                createdFields += "\tpublic " + field[1] + " " + field[0] + " = \"\";\n\n";
+                createdFields += "\tpublic " + field[1] + " " + experimentName + "_" + field[0] + " = \"\";\n\n";
 
                 setJsonFunction += "\t\tJsonNode " + field[0] + "Node = questionNode.get(\"" + field[0] + "\");\n";
                 setJsonFunction += "\t\tif (" + field[0] + "Node != null){\n";
-                setJsonFunction += "\t\t\tthis." + field[0] + " = " + field[0] + "Node.asText();\n";
+                setJsonFunction += "\t\t\tthis." + experimentName + "_" + field[0] + " = " + field[0] + "Node.asText();\n";
                 setJsonFunction += "\t\t}\n\n";
             }else if(fieldType.equals("java.lang.Integer") || fieldType.equals("Integer") || fieldType.equals("int")){
                 createdFields += "\t@Basic\n";
                 createdFields += "\t@Column(name=\"" + experimentName + "_" + field[0] + "\")\n";
-                createdFields += "\tpublic " + field[1] + " " + field[0] + " = -1;\n\n";
+                createdFields += "\tpublic " + field[1] + " " + experimentName + "_" + field[0] + " = -1;\n\n";
 
                 setJsonFunction += "\t\tJsonNode " + field[0] + "Node = questionNode.get(\"" + field[0] + "\");\n";
                 setJsonFunction += "\t\tif (" + field[0] + "Node != null){\n";
-                setJsonFunction += "\t\t\tthis." + field[0] + " = " + field[0] + "Node.asInt();\n";
+                setJsonFunction += "\t\t\tthis." + experimentName + "_" + field[0] + " = " + field[0] + "Node.asInt();\n";
                 setJsonFunction += "\t\t}\n\n";
             }else if(fieldType.equals("java.lang.Float") || fieldType.equals("Float") || fieldType.equals("float")){
                 createdFields += "\t@Basic\n";
                 createdFields += "\t@Column(name=\"" + experimentName + "_" + field[0] + "\")\n";
-                createdFields += "\tpublic " + field[1] + " " + field[0] + " = -1.0f;\n\n";
+                createdFields += "\tpublic " + field[1] + " " + experimentName + "_" + field[0] + " = -1.0f;\n\n";
 
                 setJsonFunction += "\t\tJsonNode " + field[0] + "Node = questionNode.get(\"" + field[0] + "\");\n";
                 setJsonFunction += "\t\tif (" + field[0] + "Node != null){\n";
-                setJsonFunction += "\t\t\tthis." + field[0] + " = (float)" + field[0] + "Node.asDouble();\n";
+                setJsonFunction += "\t\t\tthis." + experimentName + "_" + field[0] + " = (float)" + field[0] + "Node.asDouble();\n";
                 setJsonFunction += "\t\t}\n\n";
             }else if(fieldType.equals("java.lang.Boolean") || fieldType.equals("Boolean") || fieldType.equals("boolean")){
                 createdFields += "\t@Basic\n";
                 createdFields += "\t@Column(name=\"" + experimentName + "_" + field[0] + "\")\n";
-                createdFields += "\tpublic " + field[1] + " " + field[0] + " = false;\n\n";
+                createdFields += "\tpublic " + field[1] + " " + experimentName + "_" + field[0] + " = false;\n\n";
 
                 setJsonFunction += "\t\tJsonNode " + field[0] + "Node = questionNode.get(\"" + field[0] + "\");\n";
                 setJsonFunction += "\t\tif (" + field[0] + "Node != null){\n";
-                setJsonFunction += "\t\t\tthis." + field[0] + " = " + field[0] + "Node.asBoolean();\n";
+                setJsonFunction += "\t\t\tthis." + experimentName + "_" + field[0] + " = " + field[0] + "Node.asBoolean();\n";
                 setJsonFunction += "\t\t}\n\n";
             } else if(fieldType.startsWith("java.util.List")){
                 createdFields += "\t@OneToMany(cascade = CascadeType.ALL)\n";
-                createdFields += "\tpublic " + field[1] + " " + field[0] + " = new LinkedList<>();\n\n";
+                createdFields += "\tpublic " + field[1] + " " + experimentName + "_" + field[0] + " = new LinkedList<>();\n\n";
             }else{
                 throw new RuntimeException("Unknown fieldType: " + fieldType);
             }
@@ -182,6 +203,11 @@ public class ManageExperiments extends Controller {
     private static void addFieldType(String className, JsonObjectBuilder objectBuilder, Set<String> observedTypes, boolean isQuestionType, boolean isGroupType) throws ClassNotFoundException {
         JsonArrayBuilder fieldBuilder = Json.createArrayBuilder();
         Class c = Class.forName(className);
+        String removablePrefix = null;
+        if(isQuestionType){
+            String modifiedClassName = c.getSimpleName().substring(0,c.getSimpleName().length() - "Question".length());
+            removablePrefix = modifiedClassName + "_";
+        }
 
         if(observedTypes.contains(c.getSimpleName())){
             return;
@@ -200,7 +226,7 @@ public class ManageExperiments extends Controller {
                 }
             }
             fieldBuilder.add(questionBuilder.add("type", s.getGenericType().toString().replace("class ",""))
-                    .add("name", s.getName())
+                    .add("name", (isQuestionType ? s.getName().replaceFirst(removablePrefix,"") : s.getName()))
                     .add("simpleTypeName",s.getType().getSimpleName())
                     .build());
         }
@@ -250,13 +276,13 @@ public class ManageExperiments extends Controller {
             return internalServerError("writeResults method is not accessible: " + experimentType);
         } catch (InvocationTargetException e) {
             e.printStackTrace();
-            return internalServerError("writeResults method throws exception: \n" + e.getCause().getMessage());
+            return internalServerError("writeResults method throws exception: \n" + ((e.getCause() != null) ? e.getCause().getMessage() : e.getMessage()));
         }
 
         return ok();
     }
 
-    @BodyParser.Of(BodyParser.Json.class)
+    /*@BodyParser.Of(BodyParser.Json.class)
     public static Result submitResult() throws SQLException {
         JsonNode json = request().body().asJson();
         if (json != null) {
@@ -267,7 +293,7 @@ public class ManageExperiments extends Controller {
         }
 
         return ok();
-    }
+    }*/
 
     @Security.Authenticated(Secured.class)
     public static Result createExperiment(String name) {
@@ -343,17 +369,19 @@ public class ManageExperiments extends Controller {
         }
 
         File sourceFile = new File(sourcepath);
-        for (File f : sourceFile.listFiles()) {
-            if (f.isDirectory()) {
-                copyExperimentDirectory(sourcepath + f.getName(), destination + f.getName(), oldName, newName);
-            } else {
-                copyExperimentFile(sourcepath + f.getName(), destination + f.getName().replaceAll(oldName, newName), oldName, newName);
+        if(sourceFile.exists()){
+            for (File f : sourceFile.listFiles()) {
+                if (f.isDirectory()) {
+                    copyExperimentDirectory(sourcepath + f.getName(), destination + f.getName(), oldName, newName);
+                } else {
+                    copyExperimentFile(sourcepath + f.getName(), destination + f.getName().replaceAll(oldName, newName), oldName, newName);
+                }
             }
-        }
 
-        File destinationFile = new File(destination);
-        if (!destinationFile.exists()) {
-            destinationFile.mkdirs();
+            File destinationFile = new File(destination);
+            if (!destinationFile.exists()) {
+                destinationFile.mkdirs();
+            }
         }
     }
 
@@ -695,6 +723,7 @@ public class ManageExperiments extends Controller {
 
         experiment.update();
 
+        /*
         // Create example question
         List<ExampleQuestion> exampleQuestions_tmp = new LinkedList<>();
         for (Iterator<JsonNode> exampleQuestions = json.get("exampleQuestions").iterator(); exampleQuestions.hasNext(); ) {
@@ -712,7 +741,7 @@ public class ManageExperiments extends Controller {
         if (cheaterDetectionNode != null) {
             List<CheaterDetectionQuestion> cheaterDetectionQuestions_tmp = CheaterDetectionQuestion.createCheaterDetectionQuestions(experiment, json.get("cheaterDetectionQuestions"));
             experiment.setCheaterDetectionQuestions(cheaterDetectionQuestions_tmp);
-        }
+        }*/
 
         // Create Parts
         List<AbstractGroup> groups = new LinkedList<>();

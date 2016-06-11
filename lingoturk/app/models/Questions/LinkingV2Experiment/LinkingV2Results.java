@@ -29,7 +29,7 @@ public class LinkingV2Results extends Model{
     String origin;
 
     @Basic
-    @Column(name = "timestamp")
+    @Column(name = "timestamp", columnDefinition = "timestamp default now()")
     Date timestamp;
 
     @Basic
@@ -62,5 +62,5 @@ public class LinkingV2Results extends Model{
 
     @Basic
     @Column(name = "result")
-    int result;
+    String result;
 }

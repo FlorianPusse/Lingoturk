@@ -191,15 +191,14 @@
             <input type="hidden" name="partId" id="partId" value="@part.getId()"/>
         }
         @if(worker != null){
-            <input type="hidden" name="workerId" value="@worker.getId()">
+            <input type="hidden" name="workerId" id="workerId" value="@worker.getId()">
         }
         @if(exp != null){
             <input type="hidden" id="expId" value="@exp.getId()">
         }
-        <input type="hidden" id="origin" value="@origin">
+        <input type="hidden" name="origin" id="origin" value="@origin">
         <input type="hidden" name="assignmentId" id="assignmentId" value="@assignmentId">
-        <input type="hidden" name="workerId" value="@worker.getId()">
-        <input type="hidden" name="hitId" value="@hitId">
+        <input type="hidden" name="hitId" id="hitId" value="@hitId">
 
             <!-- You can add more input elements here -->
     </form>

@@ -28,6 +28,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Iterator;
 
+import static play.mvc.Results.ok;
+
 @Entity
 @Inheritance
 @DiscriminatorValue("SentenceCompletionExperiment.SentenceCompletionQuestion")
@@ -37,49 +39,49 @@ public class SentenceCompletionQuestion extends PartQuestion {
 
 	@Basic
 	@Column(name="SentenceCompletion_story", columnDefinition = "TEXT")
-	public java.lang.String story = "";
+	public java.lang.String SentenceCompletion_story = "";
 
 	@Basic
 	@Column(name="SentenceCompletion_list", columnDefinition = "TEXT")
-	public java.lang.String list = "";
+	public java.lang.String SentenceCompletion_list = "";
 
 	@Basic
 	@Column(name="SentenceCompletion_itemNr", columnDefinition = "TEXT")
-	public java.lang.String itemNr = "";
+	public java.lang.String SentenceCompletion_itemNr = "";
 
 	@Basic
 	@Column(name="SentenceCompletion_itemLength", columnDefinition = "TEXT")
-	public java.lang.String itemLength = "";
+	public java.lang.String SentenceCompletion_itemLength = "";
 
 	@Basic
 	@Column(name="SentenceCompletion_itemType", columnDefinition = "TEXT")
-	public java.lang.String itemType = "";
+	public java.lang.String SentenceCompletion_itemType = "";
 
     @Override
     public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {
 		JsonNode storyNode = questionNode.get("story");
 		if (storyNode != null){
-			this.story = storyNode.asText();
+			this.SentenceCompletion_story = storyNode.asText();
 		}
 
 		JsonNode listNode = questionNode.get("list");
 		if (listNode != null){
-			this.list = listNode.asText();
+			this.SentenceCompletion_list = listNode.asText();
 		}
 
 		JsonNode itemNrNode = questionNode.get("itemNr");
 		if (itemNrNode != null){
-			this.itemNr = itemNrNode.asText();
+			this.SentenceCompletion_itemNr = itemNrNode.asText();
 		}
 
 		JsonNode itemLengthNode = questionNode.get("itemLength");
 		if (itemLengthNode != null){
-			this.itemLength = itemLengthNode.asText();
+			this.SentenceCompletion_itemLength = itemLengthNode.asText();
 		}
 
 		JsonNode itemTypeNode = questionNode.get("itemType");
 		if (itemTypeNode != null){
-			this.itemType = itemTypeNode.asText();
+			this.SentenceCompletion_itemType = itemTypeNode.asText();
 		}
 
     }
@@ -87,13 +89,8 @@ public class SentenceCompletionQuestion extends PartQuestion {
 	/* END OF VARIABLES BLOCK */
 
 
-    public SentenceCompletionQuestion(String itemNr, String list, String itemLength, String itemType, String story){
-        this.itemNr = itemNr;
-        this.list = list;
-        this.itemLength = itemLength;
-        this.itemType = itemType;
-        this.story = story;
-    }
+
+    public SentenceCompletionQuestion(){}
 
     @Override
     public void writeResults(JsonNode resultNode) throws SQLException {
@@ -133,10 +130,6 @@ public class SentenceCompletionQuestion extends PartQuestion {
 
     @Override
     public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
-        return null;
-    }
-
-    public String getStory() {
-        return story;
+        return ok(views.html.ExperimentRendering.SentenceCompletionExperiment.SentenceCompletionExperiment_render.render(this, null, worker, assignmentId, hitId, turkSubmitTo, exp, df, "MTURK"));
     }
 }

@@ -141,8 +141,7 @@
 
             if (questionId != "") {
                 $http.get("/getQuestion/" + questionId).success(function (data) {
-                    // TODO: FIX
-                    self.part = {number : 1};
+                    self.part = {number : 1, id : -1};
 
                     var json = data;
                     self.questions = json;

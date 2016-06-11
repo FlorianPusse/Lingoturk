@@ -29,7 +29,7 @@ public class LinkingV1Results extends Model{
     String origin;
 
     @Basic
-    @Column(name = "timestamp")
+    @Column(name = "timestamp", columnDefinition = "timestamp default now()")
     Date timestamp;
 
     @Basic
@@ -67,4 +67,8 @@ public class LinkingV1Results extends Model{
     @Basic
     @Column(name = "noLinkingPossible")
     boolean noLinkingPossible;
+
+    @Basic
+    @Column(name = "workingTimes")
+    int workingTimes;
 }

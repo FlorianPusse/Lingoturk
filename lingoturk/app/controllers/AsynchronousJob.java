@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import models.Repository;
 import models.Results.AssignmentResult;
-import models.Questions.DiscourseConnectivesExperiment.CheaterDetectionQuestion;
 import models.Questions.PublishableQuestion;
 import models.Worker;
 import org.dom4j.DocumentException;
@@ -38,6 +37,11 @@ public class AsynchronousJob extends UntypedActor {
     private static Map<String,Integer> failedTries = new HashMap<>();
 
     @Override
+    public void onReceive(Object message) throws Exception {
+
+    }
+
+    /*@Override
     public void onReceive(Object message) throws Exception {
         for (String assignmentID : waitingAssignmentIDs) {
             System.out.println("Test assignment with ID: " + assignmentID + " ...");
@@ -154,6 +158,6 @@ public class AsynchronousJob extends UntypedActor {
             statement.setString(2,assignmentID);
             statement.execute();
         }
-    }
+    }*/
 
 }

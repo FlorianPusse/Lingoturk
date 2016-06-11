@@ -13,6 +13,8 @@ import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import java.sql.SQLException;
 
+import static play.mvc.Results.ok;
+
 @Entity
 @Inheritance
 @DiscriminatorValue("_TEMPLATE_Experiment._TEMPLATE_Group")

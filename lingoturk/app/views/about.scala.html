@@ -1,0 +1,28 @@
+@main("Contact"){
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#contact").on("click",function(){
+            $(this).append($('<a href="mailto:florian.pusse@@gmail.com">florian.pusse@@gmail.com</a>'));
+            $("#name").remove();
+        });
+    })
+</script>
+
+
+<div style="margin-top:200px; margin: 0px;">
+
+    <p><span style="color: #8600b3; font-weight:800">LINGO</span><span style="color: #8600b3; font-weight:600">turk</span> is an open-source, freely available crowdsourcing client/server system aimed primarily at psycholinguistic experimentation where custom and specialized user interfaces are required but not supported by popular crowdsourcing task management platforms.</p>
+
+    <p><span style="color: #8600b3; font-weight:800">LINGO</span><span style="color: #8600b3; font-weight:600">turk</span> enables user-friendly local hosting of experiments as well as condition management and participant exclusion. It is compatible with Amazon Mechanical Turk and Prolific Academic. New experiments can easily be set up via the Play Framework and the <span style="color: #8600b3; font-weight:800">LINGO</span><span style="color: #8600b3; font-weight:600">turk</span> API, while multiple experiments can be managed from a single system.</p>
+
+    <strong style="text-align: center; display: block;">The full demo paper for NAACL 2016 can be found here: <a href="https://drive.google.com/open?id=0B66gWNstWFFHOTc2WTh1bF9hSTA">Demo paper</a></strong>
+
+    <blockquote style="border-right: 5px solid #FF9500; text-align:center; border-left: 5px solid #FF9500; margin-top:15px">
+        <p>
+            This framework is made available via <strong><a href="https://github.com/FlorianPusse/Lingoturk">Github</a></strong>
+        </p>
+    </blockquote>
+
+</div>
+}

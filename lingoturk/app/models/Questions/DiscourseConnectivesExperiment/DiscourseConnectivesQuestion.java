@@ -37,45 +37,46 @@ public class DiscourseConnectivesQuestion extends PartQuestion {
 
 	@Basic
 	@Column(name="DiscourseConnectives_sentence1", columnDefinition = "TEXT")
-	public java.lang.String sentence1 = "";
+	public java.lang.String DiscourseConnectives_sentence1 = "";
 
 	@Basic
 	@Column(name="DiscourseConnectives_sentence2", columnDefinition = "TEXT")
-	public java.lang.String sentence2 = "";
+	public java.lang.String DiscourseConnectives_sentence2 = "";
 
 	@Basic
 	@Column(name="DiscourseConnectives_innerID", columnDefinition = "TEXT")
-	public java.lang.String innerID = "";
+	public java.lang.String DiscourseConnectives_innerID = "";
 
 	@Basic
 	@Column(name="DiscourseConnectives_sentenceType", columnDefinition = "TEXT")
-	public java.lang.String sentenceType = "";
+	public java.lang.String DiscourseConnectives_sentenceType = "";
 
     @Override
     public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {
-	    JsonNode sentence1Node = questionNode.get("sentence1");
+		JsonNode sentence1Node = questionNode.get("sentence1");
 		if (sentence1Node != null){
-			this.sentence1 = sentence1Node.asText();
+			this.DiscourseConnectives_sentence1 = sentence1Node.asText();
 		}
 
-	    JsonNode sentence2Node = questionNode.get("sentence2");
+		JsonNode sentence2Node = questionNode.get("sentence2");
 		if (sentence2Node != null){
-			this.sentence2 = sentence2Node.asText();
+			this.DiscourseConnectives_sentence2 = sentence2Node.asText();
 		}
 
-	    JsonNode innerIDNode = questionNode.get("innerID");
+		JsonNode innerIDNode = questionNode.get("innerID");
 		if (innerIDNode != null){
-			this.innerID = innerIDNode.asText();
+			this.DiscourseConnectives_innerID = innerIDNode.asText();
 		}
 
-	    JsonNode sentenceTypeNode = questionNode.get("sentenceType");
+		JsonNode sentenceTypeNode = questionNode.get("sentenceType");
 		if (sentenceTypeNode != null){
-			this.sentenceType = sentenceTypeNode.asText();
+			this.DiscourseConnectives_sentenceType = sentenceTypeNode.asText();
 		}
 
     }
 
 	/* END OF VARIABLES BLOCK */
+
 
 
     public DiscourseConnectivesQuestion() {}
@@ -136,11 +137,6 @@ public class DiscourseConnectivesQuestion extends PartQuestion {
     @Override
     public JsonObject returnJSON() throws SQLException {
        return super.returnJSON();
-    }
-
-    @Override
-    public String toString() {
-        return "DragAndDrop Question";
     }
 
     public static void addConnectives(JsonArrayBuilder builder, String connectives[]) {
@@ -330,7 +326,7 @@ public class DiscourseConnectivesQuestion extends PartQuestion {
         JsonObject object;
 
         DiscourseConnectivesQuestion question = (DiscourseConnectivesQuestion) Question.byId(questionID);
-        switch (question.getSentenceType()) {
+        switch (question.DiscourseConnectives_sentenceType) {
             case "Conjunction":
                 object = createConjunctions();
                 break;
@@ -350,25 +346,5 @@ public class DiscourseConnectivesQuestion extends PartQuestion {
     @Override
     public void writeResults(JsonNode resultNode) {
         // TODO: Implement
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getSentence1() {
-        return sentence1;
-    }
-
-    public String getSentence2() {
-        return sentence2;
-    }
-
-    public int getExperimentID() {
-        return experimentID;
-    }
-
-    public String getSentenceType() {
-        return sentenceType;
     }
 }

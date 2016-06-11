@@ -13,7 +13,7 @@ public class Global extends GlobalSettings{
     @Override
     public void onStart(Application app) {
         System.out.println("[info] play - Application has started...");
-        try {
+        /*try {
             AsynchronousJob.loadQueue();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -27,16 +27,16 @@ public class Global extends GlobalSettings{
                 "message",
                 Akka.system().dispatcher(),
                 null
-        );
+        );*/
     }
 
     @Override
     public void onStop(Application app) {
-        try {
+        /*try {
             AsynchronousJob.saveQueue();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println("[info] play - Application shutdown...");
+        System.out.println("[info] play - Application shutdown...");*/
     }
 }
