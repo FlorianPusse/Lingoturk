@@ -2,10 +2,6 @@
 
 # --- !Ups
 
-DROP SEQUENCE IF EXISTS LingoExpModelPublished_Seq CASCADE;
-DROP SEQUENCE IF EXISTS ErrorMessages_Seq CASCADE;
-DROP SEQUENCE IF EXISTS StoryCompletionResultV2_Seq CASCADE;
-
 CREATE SEQUENCE LingoExpModelPublished_Seq START 1;
 CREATE SEQUENCE ErrorMessages_Seq START 1;
 CREATE SEQUENCE PictureNamingMailAddress_Seq START 1;
@@ -66,38 +62,6 @@ CREATE TABLE LingoExpModels_contain_ExampleQuestions(
 	PRIMARY KEY (LingoExpModelID,QuestionID),
 	FOREIGN KEY (LingoExpModelID) REFERENCES LingoExpModels ON DELETE CASCADE,
 	FOREIGN KEY (QuestionID) REFERENCES Questions ON DELETE CASCADE
-);
-
-CREATE TABLE examplequestions_haverightanswer_words(
-	QuestionID int,
-	WordID int,
-	PRIMARY KEY (QuestionID,WordID),
-	FOREIGN KEY (QuestionID) REFERENCES Questions ON DELETE CASCADE,
-	FOREIGN KEY (WordID) REFERENCES Words ON DELETE CASCADE
-);
-
-CREATE TABLE ExampleQuestions_havePossible_Words(
-	QuestionID int,
-	WordID int,
-	PRIMARY KEY (QuestionID,WordID),
-	FOREIGN KEY (QuestionID) REFERENCES Questions ON DELETE CASCADE,
-	FOREIGN KEY (WordID) REFERENCES Words ON DELETE CASCADE
-);
-
-CREATE TABLE CheaterDetectionQuestions_mustNotHave_Words(
-	QuestionID int,
-	WordID int,
-	PRIMARY KEY (QuestionID,WordID),
-	FOREIGN KEY (QuestionID) REFERENCES Questions ON DELETE CASCADE,
-	FOREIGN KEY (WordID) REFERENCES Words ON DELETE CASCADE
-);
-
-CREATE TABLE CheaterDetectionQuestions_mustHave_Words(
-	QuestionID int,
-	WordID int,
-	PRIMARY KEY (QuestionID,WordID),
-	FOREIGN KEY (QuestionID) REFERENCES Questions ON DELETE CASCADE,
-	FOREIGN KEY (WordID) REFERENCES Words ON DELETE CASCADE
 );
 
 CREATE TABLE LingoExpModelPublishedAs (
@@ -229,17 +193,12 @@ DROP TABLE IF EXISTS LingoExpModels_contain_Parts CASCADE;
 DROP TABLE IF EXISTS Parts_contain_Questions CASCADE;
 DROP TABLE IF EXISTS LingoExpModels_contain_CheaterDetectionQuestions CASCADE;
 DROP TABLE IF EXISTS LingoExpModels_contain_ExampleQuestions CASCADE;
-DROP TABLE IF EXISTS ExampleQuestions_haverightAnswer_Words CASCADE;
-DROP TABLE IF EXISTS ExampleQuestions_havePossible_Words CASCADE;
-DROP TABLE IF EXISTS CheaterDetectionQuestions_mustNotHave_Words CASCADE;
-DROP TABLE IF EXISTS CheaterDetectionQuestions_mustHave_Words CASCADE;
 DROP TABLE IF EXISTS LingoExpModelPublishedAs CASCADE;
 DROP TABLE IF EXISTS QuestionPublishedAs CASCADE;
 DROP TABLE IF EXISTS participatesInCD_Question CASCADE;
 DROP TABLE IF EXISTS pendingAssignments;
 DROP TABLE IF EXISTS failedAssignments;
 DROP TABLE IF EXISTS PartPublishedAs;
-DROP TABLE IF EXISTS examplequestions_haverightanswer_words;
 DROP TABLE IF EXISTS PictureNamingMailAddress;
 DROP FUNCTION IF EXISTS publishLingoExpModel(int,bigint,varchar,varchar);
 DROP FUNCTION IF EXISTS wrongAnswersCount(varchar);
