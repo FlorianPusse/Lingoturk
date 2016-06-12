@@ -1,18 +1,42 @@
-import akka.actor.ActorRef;
-import akka.actor.Props;
-import controllers.AsynchronousJob;
+import models.Repository;
+import org.apache.commons.io.FileUtils;
 import play.*;
-import play.libs.Akka;
 
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
-import scala.concurrent.duration.Duration;
+import java.sql.Statement;
 
 public class Global extends GlobalSettings{
+
+    static boolean loadDemoExperiments = true;
 
     @Override
     public void onStart(Application app) {
         System.out.println("[info] play - Application has started...");
+        Connection c = Repository.getConnection();
+
+        if(loadDemoExperiments) {
+            try {
+                Statement s = c.createStatement();
+                ResultSet resultSet = s.executeQuery("SELECT count(*) FROM LingoExpModels");
+                if (resultSet.next()) {
+                    int experimentCount = resultSet.getInt(1);
+                    if (experimentCount == 0) {
+                        // Populate with demo experiments
+                        String query = FileUtils.readFileToString(new File("template/LingoturkDEMO.sql"));
+                        s.execute(query);
+                        s.close();
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         /*try {
             AsynchronousJob.loadQueue();
         } catch (SQLException e) {

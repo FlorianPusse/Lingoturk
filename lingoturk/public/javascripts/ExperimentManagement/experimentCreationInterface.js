@@ -22,6 +22,21 @@
             self.questionFields.push(new self.Field());
         };
 
+        this.removeField = function(field){
+            var index = self.questionFields.indexOf(field);
+            self.questionFields.splice(index,1);
+        };
+
+        this.checkInput = function(){
+            for(var i = 0; i < self.questionFields.length; ++i){
+                var f = self.questionFields[i];
+                if(f.name == "" || f.type == ""){
+                    return false;
+                }
+            }
+            return true;
+        };
+
         this.submitting = false;
         this.submit = function () {
             if (!self.submitting) {

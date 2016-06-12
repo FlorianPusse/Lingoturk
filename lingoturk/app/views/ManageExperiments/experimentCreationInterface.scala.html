@@ -44,10 +44,16 @@
                 <strong style="margin-bottom:20px;margin-top:20px; display:block;">Fields:</strong>
 
                 <div style="margin-bottom: 20px;" ng-repeat="field in IC.questionFields track by $index" class="form-group">
-                    <label id="{{field + $index}}"><input placeholder="field {{$index}} name" style="border:none; font-weight: bolder; -webkit-box-shadow: none;box-shadow: none;-webkit-transition: none;" type="text" class="form-control" ng-model="field.name"></label>
-                    <select class="form-control" ng-model="field.type" ng-options="type.val as type.name for type in IC.types" id="{{field + $index}}">
-                        <option disabled="disabled"selected value> -- select field -- </option>
-                    </select>
+                    <div style="float:left; width: 8%">
+                        <button ng-click="IC.removeField(field)" style="margin-top: 25%;" class="btn btn-default">-</button>
+                    </div>
+                    <div style="float:right; width: 92%">
+                        <label id="{{field + $index}}"><input placeholder="field {{$index}} name" style="border:none; font-weight: bolder; -webkit-box-shadow: none;box-shadow: none;-webkit-transition: none;" type="text" class="form-control" ng-model="field.name"></label>
+                        <select class="form-control" ng-model="field.type" ng-options="type.val as type.name for type in IC.types" id="{{field + $index}}">
+                            <option disabled="disabled"selected value> -- select field -- </option>
+                        </select>
+                    </div>
+                    <div style="clear:both"></div>
                 </div>
 
                 <div style="text-align:center">
@@ -55,7 +61,7 @@
                 </div>
             </div>
 
-            <button ng-click="IC.submit()" type="button" class="btn btn-default" style="float:right">Submit</button>
+            <button ng-click="IC.submit()" ng-disabled="!IC.checkInput()" type="button" class="btn btn-default" style="float:right">Submit</button>
         </div>
     </div>
 }
