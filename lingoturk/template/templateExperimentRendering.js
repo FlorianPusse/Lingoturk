@@ -17,12 +17,20 @@
 
         self.shuffleQuestions = true;
 
+        this.resultsSubmitted = function(){
+            bootbox.alert("Results successfully submitted. You might consider redirecting your participants now.");
+        };
+
+        this.resultSubmissionError = function(){
+            bootbox.alert("Error! Could not submit results!");
+        };
+
         self.failedTries = 0;
         this.submitResults = function (successCallback, errorCallback) {
             var results = {
                 experimentType : "_TEMPLATE_Experiment",
                 results : self.questions,
-                assignmentId : assignmentId,
+                assignmentId : self.assignmentId,
                 hitId : self.hitId,
                 workerId : self.workerId,
                 partId : self.partId
@@ -43,14 +51,6 @@
                 });
         };
 
-        this.resultsSubmitted = function(){
-
-        };
-
-        this.resultSubmissionError = function(){
-
-        };
-
         this.next = function(){
              if(self.state == "workerIdSlide"){
                 if(self.questionId == null && self.partId == null){
@@ -64,7 +64,7 @@
             if(self.slideIndex + 1 < self.allStates.length){
                 self.state = self.allStates[++self.slideIndex];
             }else{
-                alert("all states");
+                self.submitResults(self.resultsSubmitted, self.resultSubmissionError);
             }
         };
 
