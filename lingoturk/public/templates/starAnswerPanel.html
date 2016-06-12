@@ -1,7 +1,7 @@
 <div class="panel panel-primary">
     <div class="panel-heading" style="font-weight: bolder ;">{{content.heading}}</div>
     <div class="panel-body">
-        {{content.text}}
+        <p ng-bind-html="content.text | unsafe"></p>
         <hr style="margin-bottom : 15px ; margin-top : 15px"/>
         <strong>{{content.instructions}}</strong>
         <div style="text-align:center">

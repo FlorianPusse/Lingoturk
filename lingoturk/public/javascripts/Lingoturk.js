@@ -1,6 +1,9 @@
 (function () {
     var app = angular.module('Lingoturk', []);
 
+    /* http://stackoverflow.com/questions/9381926/angularjs-insert-html-into-view */
+    app.filter('unsafe', function($sce) { return $sce.trustAsHtml; });
+
     app.directive("statisticsSlide", function($compile){
         return {
             restrict: 'E',
