@@ -43,7 +43,7 @@ public class _TEMPLATE_Question extends PartQuestion {
         for(Iterator<JsonNode> questionNodeIterator = resultNode.get("results").iterator(); questionNodeIterator.hasNext(); ){
             JsonNode questionNode = questionNodeIterator.next();
             int questionId = questionNode.get("id").asInt();
-            JsonNode result = questionNode.get("result");
+            JsonNode result = questionNode.get("answer");
 
             PreparedStatement preparedStatement = Repository.getConnection().prepareStatement(
                     "INSERT INTO _TEMPLATE_Results(id,workerId,assignmentId,hitId,partId,questionId,answer) VALUES(nextval('_TEMPLATE_Results_seq'),?,?,?,?,?,?)"

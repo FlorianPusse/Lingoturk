@@ -4,7 +4,7 @@
         <p ng-bind-html="content.text | unsafe"></p>
         <hr style="margin-bottom : 15px ; margin-top : 15px"/>
         <div style="text-align:center">
-            <strong>{{content.instructions}}</strong>
+            <strong style="margin-bottom: 10px; display: block;">{{content.instructions}}</strong>
         </div>
         <div style="width:80%; margin: 10px auto; background: #428bca" class="slider"></div>
         <button ng-click="click()" type="button" ng-disabled="answer === undefined && !activated" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>

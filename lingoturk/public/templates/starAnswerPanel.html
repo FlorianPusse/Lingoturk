@@ -3,7 +3,9 @@
     <div class="panel-body">
         <p ng-bind-html="content.text | unsafe"></p>
         <hr style="margin-bottom : 15px ; margin-top : 15px"/>
-        <strong>{{content.instructions}}</strong>
+        <div style="text-align:center">
+            <strong style="margin-bottom: 10px; display: block;">{{content.instructions}}</strong>
+        </div>
         <div style="text-align:center">
             <img ng-show="!(i <= answer)" ng-repeat-start="i in range(maxStars)" src="/assets/images/star_grey.png" ng-click="setAnswer(i)" aria-hidden="true" style="margin-left : 25px">
             <img ng-show="i <= answer" ng-repeat-end src="/assets/images/star_yellow.png" ng-click="setAnswer(i)" aria-hidden="true" style="margin-left : 25px">
