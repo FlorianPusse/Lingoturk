@@ -3,7 +3,9 @@
     <div class="panel-body">
         <p ng-bind-html="content.text | unsafe"></p>
         <hr style="margin-bottom : 15px ; margin-top : 15px"/>
-        <strong style="margin-bottom: 10px; display: block;">{{content.instructions}}</strong>
+        <div style="text-align:center">
+            <strong style="margin-bottom: 10px; display: block;">{{content.instructions}}</strong>
+        </div>
         <input type="text" ng-model="answer" class="form-control">
         <button ng-click="click()" type="button" ng-disabled="answer === undefined || answer == '' || !matches" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
     </div>
