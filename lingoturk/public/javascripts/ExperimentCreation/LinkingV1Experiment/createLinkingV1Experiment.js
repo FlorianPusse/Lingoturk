@@ -141,7 +141,7 @@
 
         this.Part = function (fileName) {
             var self = this;
-            self.type = "LinkingV1PoolGroup";
+            self._type = "LinkingV1PoolGroup";
             self.fileName = fileName;
             self.lhs = "";
             self.rhs = "";

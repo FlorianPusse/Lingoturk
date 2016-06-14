@@ -20,7 +20,7 @@ import static org.apache.commons.io.FileUtils.listFiles;
 public class QuestionFactory extends AbstractFactory{
 
     public static PartQuestion createQuestion(String type, LingoExpModel experiment, JsonNode node) throws SQLException {
-        System.out.println("Create group of type: " + type);
+        System.out.println("Create question of type: " + type);
 
         try {
             Class c = getClass(type);

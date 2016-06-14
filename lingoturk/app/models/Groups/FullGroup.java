@@ -71,11 +71,6 @@ public class FullGroup extends AbstractGroup {
     @Override
     public void setJSONData(LingoExpModel experiment, JsonNode partNode) throws SQLException {
         super.setJSONData(experiment,partNode);
-
-        JsonNode fileName = partNode.get("fileName");
-        if(fileName != null) {
-            this.fileName = fileName.asText();
-        }
     }
 
     @Override

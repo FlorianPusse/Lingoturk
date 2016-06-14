@@ -27,10 +27,6 @@ public class DisjointGroup extends AbstractGroup {
 
     /* BEGIN OF VARIABLES BLOCK */
 
-    @Basic
-    @Column(name = "DisjointGroup_number")
-    int number;
-
     /* END OF VARIABLES BLOCK */
 
     public DisjointGroup(){}
@@ -54,11 +50,6 @@ public class DisjointGroup extends AbstractGroup {
     @Override
     public void setJSONData(LingoExpModel experiment, JsonNode partNode) throws SQLException {
         super.setJSONData(experiment, partNode);
-
-        JsonNode numberNode = partNode.get("number");
-        if (numberNode != null) {
-            this.number = numberNode.asInt();
-        }
     }
 
     @Override
@@ -95,7 +86,7 @@ public class DisjointGroup extends AbstractGroup {
     public JsonObject returnJSON() throws SQLException {
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
         objectBuilder.add("id", id);
-        objectBuilder.add("number", number);
+        objectBuilder.add("number", listNumber);
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
         for (PartQuestion question : getQuestions()) {
             arrayBuilder.add(question.returnJSON());

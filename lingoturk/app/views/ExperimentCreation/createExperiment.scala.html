@@ -90,7 +90,7 @@
                 <div id="allquestions">
                     <h3 ng-repeat-start="group in cc.groups track by $index">List {{$index}}</h3>
                     <div class="repeatBody" ng-repeat-end>
-                        <div ng-if="field != 'questions' && field != 'type' && field != 'questionFieldNames' && field != 'parsedContent' && field != 'questionColumnNames'" ng-repeat="(field,value) in group" class="form-group">
+                        <div ng-if="field != 'questions' && field != '_type' && field != 'questionFieldNames' && field != 'parsedContent' && field != 'questionColumnNames'" ng-repeat="(field,value) in group" class="form-group">
                             <label for="{{field}}">{{field}}</label>
                             <input type="text" class="form-control" id="{{field}}" ng-model="group[field]">
                         </div>

@@ -55,22 +55,22 @@ INSERT INTO elicitingparaphrasesresults (id, assignmentid, hitid, workerid, orig
 -- Data for Name: groups; Type: TABLE DATA; Schema: public; Owner: fpusse
 --
 
-INSERT INTO groups (dtype, partid, availability, file_name, disjointgroup_number) VALUES ('DisjointGroup', 1, 0, NULL, 1);
-INSERT INTO groups (dtype, partid, availability, file_name, disjointgroup_number) VALUES ('FullGroup', 2, 0, 'elicitingParaphrases.csv', NULL);
-INSERT INTO groups (dtype, partid, availability, file_name, disjointgroup_number) VALUES ('LinkingV1Experiment.LinkingV1PoolGroup', 3, 0, NULL, NULL);
-INSERT INTO groups (dtype, partid, availability, file_name, disjointgroup_number) VALUES ('LinkingV1Experiment.LinkingV2PoolGroup', 4, 0, NULL, NULL);
-INSERT INTO groups (dtype, partid, availability, file_name, disjointgroup_number) VALUES ('FullGroup', 5, 0, 'list1.csv', NULL);
-INSERT INTO groups (dtype, partid, availability, file_name, disjointgroup_number) VALUES ('FullGroup', 6, 0, 'list2.csv', NULL);
-INSERT INTO groups (dtype, partid, availability, file_name, disjointgroup_number) VALUES ('DisjointGroup', 7, 0, NULL, 1);
-INSERT INTO groups (dtype, partid, availability, file_name, disjointgroup_number) VALUES ('DisjointGroup', 8, 0, NULL, 2);
-INSERT INTO groups (dtype, partid, availability, file_name, disjointgroup_number) VALUES ('DisjointGroup', 9, 0, NULL, 3);
-INSERT INTO groups (dtype, partid, availability, file_name, disjointgroup_number) VALUES ('FullGroup', 10, 0, 'list1.csv', NULL);
-INSERT INTO groups (dtype, partid, availability, file_name, disjointgroup_number) VALUES ('FullGroup', 11, 0, 'list2.csv', NULL);
-INSERT INTO groups (dtype, partid, availability, file_name, disjointgroup_number) VALUES ('FullGroup', 12, 0, 'list3.csv', NULL);
-INSERT INTO groups (dtype, partid, availability, file_name, disjointgroup_number) VALUES ('FullGroup', 13, 0, 'list4.csv', NULL);
-INSERT INTO groups (dtype, partid, availability, file_name, disjointgroup_number) VALUES ('DisjointGroup', 14, 0, NULL, 1);
-INSERT INTO groups (dtype, partid, availability, file_name, disjointgroup_number) VALUES ('FullGroup', 15, 0, 'list1.csv', NULL);
-INSERT INTO groups (dtype, partid, availability, file_name, disjointgroup_number) VALUES ('FullGroup', 16, 0, 'otoh_continuation2_lists1.csv', NULL);
+INSERT INTO groups (dtype, partid, availability, fileName, listNumber) VALUES ('DisjointGroup', 1, 0, NULL, 1);
+INSERT INTO groups (dtype, partid, availability, fileName, listNumber) VALUES ('FullGroup', 2, 0, 'elicitingParaphrases.csv', NULL);
+INSERT INTO groups (dtype, partid, availability, fileName, listNumber) VALUES ('LinkingV1Experiment.LinkingV1PoolGroup', 3, 0, NULL, NULL);
+INSERT INTO groups (dtype, partid, availability, fileName, listNumber) VALUES ('LinkingV1Experiment.LinkingV2PoolGroup', 4, 0, NULL, NULL);
+INSERT INTO groups (dtype, partid, availability, fileName, listNumber) VALUES ('FullGroup', 5, 0, 'list1.csv', NULL);
+INSERT INTO groups (dtype, partid, availability, fileName, listNumber) VALUES ('FullGroup', 6, 0, 'list2.csv', NULL);
+INSERT INTO groups (dtype, partid, availability, fileName, listNumber) VALUES ('DisjointGroup', 7, 0, NULL, 1);
+INSERT INTO groups (dtype, partid, availability, fileName, listNumber) VALUES ('DisjointGroup', 8, 0, NULL, 2);
+INSERT INTO groups (dtype, partid, availability, fileName, listNumber) VALUES ('DisjointGroup', 9, 0, NULL, 3);
+INSERT INTO groups (dtype, partid, availability, fileName, listNumber) VALUES ('FullGroup', 10, 0, 'list1.csv', NULL);
+INSERT INTO groups (dtype, partid, availability, fileName, listNumber) VALUES ('FullGroup', 11, 0, 'list2.csv', NULL);
+INSERT INTO groups (dtype, partid, availability, fileName, listNumber) VALUES ('FullGroup', 12, 0, 'list3.csv', NULL);
+INSERT INTO groups (dtype, partid, availability, fileName, listNumber) VALUES ('FullGroup', 13, 0, 'list4.csv', NULL);
+INSERT INTO groups (dtype, partid, availability, fileName, listNumber) VALUES ('DisjointGroup', 14, 0, NULL, 1);
+INSERT INTO groups (dtype, partid, availability, fileName, listNumber) VALUES ('FullGroup', 15, 0, 'list1.csv', NULL);
+INSERT INTO groups (dtype, partid, availability, fileName, listNumber) VALUES ('FullGroup', 16, 0, 'otoh_continuation2_lists1.csv', NULL);
 
 
 --

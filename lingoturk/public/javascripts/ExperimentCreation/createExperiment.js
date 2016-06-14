@@ -198,7 +198,7 @@
                         var f = fields[i];
                         tmp.push(f.name);
                     }
-                    var func = "self[typeName] = function(" + tmp.join(",") + "){\nvar self = this;\nself.type=\"" + typeName + "\";\n"
+                    var func = "self[typeName] = function(" + tmp.join(",") + "){\nvar self = this;\nself._type=\"" + typeName + "\";\n"
                     if(obj.isGroupType){
                         func + "self.questions=null;\n";
                     }

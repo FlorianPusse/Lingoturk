@@ -33,7 +33,7 @@
                 assignmentId : self.assignmentId,
                 hitId : self.hitId,
                 workerId : self.workerId,
-                partId : self.partId
+                partId : (self.partId == null ? -1 : self.partId)
             };
 
 

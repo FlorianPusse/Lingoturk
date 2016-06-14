@@ -409,6 +409,9 @@ public class ManageExperiments extends Controller {
             fileContent = setFields(fileContent,name, questionFields);
             FileUtils.writeStringToFile(questionFile, fileContent, StandardCharsets.UTF_8);
 
+            copyExperimentFile("template/templateResults.java",
+                    "app/models/Questions/" + name + "Experiment/" + name + "Results.java", "_TEMPLATE_", name);
+
             copyExperimentFile("template/templateResultQuery.sql",
                     "app/models/Questions/" + name + "Experiment/resultQuery.sql", "_TEMPLATE_", name);
 
@@ -728,7 +731,7 @@ public class ManageExperiments extends Controller {
         List<ExampleQuestion> exampleQuestions_tmp = new LinkedList<>();
         for (Iterator<JsonNode> exampleQuestions = json.get("exampleQuestions").iterator(); exampleQuestions.hasNext(); ) {
             JsonNode question = exampleQuestions.next();
-            String type = question.get("type").asText();
+            String type = question.get("_type").asText();
             ExampleQuestion exampleQuestion = QuestionFactory.createExampleQuestion(type, experiment, question);
             exampleQuestions_tmp.add(exampleQuestion);
         }
@@ -747,11 +750,11 @@ public class ManageExperiments extends Controller {
         List<AbstractGroup> groups = new LinkedList<>();
         for (Iterator<JsonNode> partIterator = json.get("parts").iterator(); partIterator.hasNext(); ) {
             JsonNode partNode = partIterator.next();
-            AbstractGroup p = GroupFactory.createPart(partNode.get("type").asText(), experiment, partNode);
+            AbstractGroup p = GroupFactory.createPart(partNode.get("_type").asText(), experiment, partNode);
             if (p != null) {
                 groups.add(p);
             } else {
-                return internalServerError("Unknown Group type: " + partNode.get("type").asText());
+                return internalServerError("Unknown Group type: " + partNode.get("_type").asText());
             }
         }
 

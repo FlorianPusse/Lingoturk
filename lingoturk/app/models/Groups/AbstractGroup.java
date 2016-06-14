@@ -37,14 +37,18 @@ public abstract class AbstractGroup extends Model {
 
     @Id
     @Column(name = "PartId")
-    int id;
+    public int id;
 
     @Basic
-    int availability;
+    public int availability;
 
     @Basic
-    protected
-    String fileName;
+    @Column(name = "fileName")
+    public String fileName;
+
+    @Basic
+    @Column(name = "listNumber")
+    public Integer listNumber;
 
     /* END OF VARIABLES BLOCK */
 
@@ -115,9 +119,19 @@ public abstract class AbstractGroup extends Model {
         // Create Questions
         for(Iterator<JsonNode> questions =  partNode.get("questions").iterator(); questions.hasNext(); ){
             JsonNode questionNode = questions.next();
-            questions_tmp.add(QuestionFactory.createQuestion(questionNode.get("type").asText(),experiment,questionNode));
+            questions_tmp.add(QuestionFactory.createQuestion(questionNode.get("_type").asText(),experiment,questionNode));
         }
         this.questions = questions_tmp;
+
+        JsonNode fileName = partNode.get("fileName");
+        if(fileName != null) {
+            this.fileName = fileName.asText();
+        }
+
+        JsonNode numberNode = partNode.get("listNumber");
+        if (numberNode != null) {
+            this.listNumber = numberNode.asInt();
+        }
     }
 
     public static AbstractGroup byId(int id) {

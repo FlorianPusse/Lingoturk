@@ -14,7 +14,7 @@ import static org.apache.commons.io.FileUtils.listFiles;
 
 public class GroupFactory extends AbstractFactory{
     public static AbstractGroup createPart(String type, LingoExpModel experiment, JsonNode node) throws SQLException {
-        System.out.println("Create question of type: " + type);
+        System.out.println("Create group of type: " + type);
 
         try {
             Class c = getClass(type);

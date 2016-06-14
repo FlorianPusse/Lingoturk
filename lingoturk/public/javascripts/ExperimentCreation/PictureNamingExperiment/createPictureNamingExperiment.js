@@ -97,14 +97,14 @@
 
         this.Part = function (number) {
             var self = this;
-            self.type = "DisjointGroup";
+            self._type = "DisjointGroup";
             self.number = number;
             self.questions = [];
         };
 
         this.Chunk = function(number,pictures){
             var self = this;
-            self.type = "PictureNamingChunk";
+            self._type = "PictureNamingChunk";
             self.number = number;
             self.pictures = pictures;
         };

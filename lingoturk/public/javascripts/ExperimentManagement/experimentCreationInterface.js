@@ -27,10 +27,14 @@
             self.questionFields.splice(index,1);
         };
 
+        this.isAlphaNumeric = function(s){
+            return /^[a-z][a-z0-9]*$/i.test(s);
+        };
+
         this.checkInput = function(){
             for(var i = 0; i < self.questionFields.length; ++i){
                 var f = self.questionFields[i];
-                if(f.name == "" || f.type == ""){
+                if(f.name == "" || !self.isAlphaNumeric(f.name.trim()) || f.type == ""){
                     return false;
                 }
             }
@@ -39,26 +43,31 @@
 
         this.submitting = false;
         this.submit = function () {
-            if (!self.submitting) {
-                self.submitting = true;
-                var result = {
-                    newTypeName : self.newTypeName,
-                    experimentType : self.experimentType,
-                    sourceTypeName : self.sourceTypeName,
-                    sourceGroupName : self.sourceGroupName,
-                    questionFields : self.questionFields
-                };
-                $http.post("/createNewExperimentType", result)
-                    .success(function () {
-                        bootbox.alert("Experiment type created. You will be redirected to the index page!", function() {
-                            window.location.href = "/";
+            if(self.newTypeName.trim() != "" && self.isAlphaNumeric(self.newTypeName.trim())) {
+                if (!self.submitting) {
+                    self.submitting = true;
+                    var result = {
+                        newTypeName: self.newTypeName,
+                        experimentType: self.experimentType,
+                        sourceTypeName: self.sourceTypeName,
+                        sourceGroupName: self.sourceGroupName,
+                        questionFields: self.questionFields
+                    };
+                    $http.post("/createNewExperimentType", result)
+                        .success(function () {
+                            bootbox.alert("Experiment type created. You will be redirected to the index page!", function () {
+                                window.location.href = "/";
+                            });
+                        })
+                        .error(function (data) {
+                            bootbox.alert("An error occured while creating your experiment: " + data);
+                            self.submitting = false;
                         });
-                    })
-                    .error(function (data) {
-                        alert(data);
-                        self.submitting = false;
-                    });
+                }
+            }else{
+                bootbox.alert("Error! New type name is either empty or not alphanumeric.");
             }
         };
+
     }]);
 })();

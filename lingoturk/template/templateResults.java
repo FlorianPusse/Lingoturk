@@ -1,11 +1,7 @@
 package models.Questions._TEMPLATE_Experiment;
 
 import play.db.ebean.Model;
-
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -16,19 +12,19 @@ public class _TEMPLATE_Results extends Model{
     int id;
 
     @Basic
-    @Column(name = "assignmentId")
+    @Column(name = "assignmentId", columnDefinition = "varchar(255) default 'NOT AVAILABLE'")
     String assignmentId;
 
     @Basic
-    @Column(name = "hitId")
+    @Column(name = "hitId", columnDefinition = "varchar(255) default 'NOT AVAILABLE'")
     String hitId;
 
     @Basic
-    @Column(name = "workerId")
+    @Column(name = "workerId", columnDefinition = "varchar(255) default 'NOT AVAILABLE'")
     String workerId;
 
     @Basic
-    @Column(name = "origin")
+    @Column(name = "origin", columnDefinition = "varchar(255) default 'NOT AVAILABLE'")
     String origin;
 
     @Basic
@@ -36,11 +32,15 @@ public class _TEMPLATE_Results extends Model{
     Date timestamp;
 
     @Basic
-    @Column(name = "partId")
+    @Column(name = "partId", columnDefinition = "integer default -1")
     int partId;
 
     @Basic
-    @Column(name = "questionId")
+    @Column(name = "questionId", columnDefinition = "integer default -1")
     int questionId;
+
+    @Basic
+    @Column(name = "answer", columnDefinition = "TEXT")
+    String answer;
 
 }

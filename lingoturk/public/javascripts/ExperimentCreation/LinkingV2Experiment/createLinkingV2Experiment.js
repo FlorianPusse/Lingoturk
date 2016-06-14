@@ -91,7 +91,7 @@
 
         this.Part = function (fileName) {
             var self = this;
-            self.type = "LinkingV2PoolGroup";
+            self._type = "LinkingV2PoolGroup";
             self.fileName = fileName;
             self.description = "";
         };

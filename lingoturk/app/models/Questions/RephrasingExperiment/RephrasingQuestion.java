@@ -1,6 +1,7 @@
 package models.Questions.RephrasingExperiment;
 
 import com.amazonaws.mturk.requester.Assignment;
+import com.amazonaws.services.identitymanagement.model.ReportStateType;
 import com.fasterxml.jackson.databind.JsonNode;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
