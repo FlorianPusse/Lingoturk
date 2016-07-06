@@ -156,14 +156,15 @@ public class LinkingV1PoolGroup extends AbstractGroup {
         try {
             String fileName = partNode.get("fileName").asText();
             System.out.println(fileName);
+            this.fileName = fileName;
 
             String lhs = partNode.get("lhs").asText();
             String rhs = partNode.get("rhs").asText();
 
             System.out.println("Create LHS.");
-            List<Script> leftHandSide = Script.createScripts(lhs, "lhs", experiment, true);
+            List<Script> leftHandSide = Script.createScripts(lhs, "lhs", experiment, true, Script.class);
             System.out.println("Create RHS.");
-            List<Script> rightHandSide = Script.createScripts(rhs, "rhs", experiment, false);
+            List<Script> rightHandSide = Script.createScripts(rhs, "rhs", experiment, false, Script.class);
 
             leftHandSide.addAll(rightHandSide);
             questions = new LinkedList<>(leftHandSide);

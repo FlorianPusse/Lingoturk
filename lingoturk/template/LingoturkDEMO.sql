@@ -1,3 +1,4 @@
+BEGIN;
 --
 -- PostgreSQL database dump
 --
@@ -6,8 +7,6 @@
 -- Dumped by pg_dump version 9.3.5
 -- Started on 2016-06-11 20:00:58
 
-SET statement_timeout = 0;
-SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -4695,3 +4694,5 @@ SELECT setval('rephrasingresults_seq', 10000);
 SELECT setval('sentencecompletionresults_seq', 10000);
 SELECT setval('storycompletionresults_seq', 10000);
 SELECT setval('workers_seq', 10000);
+
+COMMTI;

@@ -25,11 +25,21 @@ public class Pair extends Model{
     public int slot;
 
     @Basic
+    public int source;
+
+    @Basic
     public boolean none;
 
     public Pair(String sentenceId,String slot){
         this.sentenceId = Integer.parseInt(sentenceId.trim());
         this.slot = Integer.parseInt(slot.trim());
+        this.none = false;
+    }
+
+    public Pair(String source, String sentenceId,String slot){
+        this.sentenceId = Integer.parseInt(sentenceId.trim());
+        this.slot = Integer.parseInt(slot.trim());
+        this.source = Integer.parseInt(source.trim());
         this.none = false;
     }
 

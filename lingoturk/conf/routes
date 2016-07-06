@@ -51,11 +51,9 @@ GET         /modify/:id                             controllers.Application.modi
 GET         /renderExampleQuestion/:id              controllers.RenderController.renderExampleQuestion(id: Int)
 GET         /render			                        controllers.RenderController.renderAMT(Type: String, id: Int, assignmentId: String ?= null, hitId: String, workerId: String ?= null, turkSubmitTo ?= null)
 GET         /renderAMT                              controllers.RenderController.renderAMT(Type: String, id: Int, assignmentId: String ?= null, hitId: String, workerId: String ?= null, turkSubmitTo ?= null)
-GET         /renderProlific                         controllers.RenderController.renderProlific(expId: Int)
+GET         /renderProlific                         controllers.RenderController.renderProlific(expId: Integer, partId : Integer ?= null, questionId : Integer ?= null)
 
 GET         /renderLinkingProlific                  models.Questions.LinkingV1Experiment.Prolific.LinkingGroup.renderLinkingProlific(expId:Int)
-
-#POST        /submitResult                           controllers.ManageExperiments.submitResult()
 
 GET         /delete                                 controllers.Application.delete(id: Int)
 GET         /deleteExperimentType                   controllers.ManageExperiments.deleteExperimentType(experimentName: String)
@@ -72,6 +70,7 @@ POST        /authenticate                           controllers.Secured.authenti
 
 ######      Results         ######
 POST        /submitResults                          controllers.ManageExperiments.submitResults()
+POST        /submitFeedback                         controllers.ManageExperiments.submitFeedback()
 
 
 # Map static resources from the /public folder to the /assets URL path

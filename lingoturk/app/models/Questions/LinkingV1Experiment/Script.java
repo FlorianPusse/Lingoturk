@@ -25,6 +25,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -51,6 +52,9 @@ public class Script extends PartQuestion {
     @Column(name = "LinkingV1_side", columnDefinition = "TEXT")
     public String LinkingV1_side;
 
+    @Column(name = "LinkingV1_source", columnDefinition = "varchar(255) default ''")
+    public String LinkingV1_source;
+
     @OneToMany(cascade = CascadeType.ALL)
     public List<Item> itemList = new LinkedList<>();
 
@@ -63,9 +67,10 @@ public class Script extends PartQuestion {
 
     private static final int MAX_FALSE_ANSWERS = 20;
 
-    public Script(String scriptId, String side, LingoExpModel exp) {
+    public Script(String scriptId, String source, String side, LingoExpModel exp) {
         this.LinkingV1_scriptId = scriptId;
         this.LinkingV1_side = side;
+        this.LinkingV1_source = source;
         this.experimentID = exp.getId();
     }
 
@@ -187,7 +192,7 @@ public class Script extends PartQuestion {
             array.add(item.returnJSON());
         }
 
-        return Json.createObjectBuilder().add("id", id).add("items", array.build()).build();
+        return Json.createObjectBuilder().add("id", id).add("items", array.build()).add("scriptId", LinkingV1_scriptId).add("source", LinkingV1_source).build();
     }
 
     @Override
@@ -199,7 +204,7 @@ public class Script extends PartQuestion {
         itemList.add(item);
     }
 
-    public static List<Script> createScripts(String xmlString, String side, LingoExpModel exp, boolean deleteEmpty) throws ParserConfigurationException, IOException, SAXException {
+    public static List<Script> createScripts(String xmlString, String side, LingoExpModel exp, boolean deleteEmpty, Class scriptClass) throws ParserConfigurationException, IOException, SAXException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
         List<Script> scriptList = new LinkedList<>();
         Script currentScript = null;
@@ -222,11 +227,7 @@ public class Script extends PartQuestion {
                     scriptList.add(currentScript);
                 }
 
-                if(side == null){
-                    currentScript = new ScriptV2(scriptElement.getAttribute("id"), null, exp);
-                }else{
-                    currentScript = new Script(scriptElement.getAttribute("id"), side, exp);
-                }
+                currentScript = (Script) scriptClass.getConstructor(String.class, String.class, String.class, LingoExpModel.class).newInstance(new Object[]{scriptElement.getAttribute("id"),scriptElement.getAttribute("source"), side, exp});
 
                 Item currentItem;
 
@@ -240,8 +241,9 @@ public class Script extends PartQuestion {
                     String item_slotAttribute = itemElement.getAttribute("slot");
                     String item_textAttribute = itemElement.getAttribute("text");
                     String item_pair = itemElement.getAttribute("pair");
+                    String item_cAttribute = itemElement.getAttribute("c");
 
-                    currentItem = new Item(item_hAttribute, item_pair, item_textAttribute, item_slotAttribute, item_originalAttribute, item_headAttribute);
+                    currentItem = new Item(item_hAttribute, item_pair, item_textAttribute, item_slotAttribute, item_originalAttribute, item_headAttribute, item_cAttribute);
 
                     NodeList ptcpList = itemElement.getElementsByTagName("ptcp");
                     for (int z = 0; z < ptcpList.getLength(); z++) {

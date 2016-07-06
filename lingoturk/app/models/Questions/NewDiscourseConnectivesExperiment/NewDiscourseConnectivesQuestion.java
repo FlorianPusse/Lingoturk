@@ -161,7 +161,7 @@ public class NewDiscourseConnectivesQuestion extends PartQuestion {
             String manualAnswer1 =  answer.get("manualAnswer1").asText();
             String manualAnswer2 = answer.get("manualAnswer2").asText();
 
-            PreparedStatement statement = Repository.getConnection().prepareStatement("INSERT INTO NewDiscourseConnectivesResults(id,workerId,partId,questionId,connective1,connective2,manualAnswer1,manualAnswer2) VALUES (nextval('newdiscourseconnectivesresults_seq'), ?,?,?,?,?,?,?)");
+            PreparedStatement statement = Repository.getConnection().prepareStatement("INSERT INTO NewDiscourseConnectivesResults(id,workerId,partId,questionId,connective1,connective2,manualAnswer1,manualAnswer2) VALUES (nextval('NewDiscourseConnectivesResults_seq'), ?,?,?,?,?,?,?)");
             statement.setString(1,workerId);
             statement.setInt(2, partId);
             statement.setInt(3, questionId);

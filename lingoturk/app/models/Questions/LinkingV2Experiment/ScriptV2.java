@@ -53,8 +53,8 @@ public class ScriptV2 extends Script {
         statement.close();
     }
 
-    public ScriptV2(String scriptId, String side, LingoExpModel exp) {
-        super(scriptId, side, exp);
+    public ScriptV2(String scriptId, String source, String side, LingoExpModel exp) {
+        super(scriptId, source, side, exp);
     }
 
     @Override

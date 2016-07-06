@@ -23,6 +23,7 @@ import models.Repository;
 import models.Worker;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.h2.command.Prepared;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.libs.Crypto;
@@ -253,7 +254,25 @@ public class ManageExperiments extends Controller {
         return fieldNames;
     }
 
-    /* Render experiment creation page */
+
+    @BodyParser.Of(value = BodyParser.Json.class, maxLength = 200 * 1024 * 10)
+    public static Result submitFeedback() throws SQLException {
+        JsonNode json = request().body().asJson();
+        String expId = json.get("expId").asText();
+        String workerId = json.get("workerId").asText();
+        String feedback = json.get("feedback").asText();
+
+        PreparedStatement statement = Repository.getConnection().prepareStatement("INSERT INTO participantFeedback(id,expId,workerId,feedback) VALUES (nextVal('ParticipantFeedback_Seq'),?,?,?)");
+        statement.setString(1,expId);
+        statement.setString(2,workerId);
+        statement.setString(3,feedback);
+
+        statement.execute();
+        statement.close();
+
+        return ok();
+    }
+
     @BodyParser.Of(value = BodyParser.Json.class, maxLength = 200 * 1024 * 10)
     public static Result submitResults() {
         JsonNode json = request().body().asJson();

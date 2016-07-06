@@ -3,6 +3,7 @@ package models.Groups;
 import com.amazonaws.mturk.requester.HIT;
 import com.amazonaws.mturk.service.axis.RequesterService;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.Application;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
@@ -16,9 +17,13 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.persistence.*;
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Random;
 
+import static play.libs.Json.stringify;
 import static play.mvc.Results.internalServerError;
+import static play.mvc.Results.ok;
 
 @Entity
 @Inheritance
@@ -30,6 +35,8 @@ public class DisjointGroup extends AbstractGroup {
     /* END OF VARIABLES BLOCK */
 
     public DisjointGroup(){}
+
+    private Random random = new Random();
 
     @Override
     public String publishOnAMT(RequesterService service, int publishedId, String hitTypeId, Long lifetime, Integer maxAssignments) throws SQLException {
@@ -52,6 +59,34 @@ public class DisjointGroup extends AbstractGroup {
         super.setJSONData(experiment, partNode);
     }
 
+    public Result returnQuestionAsJson(Worker worker, String assignmentId, String hitId) throws SQLException, IOException {
+        Worker.Participation participation = worker.getParticipatesInPart(this);
+        Question question = null;
+
+        if (!assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE") && !assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE_TEST")) {
+            if (participation == null) {
+                // Worker hasn't participated in the HIT already
+                question = getNextQuestion();
+                worker.addParticipatesInPart(this, question, null, assignmentId, hitId);
+            }else if (participation.getAssignmentID().equals(assignmentId)) {
+                System.out.println(worker.getId() + " reloads part: " + getId());
+                // Worker has already participated in a hit
+                question = Question.byId(participation.getQuestionID());
+            }else{
+                // Worker has already participated but assignmentId has changed
+                question = null;
+            }
+        }
+
+        // just a test -> return random question
+        int nr = random.nextInt(getQuestions().size());
+        question =  getQuestions().get(nr);
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode actualObj = mapper.readTree(question.returnJSON().toString());
+        return ok(stringify(actualObj));
+    }
+
     @Override
     public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df) {
         String workerId = worker.getId();
@@ -62,10 +97,11 @@ public class DisjointGroup extends AbstractGroup {
             if (!assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE") && !assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE_TEST")) {
                 if (participation == null) {
                     // Worker hasn't participated in the HIT already
-                    Question question = this.getNextQuestion();
+                    Question question = getNextQuestion();
                     worker.addParticipatesInPart(this, question, null, assignmentId, hitId);
                     return question.renderAMT(worker, assignmentId, hitId, turkSubmitTo, exp, df);
                 }else if (participation.getAssignmentID().equals(assignmentId)) {
+                    System.out.println(worker.getId() + " reloads part: " + getId());
                     // Worker has already participated in a hit
                     Question question = Question.byId(participation.getQuestionID());
                     return question.renderAMT(worker, assignmentId, hitId, turkSubmitTo, exp, df);

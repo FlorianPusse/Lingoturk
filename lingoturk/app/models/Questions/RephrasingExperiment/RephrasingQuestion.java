@@ -130,8 +130,11 @@ public class RephrasingQuestion extends PartQuestion {
         int readingTime1 = answerNode.get("readingTime1").asInt();
         int readingTime2 = answerNode.get("readingTime2").asInt();
 
+        int age = answerNode.get("age").asInt();
+        int startedLearning = answerNode.get("startedLearning").asInt();
+
         PreparedStatement statement = Repository.getConnection().prepareStatement(
-                "INSERT INTO RephrasingResults(id,workerId,questionId,answer1,answer2,choice1,choice2,readingTime1,readingTime2) VALUES(nextval('RephrasingResults_seq'),?,?,?,?,?,?,?,?)"
+                "INSERT INTO RephrasingResults(id,workerId,questionId,answer1,answer2,choice1,choice2,readingTime1,readingTime2, age, startedLearning) VALUES(nextval('RephrasingResults_seq'),?,?,?,?,?,?,?,?,?,?)"
         );
 
         statement.setString(1, workerId);
@@ -145,6 +148,9 @@ public class RephrasingQuestion extends PartQuestion {
 
         statement.setInt(7,readingTime1);
         statement.setInt(8,readingTime2);
+
+        statement.setInt(9, age);
+        statement.setInt(10, startedLearning);
 
         statement.execute();
         statement.close();

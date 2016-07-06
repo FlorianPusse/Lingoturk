@@ -63,4 +63,12 @@ public class RephrasingResults extends Model{
     @Basic
     @Column(name = "readingTime2")
     int readingTime2;
+
+    @Basic
+    @Column(name = "age")
+    int age;
+
+    @Basic
+    @Column(name = "startedLearning")
+    int startedLearning;
 }

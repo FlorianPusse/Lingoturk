@@ -105,7 +105,9 @@
                 angular.element($("#angularApp")).scope().$apply()
             });
             self.questionColumnNames = null;
+            self.usedNames = [];
             self.files = [];
+            $("input[type=file]").val("");
         };
 
         this.newFieldSelected = function (newValue, oldValue) {

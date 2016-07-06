@@ -129,7 +129,7 @@ CREATE FUNCTION getScriptId(lhs_script integer) RETURNS integer AS $$
 	DECLARE
 		nr int;;
   BEGIN
-		SELECT script_id INTO nr FROM Questions WHERE QuestionId = lhs_script;;
+		SELECT LinkingV1_scriptId INTO nr FROM Questions WHERE QuestionId = lhs_script;;
     RETURN nr;;
   END;;
 $$ LANGUAGE plpgsql;
@@ -147,7 +147,7 @@ CREATE FUNCTION getScenarioName(id integer) RETURNS varchar(125) AS $$
 	DECLARE
 		n VARCHAR(125);;
   BEGIN
-		SELECT file_Name INTO n FROM parts_contain_questions JOIN Groups USING (PartId) WHERE QuestionId = id;;
+		SELECT fileName INTO n FROM parts_contain_questions JOIN Groups USING (PartId) WHERE QuestionId = id;;
     RETURN n;;
   END;;
 $$ LANGUAGE plpgsql;
@@ -172,7 +172,7 @@ CREATE FUNCTION wrongAnswersCount(wId varchar) RETURNS integer AS $$
 		SELECT DISTINCT * FROM (SELECT getScenarioName(lhs_script) AS scenarioName,getScriptId(lhs_script) AS lhs_script_id,
 			getScriptId(rhs_script) AS rhs_script_id,getItemSlot(lhs_item) AS lhs_item_slot,getItemSlot(rhs_item) AS rhs_item_slot,
 			getItemSlot(before) AS before_slot,getItemSlot(after) AS after_slot,noLinkingPossible,getStandart(lhs_item,getScriptId(rhs_script)) AS goldenStandart,workerId
-		FROM LinkingResult) AS tmp
+		FROM LinkingV3Results) AS tmp
 		WHERE goldenStandart IS NOT NULL AND workerId = wId
 		ORDER BY scenarioName,lhs_script_id,rhs_script_id,lhs_item_slot,rhs_item_slot) as tmp2) as tmp3
 		WHERE result != goldenstandart;;

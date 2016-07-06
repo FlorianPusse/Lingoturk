@@ -7,6 +7,8 @@
         self.questions = [];
         self.index = -1;
         self.workerId = "";
+        self.feedback = "";
+        self.expId = "";
 
         self.submitting = false;
         this.submitResults = function () {
@@ -34,7 +36,7 @@
 
             $http.post("/submitResults", result)
                 .success(function () {
-                    window.location.href = "https://prolificacademic.co.uk/submissions/5732eb0d961cde000d7a2857/complete?cc=FPEQXRKR";
+                    $("#feedbackSlide").show();
                 })
                 .error(function () {
                     setTimeout(function () {
@@ -49,6 +51,26 @@
             self.index++;
         };
 
+        self.submittingFeedback = false;
+        this.submitFeedback = function(){
+            if(self.submittingFeedback == true){
+                return;
+            }
+
+            self.submittingFeedback = true;
+
+            $http.post("/submitFeedback", {workerId: self.workerId, expId: self.expId, feedback: self.feedback})
+                .success(function () {
+                    document.getElementById("redirect").click();
+                })
+                .error(function () {
+                    setTimeout(function () {
+                        self.submittingFeedback = false;
+                        self.submitFeedback();
+                    }, 2000);
+                });
+        };
+
         this.next = function(){
             if (self.index + 1 < self.questions.length) {
                 self.index++;
@@ -58,6 +80,7 @@
         };
 
         $(document).ready(function () {
+            self.expId = ($("#expId").length > 0) ? $("#expId").val() : null;
             var partId = $("#partId").val();
             if (partId != "") {
                 $http.get("/returnPart?partId=" + partId).success(function (data) {
