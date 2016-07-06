@@ -4695,4 +4695,4 @@ SELECT setval('sentencecompletionresults_seq', 10000);
 SELECT setval('storycompletionresults_seq', 10000);
 SELECT setval('workers_seq', 10000);
 
-COMMTI;
+COMMIT;
