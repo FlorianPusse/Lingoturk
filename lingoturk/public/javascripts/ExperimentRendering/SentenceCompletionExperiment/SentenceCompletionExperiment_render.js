@@ -121,6 +121,12 @@
                     }
                 });
 
+                $(document).on("keypress", ":input:not(textarea)", function(event) {
+                    if (event.keyCode == 13) {
+                        event.preventDefault();
+                    }
+                });
+
                 $(document).on("click", "#submitButton", function () {
                     window.location.href = "https://prolificacademic.co.uk/submissions/5646062cd01e6b001272744d/complete?cc=SXL0UU2I";
                 });

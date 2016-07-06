@@ -9,6 +9,7 @@
         self.part = null;
         self.slideIndex = 0;
         self.questionIndex = 0;
+        self.expId = null;
         self.questionId = null;
         self.partId = null;
         self.hitId = "";
@@ -121,6 +122,12 @@
             self.allStates = ["instructionsSlide","workerIdSlide","statisticsSlide","questionSlide"];
             $scope.$apply(self.state = self.allStates[0]);
             self.allStates.splice(0,1);
+
+            $(document).on("keypress", ":input:not(textarea)", function(event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                }
+            });
         });
     }]);
 })();

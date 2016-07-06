@@ -298,11 +298,6 @@
         };
 
         $(document).ready(function () {
-
-            $(document).bind("contextmenu", function (e) {
-                //return false ;
-            });
-
             self.initCategorySortable();
 
             $(document).on("mouseenter", ".draggable", function () {
@@ -316,6 +311,11 @@
                 $(this).removeClass("no-drop");
             });
 
+            $(document).on("keypress", ":input:not(textarea)", function(event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                }
+            });
         });
     }
     ])

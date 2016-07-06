@@ -22,6 +22,11 @@
 
         this.statisticsFinished = function(index){
             $("#statisticsSlide1").hide();
+            $("#workerSlide").show();
+        };
+
+        this.mainInstructionsFinished = function(){
+            $("#instructions").hide();
             $("#question0").show();
         };
 
@@ -53,6 +58,8 @@
                 experimentType : "RephrasingExperiment",
                 questionId: self.questionId,
                 workerId: self.workerId,
+                age : self.age,
+                startedLearning : self.startedLearning,
                 answer: answer
             };
 
@@ -161,6 +168,12 @@
                 }
                 if ($(this).val() > 100){
                     $(this).val(100);
+                }
+            });
+
+            $(document).on("keypress", ":input:not(textarea)", function(event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
                 }
             });
 
