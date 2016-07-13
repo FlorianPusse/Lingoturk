@@ -47,7 +47,7 @@ public class _TEMPLATE_Question extends PartQuestion {
 
             if(result != null){
                 PreparedStatement preparedStatement = Repository.getConnection().prepareStatement(
-                        "INSERT INTO _TEMPLATE_Results(id,workerId,assignmentId,hitId,partId,questionId,answer) VALUES(nextval('TestResults_seq'),?,?,?,?,?,?)"
+                        "INSERT INTO _TEMPLATE_Results(id,workerId,assignmentId,hitId,partId,questionId,answer) VALUES(nextval('_TEMPLATE_Results_seq'),?,?,?,?,?,?)"
                 );
                 preparedStatement.setString(1,workerId);
                 preparedStatement.setString(2,assignmentId);
