@@ -4,12 +4,19 @@ package controllers;
 import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.lingala.zip4j.core.*;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.model.*;
+import net.lingala.zip4j.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import models.LingoExpModel;
@@ -22,8 +29,9 @@ import models.Questions.Question;
 import models.Repository;
 import models.Worker;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.h2.command.Prepared;
+import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.libs.Crypto;
@@ -44,7 +52,7 @@ import static play.libs.Json.stringify;
 
 public class ManageExperiments extends Controller {
 
-    public static Result deleteExperimentType(String experimentName){
+    private static List<File> getDirectories(String experimentName){
         List<File> directories = new LinkedList<>();
         directories.add(new File("app/models/Groups/" + experimentName));
         directories.add(new File("app/models/Questions/" + experimentName));
@@ -53,9 +61,14 @@ public class ManageExperiments extends Controller {
         directories.add(new File("public/javascripts/ExperimentCreation/" + experimentName));
         directories.add(new File("public/javascripts/ExperimentRendering/" + experimentName));
         directories.add(new File("public/stylesheets/ExperimentRendering/" + experimentName));
+        directories.add(new File("public/images/Experiments/" + experimentName));
 
-        for(File d : directories){
-            if(d.exists() && d.isDirectory()){
+        return directories;
+    }
+
+    public static Result deleteExperimentType(String experimentName) {
+        for (File d : getDirectories(experimentName)) {
+            if (d.exists() && d.isDirectory()) {
                 try {
                     FileUtils.deleteDirectory(d);
                 } catch (IOException e) {
@@ -68,7 +81,37 @@ public class ManageExperiments extends Controller {
         return redirect("/");
     }
 
-    public static Result changeExperimentFields(String experimentName){
+    public static Result exportExperimentType(String experimentName) {
+        ZipFile zipFile;
+        File f;
+
+        try {
+            String timeStamp = new SimpleDateFormat("dd.MM.yyyy.HH.mm.ss").format(new Date());
+            //f = File.createTempFile(experimentName + "_" + timeStamp,"zip");
+            f = new File("C:\\Users\\anon\\Desktop\\test.zip");
+            zipFile = new ZipFile(f);
+        } catch (ZipException e) {
+            e.printStackTrace();
+            return internalServerError("Error: " + e.getMessage());
+        }
+
+        for (File d : getDirectories(experimentName)) {
+            if (d.exists() && d.isDirectory()) {
+                try {
+                    ZipParameters parameters = new ZipParameters();
+                    parameters.setRootFolderInZip(d.getPath().replace(File.separator,"_"));
+                    zipFile.addFolder(d,parameters);
+                } catch (ZipException e) {
+                    e.printStackTrace();
+                    return internalServerError("Error: " + e.getMessage());
+                }
+            }
+        }
+
+        return ok(zipFile.getFile());
+    }
+
+    public static Result changeExperimentFields(String experimentName) {
         return ok(views.html.ManageExperiments.changeExperimentFields.render(experimentName));
     }
 
@@ -85,17 +128,17 @@ public class ManageExperiments extends Controller {
             String path = classDetails.get("path").asText();
             File fallBack = new File("app/models/Questions/" + experimentType + "Experiment/" + className + ".java");
 
-            if(!path.equals("") || (path.equals("") && fallBack.exists())){
-                File classFile = (path.equals("") ? fallBack : new File("app/" + path.replace(".","/") + ".java"));
+            if (!path.equals("") || (path.equals("") && fallBack.exists())) {
+                File classFile = (path.equals("") ? fallBack : new File("app/" + path.replace(".", "/") + ".java"));
                 String fileContent = FileUtils.readFileToString(classFile);
 
-                Pattern pattern = Pattern.compile("/\\* BEGIN OF VARIABLES BLOCK \\*/.*/\\* END OF VARIABLES BLOCK \\*/",Pattern.DOTALL);
+                Pattern pattern = Pattern.compile("/\\* BEGIN OF VARIABLES BLOCK \\*/.*/\\* END OF VARIABLES BLOCK \\*/", Pattern.DOTALL);
                 Matcher matcher = pattern.matcher(fileContent);
                 matcher.find();
                 fileContent = matcher.replaceAll("// _VARIABLES_PLACEHOLDER_");
 
                 List<String[]> fields = new LinkedList<>();
-                for(Iterator<JsonNode> fieldIterator = entry.getValue().get("fields").iterator(); fieldIterator.hasNext();){
+                for (Iterator<JsonNode> fieldIterator = entry.getValue().get("fields").iterator(); fieldIterator.hasNext(); ) {
                     JsonNode fieldNode = fieldIterator.next();
                     String fieldName = fieldNode.get("name").asText();
                     String fieldType = fieldNode.get("type").asText();
@@ -103,13 +146,13 @@ public class ManageExperiments extends Controller {
                 }
 
                 FileUtils.writeStringToFile(classFile, setFields(fileContent, experimentType, fields), StandardCharsets.UTF_8);
-            }else{
+            } else {
                 String newClass = FileUtils.readFileToString(new File("template/templateClass.java"));
-                newClass = newClass.replace("_EXPERIMENT_",experimentType);
+                newClass = newClass.replace("_EXPERIMENT_", experimentType);
                 newClass = newClass.replace("_CLASSNAME_", className);
 
                 List<String[]> fields = new LinkedList<>();
-                for(Iterator<JsonNode> fieldIterator = entry.getValue().get("fields").iterator(); fieldIterator.hasNext();){
+                for (Iterator<JsonNode> fieldIterator = entry.getValue().get("fields").iterator(); fieldIterator.hasNext(); ) {
                     JsonNode fieldNode = fieldIterator.next();
                     String fieldName = fieldNode.get("name").asText();
                     String fieldType = fieldNode.get("type").asText();
@@ -133,33 +176,33 @@ public class ManageExperiments extends Controller {
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
 
         Set<String> observedTypes = new HashSet<>();
-        addFieldType(groupName,objectBuilder,observedTypes,false,true);
-        addFieldType(questionName,objectBuilder,observedTypes,true,false);
+        addFieldType(groupName, objectBuilder, observedTypes, false, true);
+        addFieldType(questionName, objectBuilder, observedTypes, true, false);
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode actualObj = mapper.readTree(objectBuilder.build().toString());
         return ok(stringify(actualObj));
     }
 
-    static String setFields(String fileContent, String experimentName, List<String[]> fields){
+    static String setFields(String fileContent, String experimentName, List<String[]> fields) {
         String setJsonFunction = "    @Override\n" +
                 "    public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {\n";
 
         String createdFields = "/* BEGIN OF VARIABLES BLOCK */\n\n";
 
-        for(String[] field : fields){
+        for (String[] field : fields) {
             String fieldType = field[1].trim();
 
-            if(fieldType.equals("java.lang.String") || fieldType.equals("String")){
+            if (fieldType.equals("java.lang.String") || fieldType.equals("String")) {
                 createdFields += "\t@Basic\n";
-                createdFields += "\t@Column(name=\"" + experimentName + "_" + field[0] +  "\", columnDefinition = \"TEXT\")\n";
+                createdFields += "\t@Column(name=\"" + experimentName + "_" + field[0] + "\", columnDefinition = \"TEXT\")\n";
                 createdFields += "\tpublic " + field[1] + " " + experimentName + "_" + field[0] + " = \"\";\n\n";
 
                 setJsonFunction += "\t\tJsonNode " + field[0] + "Node = questionNode.get(\"" + field[0] + "\");\n";
                 setJsonFunction += "\t\tif (" + field[0] + "Node != null){\n";
                 setJsonFunction += "\t\t\tthis." + experimentName + "_" + field[0] + " = " + field[0] + "Node.asText();\n";
                 setJsonFunction += "\t\t}\n\n";
-            }else if(fieldType.equals("java.lang.Integer") || fieldType.equals("Integer") || fieldType.equals("int")){
+            } else if (fieldType.equals("java.lang.Integer") || fieldType.equals("Integer") || fieldType.equals("int")) {
                 createdFields += "\t@Basic\n";
                 createdFields += "\t@Column(name=\"" + experimentName + "_" + field[0] + "\")\n";
                 createdFields += "\tpublic " + field[1] + " " + experimentName + "_" + field[0] + " = -1;\n\n";
@@ -168,7 +211,7 @@ public class ManageExperiments extends Controller {
                 setJsonFunction += "\t\tif (" + field[0] + "Node != null){\n";
                 setJsonFunction += "\t\t\tthis." + experimentName + "_" + field[0] + " = " + field[0] + "Node.asInt();\n";
                 setJsonFunction += "\t\t}\n\n";
-            }else if(fieldType.equals("java.lang.Float") || fieldType.equals("Float") || fieldType.equals("float")){
+            } else if (fieldType.equals("java.lang.Float") || fieldType.equals("Float") || fieldType.equals("float")) {
                 createdFields += "\t@Basic\n";
                 createdFields += "\t@Column(name=\"" + experimentName + "_" + field[0] + "\")\n";
                 createdFields += "\tpublic " + field[1] + " " + experimentName + "_" + field[0] + " = -1.0f;\n\n";
@@ -177,7 +220,7 @@ public class ManageExperiments extends Controller {
                 setJsonFunction += "\t\tif (" + field[0] + "Node != null){\n";
                 setJsonFunction += "\t\t\tthis." + experimentName + "_" + field[0] + " = (float)" + field[0] + "Node.asDouble();\n";
                 setJsonFunction += "\t\t}\n\n";
-            }else if(fieldType.equals("java.lang.Boolean") || fieldType.equals("Boolean") || fieldType.equals("boolean")){
+            } else if (fieldType.equals("java.lang.Boolean") || fieldType.equals("Boolean") || fieldType.equals("boolean")) {
                 createdFields += "\t@Basic\n";
                 createdFields += "\t@Column(name=\"" + experimentName + "_" + field[0] + "\")\n";
                 createdFields += "\tpublic " + field[1] + " " + experimentName + "_" + field[0] + " = false;\n\n";
@@ -186,10 +229,10 @@ public class ManageExperiments extends Controller {
                 setJsonFunction += "\t\tif (" + field[0] + "Node != null){\n";
                 setJsonFunction += "\t\t\tthis." + experimentName + "_" + field[0] + " = " + field[0] + "Node.asBoolean();\n";
                 setJsonFunction += "\t\t}\n\n";
-            } else if(fieldType.startsWith("java.util.List")){
+            } else if (fieldType.startsWith("java.util.List")) {
                 createdFields += "\t@OneToMany(cascade = CascadeType.ALL)\n";
                 createdFields += "\tpublic " + field[1] + " " + experimentName + "_" + field[0] + " = new LinkedList<>();\n\n";
-            }else{
+            } else {
                 throw new RuntimeException("Unknown fieldType: " + fieldType);
             }
         }
@@ -205,42 +248,42 @@ public class ManageExperiments extends Controller {
         JsonArrayBuilder fieldBuilder = Json.createArrayBuilder();
         Class c = Class.forName(className);
         String removablePrefix = null;
-        if(isQuestionType){
-            String modifiedClassName = c.getSimpleName().substring(0,c.getSimpleName().length() - "Question".length());
+        if (isQuestionType) {
+            String modifiedClassName = c.getSimpleName().substring(0, c.getSimpleName().length() - "Question".length());
             removablePrefix = modifiedClassName + "_";
         }
 
-        if(observedTypes.contains(c.getSimpleName())){
+        if (observedTypes.contains(c.getSimpleName())) {
             return;
         }
 
         for (Field s : getFields(c)) {
             JsonObjectBuilder questionBuilder = Json.createObjectBuilder();
             if (s.getGenericType().getTypeName().startsWith("java.util.List")) {
-                if(s.getGenericType() instanceof ParameterizedType){
+                if (s.getGenericType() instanceof ParameterizedType) {
                     ParameterizedType pType = (ParameterizedType) s.getGenericType();
                     String typeName = pType.getActualTypeArguments()[0].getTypeName();
-                    if(!observedTypes.contains(typeName)){
+                    if (!observedTypes.contains(typeName)) {
                         observedTypes.add(typeName);
-                        addFieldType(pType.getActualTypeArguments()[0].getTypeName(),objectBuilder,observedTypes,false,false);
+                        addFieldType(pType.getActualTypeArguments()[0].getTypeName(), objectBuilder, observedTypes, false, false);
                     }
                 }
             }
-            fieldBuilder.add(questionBuilder.add("type", s.getGenericType().toString().replace("class ",""))
-                    .add("name", (isQuestionType ? s.getName().replaceFirst(removablePrefix,"") : s.getName()))
-                    .add("simpleTypeName",s.getType().getSimpleName())
+            fieldBuilder.add(questionBuilder.add("type", s.getGenericType().toString().replace("class ", ""))
+                    .add("name", (isQuestionType ? s.getName().replaceFirst(removablePrefix, "") : s.getName()))
+                    .add("simpleTypeName", s.getType().getSimpleName())
                     .build());
         }
         objectBuilder.add(c.getSimpleName(), Json.createObjectBuilder()
-                .add("fields",fieldBuilder.build())
-                .add("isQuestionType",isQuestionType)
-                .add("isGroupType",isGroupType)
-                .add("path",c.getName())
+                .add("fields", fieldBuilder.build())
+                .add("isQuestionType", isQuestionType)
+                .add("isGroupType", isGroupType)
+                .add("path", c.getName())
                 .build());
     }
 
     private static List<Field> getFields(Class c) throws ClassNotFoundException {
-        String[] unusedFields = new String[]{"finder", "_idGetSet", "random", "questions", "id", "availability", "experimentID"};
+        String[] unusedFields = new String[]{"finder", "_idGetSet", "random", "questions", "id", "availability", "experimentID", "disabled"};
         List<Field> fieldNames = new LinkedList<>();
         do {
             for (Field f : c.getDeclaredFields()) {
@@ -263,9 +306,9 @@ public class ManageExperiments extends Controller {
         String feedback = json.get("feedback").asText();
 
         PreparedStatement statement = Repository.getConnection().prepareStatement("INSERT INTO participantFeedback(id,expId,workerId,feedback) VALUES (nextVal('ParticipantFeedback_Seq'),?,?,?)");
-        statement.setString(1,expId);
-        statement.setString(2,workerId);
-        statement.setString(3,feedback);
+        statement.setString(1, expId);
+        statement.setString(2, workerId);
+        statement.setString(3, feedback);
 
         statement.execute();
         statement.close();
@@ -295,24 +338,14 @@ public class ManageExperiments extends Controller {
             return internalServerError("writeResults method is not accessible: " + experimentType);
         } catch (InvocationTargetException e) {
             e.printStackTrace();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            Logger.error(sw.toString());
             return internalServerError("writeResults method throws exception: \n" + ((e.getCause() != null) ? e.getCause().getMessage() : e.getMessage()));
         }
 
         return ok();
     }
-
-    /*@BodyParser.Of(BodyParser.Json.class)
-    public static Result submitResult() throws SQLException {
-        JsonNode json = request().body().asJson();
-        if (json != null) {
-            String assignmentID = json.get("assignmentID").asText();
-            if (assignmentID != null && !assignmentID.equals("ASSIGNMENT_ID_NOT_AVAILABLE_TEST")) {
-                AsynchronousJob.addAssignmentID(assignmentID);
-            }
-        }
-
-        return ok();
-    }*/
 
     @Security.Authenticated(Secured.class)
     public static Result createExperiment(String name) {
@@ -323,7 +356,7 @@ public class ManageExperiments extends Controller {
             return ok(webpage);
         } catch (ClassNotFoundException e) {
             // Remove "Experiment" at the end of name
-            return ok(views.html.ExperimentCreation.createExperiment.render(name.substring(0,name.length() - "Experiment".length())));
+            return ok(views.html.ExperimentCreation.createExperiment.render(name.substring(0, name.length() - "Experiment".length())));
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassCastException e) {
             return internalServerError("Wrong type for name: " + name);
         }
@@ -332,10 +365,6 @@ public class ManageExperiments extends Controller {
     @Security.Authenticated(Secured.class)
     public static Result experimentCreationInterface() {
         return ok(views.html.ManageExperiments.experimentCreationInterface.render());
-    }
-
-    private static Set<String> listExperimentTypes() {
-        return null;
     }
 
     private static boolean typeNameExists(String path, String name) {
@@ -364,18 +393,24 @@ public class ManageExperiments extends Controller {
         boolean dir5 = typeNameExists("public/javascripts/ExperimentCreation/", name);
         boolean dir6 = typeNameExists("public/javascripts/ExperimentRendering/", name);
         boolean dir7 = typeNameExists("public/stylesheets/ExperimentRendering/", name);
+        boolean dir8 = typeNameExists("public/images/Experiments/", name);
 
-        return !(dir1 || dir2 || dir3 || dir4 || dir5 || dir6 || dir7);
+        return !(dir1 || dir2 || dir3 || dir4 || dir5 || dir6 || dir7 || dir8);
     }
+
+    private static List<String> modifiableExtensions = Arrays.asList(new String[]{"java","txt","html","config","js","conf", "properties", "sql"});
 
     private static void copyExperimentFile(String sourcepath, String destination, String oldName, String newName) throws IOException {
         File sourceFile = new File(sourcepath);
         File destinationFile = new File(destination);
 
-        String fileContent = FileUtils.readFileToString(sourceFile);
-        fileContent = fileContent.replaceAll(oldName, newName);
-
-        FileUtils.writeStringToFile(destinationFile, fileContent, StandardCharsets.UTF_8);
+        if(modifiableExtensions.contains(FilenameUtils.getExtension(sourcepath))){
+            String fileContent = FileUtils.readFileToString(sourceFile);
+            fileContent = fileContent.replaceAll(oldName, newName);
+            FileUtils.writeStringToFile(destinationFile, fileContent, StandardCharsets.UTF_8);
+        }else{
+            FileUtils.copyFile(sourceFile,destinationFile);
+        }
     }
 
     private static void copyExperimentDirectory(String sourcepath, String destination, String oldName, String newName) throws IOException {
@@ -388,7 +423,7 @@ public class ManageExperiments extends Controller {
         }
 
         File sourceFile = new File(sourcepath);
-        if(sourceFile.exists()){
+        if (sourceFile.exists()) {
             for (File f : sourceFile.listFiles()) {
                 if (f.isDirectory()) {
                     copyExperimentDirectory(sourcepath + f.getName(), destination + f.getName(), oldName, newName);
@@ -406,16 +441,20 @@ public class ManageExperiments extends Controller {
 
     private static void createExperimentType(String name, List<String[]> questionFields, String reusedGroupName) {
         try {
-            //copyExperimentFile("template/templateExperimentCreation.scala.html",
-             //       "app/views/ExperimentCreation/" + name + "Experiment/create" + name + "Experiment.scala.html", "_TEMPLATE_", name);
+            File f = new File("public/images/Experiments/" + name + "Experiment");
+            if(!f.exists()){
+                if(!f.mkdirs()){
+                    throw new IOException("Could not create directory");
+                }
+            }
 
             copyExperimentFile("template/templateExperimentRendering.scala.html",
                     "app/views/ExperimentRendering/" + name + "Experiment/" + name + "Experiment_render.scala.html", "_TEMPLATE_", name);
 
-            if(reusedGroupName != null) {
-                 copyExperimentFile("template/templateQuestion.java",
+            if (reusedGroupName != null) {
+                copyExperimentFile("template/templateQuestion.java",
                         "app/models/Questions/" + name + "Experiment/" + name + "Question.java", "_TEMPLATE_", name);
-            }else{
+            } else {
                 copyExperimentFile("template/templateGroup.java",
                         "app/models/Groups/" + name + "Experiment/" + name + "Group.java", "_TEMPLATE_", name);
 
@@ -425,7 +464,7 @@ public class ManageExperiments extends Controller {
 
             File questionFile = new File("app/models/Questions/" + name + "Experiment/" + name + "Question.java");
             String fileContent = FileUtils.readFileToString(questionFile);
-            fileContent = setFields(fileContent,name, questionFields);
+            fileContent = setFields(fileContent, name, questionFields);
             FileUtils.writeStringToFile(questionFile, fileContent, StandardCharsets.UTF_8);
 
             copyExperimentFile("template/templateResults.java",
@@ -433,9 +472,6 @@ public class ManageExperiments extends Controller {
 
             copyExperimentFile("template/templateResultQuery.sql",
                     "app/models/Questions/" + name + "Experiment/resultQuery.sql", "_TEMPLATE_", name);
-
-            //copyExperimentFile("template/templateExperimentCreation.js",
-             //       "public/javascripts/ExperimentCreation/" + name + "Experiment/create" + name + "Experiment.js", "_TEMPLATE_", name);
 
             copyExperimentFile("template/templateExperimentRendering.js",
                     "public/javascripts/ExperimentRendering/" + name + "Experiment/" + name + "Experiment_render.js", "_TEMPLATE_", name);
@@ -446,9 +482,9 @@ public class ManageExperiments extends Controller {
             File propertiesFile = new File("app/models/Questions/" + name + "Experiment/experiment.properties");
             BufferedWriter writer = new BufferedWriter(new FileWriter(propertiesFile));
             writer.write("questionType = models.Questions." + name + "Experiment." + name + "Question\n");
-            if(reusedGroupName != null){
+            if (reusedGroupName != null) {
                 writer.write("groupType = models.Groups." + reusedGroupName);
-            }else{
+            } else {
                 writer.write("groupType = models.Groups." + name + "Experiment." + name + "Group");
             }
             writer.close();
@@ -475,6 +511,7 @@ public class ManageExperiments extends Controller {
             copyExperimentDirectory("public/javascripts/ExperimentCreation/" + sourceExperimentName, "public/javascripts/ExperimentCreation/" + targetExperimentName, sourceExperiment, targetExperiment);
             copyExperimentDirectory("public/javascripts/ExperimentRendering/" + sourceExperimentName, "public/javascripts/ExperimentRendering/" + targetExperimentName, sourceExperiment, targetExperiment);
             copyExperimentDirectory("public/stylesheets/ExperimentRendering/" + sourceExperimentName, "public/stylesheets/ExperimentRendering/" + targetExperimentName, sourceExperiment, targetExperiment);
+            copyExperimentDirectory("public/images/Experiments/" + sourceExperimentName, "public/images/Experiments/" + targetExperimentName, sourceExperiment, targetExperiment);
         } catch (IOException e) {
             throw new IllegalStateException("Error occured while copying experiment files: " + e.getMessage());
         }
@@ -512,7 +549,7 @@ public class ManageExperiments extends Controller {
         String experimentType = json.get("experimentType").asText();
 
         List<String[]> questionFields = new LinkedList<>();
-        for(Iterator<JsonNode> questionFieldIterator = json.get("questionFields").iterator(); questionFieldIterator.hasNext();){
+        for (Iterator<JsonNode> questionFieldIterator = json.get("questionFields").iterator(); questionFieldIterator.hasNext(); ) {
             JsonNode questionField = questionFieldIterator.next();
             questionFields.add(new String[]{questionField.get("name").asText(), questionField.get("type").asText()});
         }
@@ -526,12 +563,12 @@ public class ManageExperiments extends Controller {
                 copyExperimentType(sourceTypeName, newTypeName);
                 break;
             case "NEW":
-                createExperimentType(newTypeName,questionFields, null);
+                createExperimentType(newTypeName, questionFields, null);
                 break;
             case "REUSE":
                 String sourceGroup = json.get("sourceGroupName").asText();
                 try {
-                    createExperimentType(newTypeName,questionFields, sourceGroup);
+                    createExperimentType(newTypeName, questionFields, sourceGroup);
                 } catch (IllegalStateException e) {
                     return internalServerError(e.getMessage());
                 }
@@ -632,8 +669,7 @@ public class ManageExperiments extends Controller {
         }
     }
 
-    static int fallBackCounter = 0;
-
+    static Map<Integer, Integer> fallBack = new HashMap<>();
     public static Result returnPartAsJSON(int expId, String workerId) throws SQLException, IOException {
         LingoExpModel exp = LingoExpModel.byId(expId);
 
@@ -661,11 +697,25 @@ public class ManageExperiments extends Controller {
                     }
                 }
                 if (group == null) {
-                    group = exp.getParts().get(fallBackCounter);
-                    System.out.println("No Parts available. Fallback to Group Nr. " + group.getId());
-                    fallBackCounter++;
-                    if (fallBackCounter >= exp.getParts().size()) {
-                        fallBackCounter = 0;
+                    while(true){
+                        int fallBackCounter;
+                        if (fallBack.containsKey(expId)) {
+                            fallBackCounter = fallBack.get(expId);
+                        } else {
+                            fallBackCounter = 0;
+                            fallBack.put(expId, 0);
+                        }
+
+                        group = exp.getParts().get(fallBackCounter);
+                        fallBackCounter++;
+                        if (fallBackCounter >= exp.getParts().size()) {
+                            fallBackCounter = 0;
+                        }
+                        fallBack.put(expId, fallBackCounter);
+                        if(!group.disabled){
+                            System.out.println("No Parts available. Fallback to Group Nr. " + group.getId());
+                            break;
+                        }
                     }
                 }
                 worker.addParticipatesInPart(group, null, null, "Prolific", null);
@@ -744,26 +794,6 @@ public class ManageExperiments extends Controller {
         }
 
         experiment.update();
-
-        /*
-        // Create example question
-        List<ExampleQuestion> exampleQuestions_tmp = new LinkedList<>();
-        for (Iterator<JsonNode> exampleQuestions = json.get("exampleQuestions").iterator(); exampleQuestions.hasNext(); ) {
-            JsonNode question = exampleQuestions.next();
-            String type = question.get("_type").asText();
-            ExampleQuestion exampleQuestion = QuestionFactory.createExampleQuestion(type, experiment, question);
-            exampleQuestions_tmp.add(exampleQuestion);
-        }
-
-        experiment.setExampleQuestions(exampleQuestions_tmp);
-
-
-        // Create cheater detection questions
-        JsonNode cheaterDetectionNode = json.get("cheaterDetectionQuestions");
-        if (cheaterDetectionNode != null) {
-            List<CheaterDetectionQuestion> cheaterDetectionQuestions_tmp = CheaterDetectionQuestion.createCheaterDetectionQuestions(experiment, json.get("cheaterDetectionQuestions"));
-            experiment.setCheaterDetectionQuestions(cheaterDetectionQuestions_tmp);
-        }*/
 
         // Create Parts
         List<AbstractGroup> groups = new LinkedList<>();

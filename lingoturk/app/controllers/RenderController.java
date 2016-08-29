@@ -56,13 +56,15 @@ public class RenderController extends Controller {
      * @return Result object containing the page.
      */
     public static Result renderProlific(Integer expId, Integer partId, Integer questionId) {
+        DynamicForm df = new DynamicForm().bindFromRequest();
         LingoExpModel lingoExpModel = LingoExpModel.byId(expId);
         if (lingoExpModel == null) {
             return internalServerError("Unknown experiment Id");
         }
+
         try {
             Method m = getRenderMethod(lingoExpModel.getExperimentType());
-            Html webpage = (Html) m.invoke(null, (questionId == null ? null : Question.byId(questionId)), (partId == null ? null : AbstractGroup.byId(partId)), null, null, null, null, lingoExpModel, null, "PROLIFIC");
+            Html webpage = (Html) m.invoke(null, (questionId == null ? null : Question.byId(questionId)), (partId == null ? null : AbstractGroup.byId(partId)), null, null, null, null, lingoExpModel, df, "PROLIFIC");
             return ok(webpage);
         } catch (ClassNotFoundException e) {
             return internalServerError("Unknown experiment name: " + lingoExpModel.getExperimentType());

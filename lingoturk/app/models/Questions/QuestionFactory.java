@@ -3,7 +3,6 @@ package models.Questions;
 import com.fasterxml.jackson.databind.JsonNode;
 import models.AbstractFactory;
 import models.LingoExpModel;
-import models.Questions.RephrasingExperiment.RephrasingExampleQuestion;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -29,10 +28,15 @@ public class QuestionFactory extends AbstractFactory{
             }
 
             PartQuestion question = (PartQuestion) c.newInstance();
+            question.experimentID = experiment.getId();
+
+            JsonNode subListNode = node.get("subList");
+            if(subListNode != null){
+                question.subList = subListNode.asText();
+            }
+
             question.save();
             question.setJSONData(experiment, node);
-            question.update();
-            question.experimentID = experiment.getId();
             question.update();
 
             return question;

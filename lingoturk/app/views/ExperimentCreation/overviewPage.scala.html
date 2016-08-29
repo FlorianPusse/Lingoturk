@@ -15,6 +15,13 @@
         }
     </style>
     <script>
+        function exportExperimentType(name){
+            bootbox.confirm("Are you sure you want to export this experiment type?", function(result) {
+                if(result){
+                    window.location.href = "/exportExperimentType?experimentName=" + name;
+                }
+            });
+        }
         function deleteExperimentType(name){
             bootbox.confirm("Are you sure you want to delete this experiment type? It will not be possible to restore it afterwards.", function(result) {
                 if(result){
@@ -79,6 +86,7 @@
                     <div>
                         <span title="Base new experiment type on existing type" onclick="copyExperimentType('@experimentName'); return false;" class="glyphicon glyphicon-duplicate" aria-hidden="true"></span>
                         <span title="Delete experiment type" onclick="deleteExperimentType('@experimentName'); return false;" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        <span title="Export experiment type" onclick="exportExperimentType('@experimentName'); return false;" class="glyphicon glyphicon-export" aria-hidden="true"></span>
                     </div>
                 </div>
             </a>

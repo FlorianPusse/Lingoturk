@@ -36,7 +36,15 @@ public abstract class Question extends Model {
 
     @JsonIgnore
     @Column(name = "Availability", columnDefinition = "integer default 1")
-    protected int availability = 1;
+    protected int availability;
+
+    @JsonIgnore
+    @Column(name = "disabled", columnDefinition = "boolean default false")
+    public boolean disabled;
+
+    @Basic
+    @Column(name = "subList", columnDefinition = "varchar(255) default ''")
+    public String subList;
 
     @JsonIgnore
     private static Finder<Integer, Question> finder = new Finder<>(Integer.class, Question.class);
@@ -46,6 +54,10 @@ public abstract class Question extends Model {
     }
 
     public synchronized Question getIfAvailable() throws SQLException {
+        if (disabled){
+            return null;
+        }
+
         PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT * FROM Questions WHERE QuestionID=" + this.getId());
         ResultSet rs = statement.executeQuery();
 

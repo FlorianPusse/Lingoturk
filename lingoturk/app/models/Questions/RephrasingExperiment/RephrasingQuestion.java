@@ -1,7 +1,6 @@
 package models.Questions.RephrasingExperiment;
 
 import com.amazonaws.mturk.requester.Assignment;
-import com.amazonaws.services.identitymanagement.model.ReportStateType;
 import com.fasterxml.jackson.databind.JsonNode;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
@@ -11,14 +10,10 @@ import models.Worker;
 import org.dom4j.DocumentException;
 import play.data.DynamicForm;
 import play.mvc.Result;
-
-import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.persistence.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Iterator;
 
 import static play.mvc.Results.ok;
 
@@ -130,8 +125,8 @@ public class RephrasingQuestion extends PartQuestion {
         int readingTime1 = answerNode.get("readingTime1").asInt();
         int readingTime2 = answerNode.get("readingTime2").asInt();
 
-        int age = answerNode.get("age").asInt();
-        int startedLearning = answerNode.get("startedLearning").asInt();
+        int age = resultNode.get("age").asInt();
+        int startedLearning = resultNode.get("startedLearning").asInt();
 
         PreparedStatement statement = Repository.getConnection().prepareStatement(
                 "INSERT INTO RephrasingResults(id,workerId,questionId,answer1,answer2,choice1,choice2,readingTime1,readingTime2, age, startedLearning) VALUES(nextval('RephrasingResults_seq'),?,?,?,?,?,?,?,?,?,?)"

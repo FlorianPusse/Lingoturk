@@ -33,6 +33,16 @@ public class LinkingGroup extends AbstractGroup {
 
     public List<PartQuestion> q = null;
 
+    @Override
+    public List<ProlificPublish> prepareProlificPublish() {
+        return null;
+    }
+
+    @Override
+    public void publishOnProlific(int maxAssignments) {
+        throw new RuntimeException("Not implemented");
+    }
+
     public static LinkingGroup createPart(List<PartQuestion> combinations) throws SQLException {
         LinkingGroup part = new LinkingGroup();
         part.save();

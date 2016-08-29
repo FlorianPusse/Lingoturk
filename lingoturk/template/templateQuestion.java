@@ -40,6 +40,24 @@ public class _TEMPLATE_Question extends PartQuestion {
         String hitId = resultNode.get("hitId").asText();
         int partId = resultNode.get("partId").asInt();
 
+        int expId = -1;
+        JsonNode expIdNode = resultNode.get("expId");
+        if(expIdNode != null){
+            expId = expIdNode.asInt();
+        }
+
+        String origin = "NOT AVAILABLE";
+        JsonNode originNode = resultNode.get("origin");
+        if(originNode != null){
+            origin = originNode.asText();
+        }
+
+        JsonNode statisticsNode = resultNode.get("statistics");
+        if(statisticsNode != null){
+            String statistics = statisticsNode.toString();
+            Worker.addStatistics(workerId, expId, origin, statistics);
+        }
+
         for(Iterator<JsonNode> questionNodeIterator = resultNode.get("results").iterator(); questionNodeIterator.hasNext(); ){
             JsonNode questionNode = questionNodeIterator.next();
             int questionId = questionNode.get("id").asInt();

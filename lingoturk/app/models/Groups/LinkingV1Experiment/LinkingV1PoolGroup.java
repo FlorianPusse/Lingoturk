@@ -53,6 +53,16 @@ public class LinkingV1PoolGroup extends AbstractGroup {
     public LinkingV1PoolGroup(){}
 
     @Override
+    public List<ProlificPublish> prepareProlificPublish() {
+        return null;
+    }
+
+    @Override
+    public void publishOnProlific(int maxAssignments) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
     public String publishOnAMT(RequesterService service, int publishedId, String hitTypeId, Long lifetime, Integer maxAssignmentsPerCombination) throws SQLException {
         String url = null;
 

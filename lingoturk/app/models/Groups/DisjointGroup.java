@@ -19,6 +19,9 @@ import javax.json.JsonObjectBuilder;
 import javax.persistence.*;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static play.libs.Json.stringify;
@@ -38,6 +41,8 @@ public class DisjointGroup extends AbstractGroup {
 
     private Random random = new Random();
 
+    static Map<Integer, Integer> fallBack = new HashMap<>();
+
     @Override
     public String publishOnAMT(RequesterService service, int publishedId, String hitTypeId, Long lifetime, Integer maxAssignments) throws SQLException {
         String question = "<ExternalQuestion xmlns=\"http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd\">"
@@ -55,21 +60,66 @@ public class DisjointGroup extends AbstractGroup {
     }
 
     @Override
+    public List<ProlificPublish> prepareProlificPublish() {
+        return null;
+    }
+
+    @Override
+    public void publishOnProlific(int maxAssignments) {
+
+    }
+
+    @Override
     public void setJSONData(LingoExpModel experiment, JsonNode partNode) throws SQLException {
         super.setJSONData(experiment, partNode);
     }
 
-    public Result returnQuestionAsJson(Worker worker, String assignmentId, String hitId) throws SQLException, IOException {
-        Worker.Participation participation = worker.getParticipatesInPart(this);
+    public static Result returnQuestionAsJson(int groupId, String workerId, String assignmentId, String hitId) throws SQLException, IOException {
+        DisjointGroup group = (DisjointGroup) DisjointGroup.byId(groupId);
+
+        Worker worker = Worker.getWorkerById(workerId);
+        if (worker == null){
+            worker = Worker.createWorker(workerId);
+        }
+
+        Worker.Participation participation = worker.getParticipatesInPart(group);
         Question question = null;
 
-        if (!assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE") && !assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE_TEST")) {
+        if (assignmentId == null || (!assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE") && !assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE_TEST"))) {
+            assignmentId = (assignmentId == null) ? "NOT AVAILABLE" : assignmentId;
+
             if (participation == null) {
                 // Worker hasn't participated in the HIT already
-                question = getNextQuestion();
-                worker.addParticipatesInPart(this, question, null, assignmentId, hitId);
+                System.out.println(worker.getId() + " takes part in part: " + group.getId());
+                question = group.getNextQuestion();
+
+                if (question == null) {
+                    while(true){
+                        int fallBackCounter;
+                        if (fallBack.containsKey(groupId)) {
+                            fallBackCounter = fallBack.get(groupId);
+                        } else {
+                            fallBackCounter = 0;
+                            fallBack.put(groupId, 0);
+                        }
+
+                        question = group.getQuestions().get(fallBackCounter);
+                        fallBackCounter++;
+                        if (fallBackCounter >= group.getQuestions().size()) {
+                            fallBackCounter = 0;
+                        }
+                        fallBack.put(groupId, fallBackCounter);
+                        if(!question.disabled){
+                            System.out.println("No Questions available. Fallback to question Nr. " + question.getId());
+                            break;
+                        }
+                    }
+                }
+
+
+                worker.addParticipatesInPart(group, question, null, assignmentId, hitId);
             }else if (participation.getAssignmentID().equals(assignmentId)) {
-                System.out.println(worker.getId() + " reloads part: " + getId());
+                System.out.println(worker.getId() + " reloads part: " + group.getId());
                 // Worker has already participated in a hit
                 question = Question.byId(participation.getQuestionID());
             }else{
@@ -78,9 +128,11 @@ public class DisjointGroup extends AbstractGroup {
             }
         }
 
-        // just a test -> return random question
-        int nr = random.nextInt(getQuestions().size());
-        question =  getQuestions().get(nr);
+        if (question == null){
+            // just a test -> return random question
+            int nr = group.random.nextInt(group.getQuestions().size());
+            question =  group.getQuestions().get(nr);
+        }
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode actualObj = mapper.readTree(question.returnJSON().toString());

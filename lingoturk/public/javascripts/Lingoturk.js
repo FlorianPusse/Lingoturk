@@ -9,24 +9,25 @@
             restrict: 'E',
             templateUrl: '/assets/templates/statisticsDirective.html',
             scope: {
+                statistics : '=',
+                click : '=',
                 content : '='
             },
-            compile: function(tElement, tAttr) {
-                var contents = tElement.contents().remove();
-                var compiledContents;
-                return function(scope, iElement, iAttr) {
-                    if(!compiledContents) {
-                        compiledContents = $compile(contents);
+            link: function (scope, element, attrs) {
+                scope.statisticsValid = function(){
+                    for(var i = 0; i < scope.statistics.length; ++i){
+                        var statistic = scope.statistics[i];
+                        if((statistic.answer === undefined || (statistic.answer == "" && statistic.type == "text")) && (statistic.optional === undefined || statistic.optional == false)){
+                            return false;
+                        }
                     }
-                    compiledContents(scope, function(clone, scope) {
-                        iElement.append(clone);
-                    });
+                    return true;
                 };
             }
         };
     });
 
-    app.directive("statisticsSlide", function($compile){
+    app.directive("workerSlide", function($compile){
         return {
             restrict: 'E',
             templateUrl: '/assets/templates/workeridDirective.html',

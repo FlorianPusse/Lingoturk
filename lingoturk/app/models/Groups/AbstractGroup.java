@@ -1,6 +1,7 @@
 package models.Groups;
 
 import com.amazonaws.mturk.service.axis.RequesterService;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
@@ -42,6 +43,10 @@ public abstract class AbstractGroup extends Model {
     @Basic
     public int availability;
 
+    @JsonIgnore
+    @Column(name = "disabled", columnDefinition = "boolean default false")
+    public boolean disabled;
+
     @Basic
     @Column(name = "fileName")
     public String fileName;
@@ -62,10 +67,20 @@ public abstract class AbstractGroup extends Model {
 
     public abstract String publishOnAMT(RequesterService service, int publishedId, String hitTypeId, Long lifetime, Integer maxAssignments) throws SQLException;
 
+    public abstract List<ProlificPublish> prepareProlificPublish();
+
+    public class ProlificPublish{
+        private ProlificPublish(){
+
+        }
+    }
+
+    public abstract void publishOnProlific(int maxAssignments);
+
     public synchronized boolean decreaseIfAvailable() throws SQLException {
         boolean answer;
         int availability = getAvailability();
-        if(availability > 0){
+        if((!disabled) && availability > 0){
             setAvailability(availability - 1);
             answer = true;
         }else{

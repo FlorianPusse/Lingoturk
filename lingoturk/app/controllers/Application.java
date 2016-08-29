@@ -108,19 +108,21 @@ public class Application extends Controller {
 
     @Security.Authenticated(Secured.class)
     public static Result publishOnProlific(int expId) {
-        return ok(views.html.publishing.publishOnProlific.render(expId));
+        LingoExpModel expModel = LingoExpModel.byId(expId);
+        if(expModel == null){
+            return internalServerError("Experiment ID does not exist!");
+        }
+
+        return ok(views.html.publishing.publishOnProlific.render(expModel));
     }
 
-    /**
-     * Renders the modify-view for a given experiment
-     *
-     * @param id the experiments id
-     * @return the rendered page
-     */
     @Security.Authenticated(Secured.class)
-    public static Result modify(int id) {
-        LingoExpModel exp = LingoExpModel.byId(id);
-        return exp.modify();
+    public static Result publishProlific() {
+        DynamicForm df = new DynamicForm().bindFromRequest();
+        int expId = Integer.parseInt(df.get("expId"));
+        LingoExpModel expModel = LingoExpModel.byId(expId);
+
+        return ok();
     }
 
     /**
@@ -131,7 +133,7 @@ public class Application extends Controller {
      * @return renders the page
      */
     @Security.Authenticated(Secured.class)
-    public static Result publish() throws SQLException {
+    public static Result publishMturk() throws SQLException {
         DynamicForm df = new DynamicForm().bindFromRequest();
         int expId = Integer.parseInt(df.get("eId"));
 
@@ -210,6 +212,18 @@ public class Application extends Controller {
             url = p.publishOnAMT(service, publishedId, hitTYPE, lifetime, maxAssign);
         }
         return ok(views.html.publishing.publish.render(url));
+    }
+
+    /**
+     * Renders the modify-view for a given experiment
+     *
+     * @param id the experiments id
+     * @return the rendered page
+     */
+    @Security.Authenticated(Secured.class)
+    public static Result modify(int id) {
+        LingoExpModel exp = LingoExpModel.byId(id);
+        return exp.modify();
     }
 
     /**

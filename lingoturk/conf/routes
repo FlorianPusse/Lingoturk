@@ -36,12 +36,14 @@ GET         /returnJson/:id                         controllers.ManageExperiment
 GET         /returnPart                             controllers.ManageExperiments.returnPart(partId:Int)
 GET         /getPart                                controllers.ManageExperiments.returnPartAsJSON(expId : Int, workerId : String)
 
+GET         /returnQuestionASJSON                   models.Groups.DisjointGroup.returnQuestionAsJson(groupId: Int, workerId: String, assignmentId: String ?= null, hitId: String ?= null)
 GET         /getQuestion/:id                        controllers.ManageExperiments.getQuestion(id:Int)
 GET         /getConnectives/:id                     models.Questions.DiscourseConnectivesExperiment.DiscourseConnectivesQuestion.getConnectives(id:Int)
 
 GET         /manage                                 controllers.Application.manage()
-POST        /publish                                controllers.Application.publish()
 GET         /publishingPlatform                     controllers.Application.publishingPlatform(expId: Int)
+POST        /publishMturk                           controllers.Application.publishMturk()
+POST        /publishProlific                        controllers.Application.publishProlific()
 GET         /publishOnMturk                         controllers.Application.publishOnMturk(expId:Int)
 GET         /publishOnProlific                      controllers.Application.publishOnProlific(expId:Int)
 GET         /publishProlific                        models.Questions.LinkingV1Experiment.Prolific.LinkingGroup.publishProlific(expId:Int)
@@ -57,6 +59,7 @@ GET         /renderLinkingProlific                  models.Questions.LinkingV1Ex
 
 GET         /delete                                 controllers.Application.delete(id: Int)
 GET         /deleteExperimentType                   controllers.ManageExperiments.deleteExperimentType(experimentName: String)
+GET         /exportExperimentType                   controllers.ManageExperiments.exportExperimentType(experimentName: String)
 
 ######      Global Settings ######
 

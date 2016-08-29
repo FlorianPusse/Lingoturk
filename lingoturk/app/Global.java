@@ -11,7 +11,7 @@ import java.sql.Statement;
 
 public class Global extends GlobalSettings{
 
-    static boolean loadDemoExperiments = true;
+    static boolean loadDemoExperiments = false;
 
     @Override
     public void onStart(Application app) {

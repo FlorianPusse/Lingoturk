@@ -61,6 +61,16 @@ public class PoolGroup extends AbstractGroup {
         return url;
     }
 
+    @Override
+    public List<ProlificPublish> prepareProlificPublish() {
+        return null;
+    }
+
+    @Override
+    public void publishOnProlific(int maxAssignments) {
+
+    }
+
     public void insert(String hitID, int publishedId, int questionId) throws SQLException {
         PreparedStatement statement = Repository.getConnection().prepareStatement("INSERT INTO PartPublishedAs(PartID,mTurkID,publishedId,question1) VALUES(?,?,?,?)");
         statement.setInt(1, getId());

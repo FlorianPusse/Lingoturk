@@ -48,6 +48,16 @@ public class LinkingV2PoolGroup extends AbstractGroup {
     public LinkingV2PoolGroup(){}
 
     @Override
+    public List<ProlificPublish> prepareProlificPublish() {
+        return null;
+    }
+
+    @Override
+    public void publishOnProlific(int maxAssignments) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
     public String publishOnAMT(RequesterService service, int publishedId, String hitTypeId, Long lifetime, Integer maxAssignmentsPerCombination) throws SQLException {
         String url = null;
         hitTypeId = service.registerHITType(7200L, 600L, 0.15, "Linking most similar English sentences. #" + Application.actCounter, "script,scripts,activity,activities,linking,aligning, English,events,description,descriptions,most,similar,everyday", "We require native speakers of English who will be presented with two descriptions of everyday activities and will be required to decide if the highlighted event in the first description is most similar to the highlighted event in the second description.", Application.qualificationRequirements);

@@ -1,14 +1,29 @@
-<div id="statisticsSlide">
-    <div class="panel panel-primary">
-        <div class="panel-heading">Please enter your age for statistical purposes:</div>
-        <div class="panel-body">
-            <div class="form-group">
-                <blockquote style="font-size : 112% ; border-right : 5px solid #FF9500 ;">
-                    <input type="number" placeholder="enter your age here" ng-maxlength="3" ng-minlength="1" oninput='$("#statisticsButton").removeAttr("disabled"); return event.charCode >= 48 && event.charCode <= 57' ng-model="RC.age" class="form-control">
-                </blockquote>
+<div class="panel panel-primary" style="width:90%; margin:auto">
+    <div class="panel-heading" style="font-weight: bolder ;">Please enter some information about yourself:</div>
+    <div class="panel-body">
+
+        <div ng-repeat="statistic in statistics">
+            <div ng-if="statistic.type == 'number'" class="form-group">
+                <label for="{{statistic.name.replace(' ','')}}">{{statistic.name}}</label>
+                <input id="{{statistic.name.replace(' ','')}}" ng-model="statistic.answer" name="{{statistic.name.replace(' ','')}}" type="number" class="form-control">
             </div>
-            <button disabled="disabled" type="button" id="statisticsButton" onclick="$('#statisticsSlide').hide();$('#statisticsSlide1').show()" class="btn btn-default" style="float : right">
-                continue</button>
+            <div ng-if="statistic.type == 'text'" class="form-group">
+                <label for="{{statistic.name.replace(' ','')}}">{{statistic.name}}</label>
+                <input id="{{statistic.name.replace(' ','')}}" ng-model="statistic.answer" name="{{statistic.name.replace(' ','')}}" type="text" class="form-control">
+            </div>
+            <div ng-if="statistic.type == 'boolean'" class="form-group">
+                <label for="{{statistic.name.replace(' ','')}}">{{statistic.name}}</label>
+                <div id="{{statistic.name.replace(' ','')}}">
+                    <div class="radio">
+                        <label><input type="radio" ng-model="statistic.answer" ng-value="true" name="{{statistic.name.replace(' ','')}}">Yes</label>
+                    </div>
+                    <div class="radio">
+                        <label><input type="radio" ng-model="statistic.answer" ng-value="false" name="{{statistic.name.replace(' ','')}}">No</label>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <button ng-click="click()" type="button" ng-disabled="!statisticsValid()" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
     </div>
 </div>

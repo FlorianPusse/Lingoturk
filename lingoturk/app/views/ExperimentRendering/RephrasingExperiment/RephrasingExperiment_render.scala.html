@@ -5,7 +5,22 @@
     <form method="POST" action="@turkSubmitTo/mturk/externalSubmit" id="form" style="margin: 10% 12% 10% ;">
 
         @** statistics **@
-        <div id="statisticsSlide">
+        <div ng-if="RC.workerId == null">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Please enter your participantId:</div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <blockquote style="font-size : 112% ; border-right : 5px solid #FF9500 ;">
+                            <input type="text" placeholder="enter your participantId here" ng-model="RC.tmpWorker" class="form-control">
+                        </blockquote>
+                    </div>
+                    <button ng-click="RC.workerId = RC.tmpWorker; RC.load()" ng-disabled="RC.tmpWorker === undefined || RC.tmpWorker == ''" type="button" class="btn btn-default" style="float : right">continue</button>
+                </div>
+            </div>
+        </div>
+
+        @** statistics **@
+        <div ng-if="RC.workerId != null" id="statisticsSlide">
             <div class="panel panel-primary">
                 <div class="panel-heading">Please enter your age for statistical purposes:</div>
                 <div class="panel-body">
@@ -21,11 +36,11 @@
 
         <div id="statisticsSlide1" style="display:none">
             <div class="panel panel-primary">
-                <div class="panel-heading">Please enter the age at which you started learning English</div>
+                <div class="panel-heading">Please enter the age at which you started learning English:</div>
                 <div class="panel-body">
                     <div class="form-group">
                         <blockquote style="font-size : 112% ; border-right : 5px solid #FF9500 ;">
-                            <input type="number" placeholder="enter your age here" ng-maxlength="3" ng-minlength="1" oninput='$("#statisticsButton1").removeAttr("disabled"); return event.charCode >= 48 && event.charCode <= 57' ng-model="RC.startedLearning" class="form-control">
+                            <input type="number" placeholder="enter the age at which you started learning English here" ng-maxlength="3" ng-minlength="1" oninput='$("#statisticsButton1").removeAttr("disabled"); return event.charCode >= 48 && event.charCode <= 57' ng-model="RC.startedLearning" class="form-control">
                         </blockquote>
                     </div>
                     <button disabled="disabled" type="button" id="statisticsButton1" ng-click="RC.statisticsFinished()" class="btn btn-default" style="float : right">
@@ -34,24 +49,12 @@
             </div>
         </div>
 
-        <div id="workerSlide" style="display:none">
-            <div class="panel panel-primary">
-                <div class="panel-heading" style="font-weight: bolder ;">Please enter your workerId into the box below</div>
-                <div class="panel-body">
-                    <input type="input" ng-model="RC.workerId" class="form-control" placeholder="enter here">
-                    <button ng-disabled="RC.workerId == ''" onclick="$('#workerSlide').hide();$('#instructions').show()" type="button" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
-                </div>
-            </div>
-        </div>
-
-
         <div id="instructions" style="display:none">
             <div class="panel panel-primary">
                 <div class="panel-heading">Instructions</div>
                 <div class="panel-body">
                     <div class="form-group">
                         <p>@Html(exp.getAdditionalExplanations())</p>
-                        Please note that you cannot go back to an earlier screen to see the original sentence again, so please make sure to pay full attention when you first read the initial sentence. The order of the two tasks (question answering vs. rephrasing) is random.
 
                         <strong style="margin-top:20px; margin-bottom:20px; display:block">You'll see an example of what to expect in the task below:</strong>
                         <ol>
@@ -68,6 +71,8 @@
                                 <img style="display:block; margin: 10px auto; max-width: 100%" src="/assets/images/Experiments/RephrasingExperiment/3.PNG" />
                             </li>
                         </ol>
+
+                        Please note that you cannot go back to an earlier screen to see the original sentence again, so please make sure to pay full attention when you first read the initial sentence. The order of the two tasks (question answering vs. rephrasing) is random.
                     </div>
                     <button type="button" ng-click="RC.mainInstructionsFinished()" class="btn btn-default" style="float : right">continue</button>
                 </div>

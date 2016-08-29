@@ -143,6 +143,15 @@ CREATE FUNCTION getItemSlot(itemId integer) RETURNS integer AS $$
   END;;
 $$ LANGUAGE plpgsql;
 
+CREATE FUNCTION getC(itemId integer) RETURNS varchar(255) AS $$
+	DECLARE
+		answer varchar(255);;
+  BEGIN
+		SELECT c INTO answer FROM LinkingItem WHERE id = itemId;;
+    RETURN answer;;
+  END;;
+$$ LANGUAGE plpgsql;
+
 CREATE FUNCTION getScenarioName(id integer) RETURNS varchar(125) AS $$
 	DECLARE
 		n VARCHAR(125);;
@@ -206,3 +215,4 @@ DROP FUNCTION IF EXISTS getStandart(int,int);
 DROP FUNCTION IF EXISTS getScenarioName(int);
 DROP FUNCTION IF EXISTS getItemSlot(int);
 DROP FUNCTION IF EXISTS getScriptId(int);
+DROP FUNCTION IF EXISTS getC(int);

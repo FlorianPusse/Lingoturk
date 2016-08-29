@@ -57,6 +57,16 @@ public class FullGroup extends AbstractGroup {
     }
 
     @Override
+    public List<ProlificPublish> prepareProlificPublish() {
+        return null;
+    }
+
+    @Override
+    public void publishOnProlific(int maxAssignments) {
+
+    }
+
+    @Override
     public Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df){
         try {
             Method m = getRenderMethod(exp.getExperimentType());

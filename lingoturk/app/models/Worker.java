@@ -100,6 +100,18 @@ public class Worker extends Model {
         statement.execute();
     }
 
+    public static void addStatistics(String workerId, int expId, String origin, String statistics) throws SQLException {
+        PreparedStatement statement = Repository.getConnection().prepareStatement(
+                "INSERT INTO ParticipantStatistics(id,workerId, origin, expId, statistics) VALUES (nextval('ParticipantStatistics_seq'),?,?,?,?)");
+
+        statement.setString(1, workerId);
+        statement.setString(2, origin);
+        statement.setInt(3, expId);
+        statement.setString(4, statistics);
+
+        statement.execute();
+    }
+
     public int countFalseAnswers() throws SQLException {
         Statement statement = Repository.getConnection().createStatement();
         ResultSet rs = statement.executeQuery("SELECT count(*) AS falseCount FROM participatesInCD_Question WHERE WorkerID='" + this.getId() +"' AND answerCorrect = false");

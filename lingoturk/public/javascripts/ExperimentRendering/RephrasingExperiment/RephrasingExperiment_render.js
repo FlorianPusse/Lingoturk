@@ -22,7 +22,7 @@
 
         this.statisticsFinished = function(index){
             $("#statisticsSlide1").hide();
-            $("#workerSlide").show();
+            $("#instructions").show();
         };
 
         this.mainInstructionsFinished = function(){
@@ -65,7 +65,7 @@
 
             $http.post("/submitResults", result)
                 .success(function () {
-                    $("#form").submit();
+                    window.location.href = "https://prolificacademic.co.uk/submissions/57ba126bfc23450001acc234/complete?cc=PXL8K2JY";
                 })
                 .error(function () {
                     setTimeout(function () {
@@ -181,27 +181,38 @@
 
             var id = $("#questionId").val();
             self.questionId = id;
-            if (id != "") {
-                $http.get("/getQuestion/" + id).success(function (data) {
-                    var question1 = data.question1;
-                    var sentence1 = data.sentence1;
-                    var questionFirst1 = data.questionFirst1;
-                    var fillerSentence1 = data.fillerSentence1;
-                    var fillerQuestion1 = data.fillerQuestion1;
 
-                    self.questions.push(new self.Question(sentence1,question1,questionFirst1,fillerSentence1,fillerQuestion1));
-
-                    var question2 = data.question2;
-                    var sentence2 = data.sentence2;
-                    var questionFirst2 = data.questionFirst2;
-                    var fillerSentence2 = data.fillerSentence2;
-                    var fillerQuestion2 = data.fillerQuestion2;
-
-                    self.questions.push(new self.Question(sentence2,question2,questionFirst2,fillerSentence2,fillerQuestion2));
-                });
-
+            if(self.questionId !== undefined){
+                if (id != "") {
+                    $http.get("/getQuestion/" + id).success(self.processData);
+                }
             }
         });
+
+        this.load = function(){
+            self.partId = $("#partId").val();
+            $http.get("/returnQuestionASJSON?groupId=" + self.partId + "&workerId=" + self.workerId).success(self.processData);
+        };
+
+        this.processData = function (data) {
+            self.questionId = data.id;
+
+            var question1 = data.question1;
+            var sentence1 = data.sentence1;
+            var questionFirst1 = data.questionFirst1;
+            var fillerSentence1 = data.fillerSentence1;
+            var fillerQuestion1 = data.fillerQuestion1;
+
+            self.questions.push(new self.Question(sentence1,question1,questionFirst1,fillerSentence1,fillerQuestion1));
+
+            var question2 = data.question2;
+            var sentence2 = data.sentence2;
+            var questionFirst2 = data.questionFirst2;
+            var fillerSentence2 = data.fillerSentence2;
+            var fillerQuestion2 = data.fillerQuestion2;
+
+            self.questions.push(new self.Question(sentence2,question2,questionFirst2,fillerSentence2,fillerQuestion2));
+        };
 
     }]);
 })();

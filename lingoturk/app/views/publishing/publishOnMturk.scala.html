@@ -62,7 +62,7 @@
             <h3 class="panel-title">Set publishing options <strong style="float:right">account balance: @if(balance != -1){$@balance}else{temporarily not available}</strong></h3>
         </div>
 
-        <form action="@routes.Application.publish()" method="POST" role="form" enctype="multipart/form-data" align="center">
+        <form action="@routes.Application.publishMturk()" method="POST" role="form" enctype="multipart/form-data" align="center">
             <div class="panel-body" style="width: 100%;overflow:auto;">
 
                 <div style="float:left; width:49.5%" id="inputOptions">
@@ -105,7 +105,7 @@
                         </div>
                     </div>
 
-                    <input type="submit" name="sub" class="btn btn-default" style="float : center; margin-top: 10%" value="Submit" formaction="@routes.Application.publish()" formmethod="post">
+                    <input type="submit" name="sub" class="btn btn-default" style="float : center; margin-top: 10%" value="Submit" formaction="@routes.Application.publishMturk()" formmethod="post">
                 </div>
 
                 <div style="float:right; width:49.5%;">

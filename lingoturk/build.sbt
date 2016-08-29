@@ -16,5 +16,6 @@ libraryDependencies ++= Seq(
   "com.amazonaws" % "aws-java-sdk" % "1.9.13",
   "org.apache.httpcomponents" % "httpclient" % "4.3.6",
   "org.apache.httpcomponents" % "httpcore" % "4.3.3",
-  "commons-io" % "commons-io" % "2.4"
+  "commons-io" % "commons-io" % "2.4",
+  "net.lingala.zip4j" % "zip4j" % "1.3.1"
 ) 
