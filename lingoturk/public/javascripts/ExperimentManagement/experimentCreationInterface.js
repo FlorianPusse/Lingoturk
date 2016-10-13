@@ -8,42 +8,46 @@
         this.experimentType = "REUSE";
         this.sourceTypeName = "";
         this.sourceGroupName = "FullGroup";
-        this.types =  [{name: "String (can also be an image path)", val: "String"},{name: "Number (Integer)", val: "int"},{name: "Number (Float)", val: "float"}];
+        this.types = [{name: "String (can also be an image path)", val: "String"}, {name: "Number (Integer)", val: "int"}, {
+            name: "Number (Float)",
+            val: "float"
+        }];
 
-        this.questionFields = [{name : "", type : ""}];
+        this.questionFields = [{name: "", type: ""}];
 
-        this.Field = function(){
+        this.Field = function () {
             var self = this;
             self.name = "";
             self.type = "";
         };
 
-        this.addField = function(){
+        this.addField = function () {
             self.questionFields.push(new self.Field());
         };
 
-        this.removeField = function(field){
+        this.removeField = function (field) {
             var index = self.questionFields.indexOf(field);
-            self.questionFields.splice(index,1);
+            self.questionFields.splice(index, 1);
         };
 
-        this.isAlphaNumeric = function(s){
+        this.isAlphaNumeric = function (s) {
             return /^[a-z][a-z0-9]*$/i.test(s);
         };
 
-        this.checkInput = function(){
-            for(var i = 0; i < self.questionFields.length; ++i){
+        this.checkInput = function () {
+            for (var i = 0; i < self.questionFields.length; ++i) {
                 var f = self.questionFields[i];
-                if(f.name == "" || !self.isAlphaNumeric(f.name.trim()) || f.type == ""){
+                if (f.name == "" || !self.isAlphaNumeric(f.name.trim()) || f.type == "") {
                     return false;
                 }
             }
             return true;
+
         };
 
         this.submitting = false;
         this.submit = function () {
-            if(self.newTypeName.trim() != "" && self.isAlphaNumeric(self.newTypeName.trim())) {
+            if (self.newTypeName.trim() != "" && self.isAlphaNumeric(self.newTypeName.trim())) {
                 if (!self.submitting) {
                     self.submitting = true;
                     var result = {
@@ -64,10 +68,17 @@
                             self.submitting = false;
                         });
                 }
-            }else{
+            } else {
                 bootbox.alert("Error! New type name is either empty or not alphanumeric.");
             }
         };
+
+        $(document).ready(function(){
+            // http://stackoverflow.com/questions/20870671/bootstrap-3-btn-group-lose-active-class-when-click-any-where-on-the-page
+            $(".btn-group > .btn").click(function(){
+                $(this).addClass("active").siblings().removeClass("active");
+            });
+        });
 
     }]);
 })();

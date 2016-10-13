@@ -30,12 +30,13 @@
             var result = {
                 experimentType : "ElicitingParaphrasesExperiment",
                 workerId: self.workerId,
-                partId: partId,
+                partId: self.partId,
                 answers: answerList
             };
 
             $http.post("/submitResults", result)
                 .success(function () {
+                    self.index++;
                     $("#feedbackSlide").show();
                 })
                 .error(function () {
@@ -47,8 +48,33 @@
         };
 
         this.startExperiment = function(){
+            var partId = $("#partId").val();
+            if (partId === undefined || partId == "") {
+                $http.get("/getPart?expId=" + self.expId + "&workerId=" + self.workerId).success(function (data) {
+                    var json = data;
+                    self.part = json;
+                    self.partId = json.id;
+                    self.questions = json.questions;
+
+                    shuffleArray(self.part.questions);
+                });
+            }
+
             $("#instructionsSlide").hide();
             self.index++;
+        };
+
+        this.checkAnswer = function(question){
+            var modifiedTexts = [];
+            for(var i = 0; i < self.questions.length; ++i){
+                modifiedTexts.push(self.questions[i].text.toLowerCase().replace(/\s/g, '').replace(/[^a-z0-9]/g,''));
+            }
+
+            if(question.answer.split(" ").length < 5 || modifiedTexts.contains(question.answer.toLowerCase().replace(/\s/g, '').replace(/[^a-z0-9]/g,''))){
+                return true;
+            }else{
+                return false;
+            }
         };
 
         self.submittingFeedback = false;
@@ -61,6 +87,12 @@
 
             $http.post("/submitFeedback", {workerId: self.workerId, expId: self.expId, feedback: self.feedback})
                 .success(function () {
+                    var url = "https://prolificacademic.co.uk/submissions/57e3c6b347180e0001f10e11/complete?cc=OYU1T7G4";
+                    if(inIframe()){
+                        window.top.location.href = url;
+                    }else{
+                        window.location = url;
+                    }
                     document.getElementById("redirect").click();
                 })
                 .error(function () {
@@ -82,7 +114,7 @@
         $(document).ready(function () {
             self.expId = ($("#expId").length > 0) ? $("#expId").val() : null;
             var partId = $("#partId").val();
-            if (partId != "") {
+            if (partId !== undefined && partId != "") {
                 $http.get("/returnPart?partId=" + partId).success(function (data) {
                     var json = data;
                     self.part = json;

@@ -59,7 +59,11 @@
             }else if(self.origin == "MTURK"){
                 $("#form").submit();
             }else if(self.origin == "PROLIFIC"){
-                window.location.href = self.redirectUrl;
+				if(inIframe()){
+                    window.top.location.href = self.redirectUrl;
+                }else{
+                    window.location = self.redirectUrl;
+                }
             }
         };
 
@@ -70,7 +74,17 @@
         };
 
         this.resultSubmissionError = function(){
-            bootbox.alert("Error! Could not submit results!");
+            self.failedTries = 0;
+            bootbox.alert("An error occurred while submitting your results. Please try again in a few seconds.");
+        };
+
+        this.handleError = function(){
+            if(self.failedTries < 100){
+                ++self.failedTries;
+                setTimeout(function() { self.submitResults() }, 1000);
+            }else{
+                self.resultSubmissionError();
+            }
         };
 
         self.failedTries = 0;
@@ -89,17 +103,8 @@
 
 
             $http.post("/submitResults", results)
-                .success(function () {
-                    successCallback();
-                })
-                .error(function () {
-                    if(self.failedTries < 100){
-                        ++self.failedTries;
-                        setTimeout(function() { self.submitResults() }, 1000);
-                    }else{
-                        errorCallback();
-                    }
-                });
+                .success(successCallback)
+                .error(errorCallback);
         };
 
         this.next = function(){
@@ -115,7 +120,7 @@
             if(self.slideIndex + 1 < self.allStates.length){
                 self.state = self.allStates[++self.slideIndex];
             }else{
-                self.submitResults(self.resultsSubmitted, self.resultSubmissionError);
+                self.submitResults(self.resultsSubmitted, self.handleError);
             }
         };
 
@@ -173,6 +178,7 @@
                     var json = data;
                     self.part = json;
                     self.partId = json.id;
+                    self.questions = json.questions;
 
                     if(self.shuffleQuestions){
                         shuffleArray(self.part.questions);

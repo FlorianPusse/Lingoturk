@@ -187,17 +187,6 @@ public class Application extends Controller {
             return badRequest("Unknown destination.");
         }
 
-        // Quealification requirements
-        QualificationRequirement localeRequirement = new QualificationRequirement();
-        localeRequirement.setQualificationTypeId(RequesterService.LOCALE_QUALIFICATION_TYPE_ID);
-        localeRequirement.setComparator(com.amazonaws.mturk.requester.Comparator.EqualTo);
-        localeRequirement.setLocaleValue(new com.amazonaws.mturk.requester.Locale("US"));
-
-        QualificationRequirement hitsApprovedRequirement = new QualificationRequirement();
-        hitsApprovedRequirement.setQualificationTypeId("00000000000000000040");
-        hitsApprovedRequirement.setComparator(com.amazonaws.mturk.requester.Comparator.GreaterThan);
-        hitsApprovedRequirement.setIntegerValue(1000);
-
         //qualificationRequirements = new QualificationRequirement[]{localeRequirement,hitsApprovedRequirement};
         qualificationRequirements = new QualificationRequirement[0];
 

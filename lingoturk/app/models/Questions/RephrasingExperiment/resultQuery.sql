@@ -7,7 +7,7 @@ SELECT * FROM
 		workerId,
 		readingTime1 AS readingTime,
 		choice1 AS choice,
-		answer1 AS answer
+		regexp_replace(answer1, E'[\\n\\r\\u2028]+', ' ', 'g' ) AS answer
 	FROM
 		RephrasingResults
 	JOIN
@@ -23,7 +23,7 @@ UNION
 		workerId,
 		readingTime2 AS readingTime,
 		choice2 AS choice,
-		answer2 AS answer
+		regexp_replace(answer2, E'[\\n\\r\\u2028]+', ' ', 'g' ) AS answer
 	FROM
 		RephrasingResults
 	JOIN

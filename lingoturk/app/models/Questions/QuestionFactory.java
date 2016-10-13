@@ -33,6 +33,8 @@ public class QuestionFactory extends AbstractFactory{
             JsonNode subListNode = node.get("subList");
             if(subListNode != null){
                 question.subList = subListNode.asText();
+            }else{
+                question.subList = "";
             }
 
             question.save();

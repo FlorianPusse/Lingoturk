@@ -18,9 +18,13 @@
     </style>
     <div ng-app="ExperimentCreationInterface" ng-controller="InterfaceController as IC">
         <div class="div-wrapper">
+            <div class="text-center">
+                <div id="type-selection" class="btn-group" role="group">
+                    <button ng-click="IC.experimentType = 'REUSE'" type="button" class="btn btn-primary active">Create empty experiment type</button>
+                    <button ng-click="IC.experimentType = 'IMPORT'" type="button" class="btn btn-primary">Import from .ZIP</button>
+                </div>
+            </div>
             <div ng-if="IC.experimentType == 'NEW' || IC.experimentType == 'REUSE'" class="interfaceContainer">
-                <strong style="margin-bottom:20px;margin-top:20px; display:block;">Create empty experiment type:</strong>
-
                 <div class="form-group">
                     <label for="newTypeName">Experiment type name</label>
                     <input id="newTypeName" type="text" class="form-control" ng-model="IC.newTypeName">
@@ -58,9 +62,19 @@
                 <div style="text-align:center">
                     <button ng-click="IC.addField()" class="btn btn-primary">+</button>
                 </div>
+
+                <button ng-click="IC.submit()" ng-disabled="!IC.checkInput()" type="button" class="btn btn-default" style="float:right">Submit</button>
             </div>
 
-            <button ng-click="IC.submit()" ng-disabled="!IC.checkInput()" type="button" class="btn btn-default" style="float:right">Submit</button>
+            <div  ng-if="IC.experimentType == 'IMPORT'">
+                <form action="/importExperimentType" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="newTypeName">Load ZIP:</label>
+                        <input name="experimentData" id="fileInput" type="file" class="form-control" onchange="if ($(this).val() != ''){$('#importSubmitButton').removeAttr('disabled');} else {$('#importSubmitButton').attr('disabled','disabled');}">
+                    </div>
+                    <button id="importSubmitButton" type="submit" class="btn btn-default" disabled="disabled" style="float:right">Import</button>
+                </form>
+            </div>
         </div>
     </div>
 }

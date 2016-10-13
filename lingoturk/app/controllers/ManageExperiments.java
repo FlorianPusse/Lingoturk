@@ -4,19 +4,15 @@ package controllers;
 import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.lingala.zip4j.core.*;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.*;
-import net.lingala.zip4j.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import models.LingoExpModel;
@@ -86,9 +82,7 @@ public class ManageExperiments extends Controller {
         File f;
 
         try {
-            String timeStamp = new SimpleDateFormat("dd.MM.yyyy.HH.mm.ss").format(new Date());
-            //f = File.createTempFile(experimentName + "_" + timeStamp,"zip");
-            f = new File("C:\\Users\\anon\\Desktop\\test.zip");
+            f = new File("C:\\Users\\anon\\Desktop\\" + experimentName +  ".zip");
             zipFile = new ZipFile(f);
         } catch (ZipException e) {
             e.printStackTrace();
@@ -99,7 +93,7 @@ public class ManageExperiments extends Controller {
             if (d.exists() && d.isDirectory()) {
                 try {
                     ZipParameters parameters = new ZipParameters();
-                    parameters.setRootFolderInZip(d.getPath().replace(File.separator,"_"));
+                    parameters.setRootFolderInZip(StringUtils.replaceOnce(d.getPath().replace(File.separator,"__"), "__" + experimentName, ""));
                     zipFile.addFolder(d,parameters);
                 } catch (ZipException e) {
                     e.printStackTrace();
@@ -109,6 +103,43 @@ public class ManageExperiments extends Controller {
         }
 
         return ok(zipFile.getFile());
+    }
+
+    public static Result importExperimentType(){
+        Http.MultipartFormData body = request().body().asMultipartFormData();
+        Http.MultipartFormData.FilePart experimentData = body.getFile("experimentData");
+        if (experimentData != null) {
+            String fileName = experimentData.getFilename();
+            File file = experimentData.getFile();
+
+            try {
+                ZipFile zipFile = new ZipFile(file);
+                if(!zipFile.isValidZipFile()){
+                    return internalServerError("Your ZIP file is not valid: " + fileName);
+                }
+                for(FileHeader fh : (List<FileHeader>) zipFile.getFileHeaders()){
+                    if(!fh.isDirectory()){
+                        String directoryName = fh.getFileName();
+
+                        // if that is the case, something is seriously wrong here
+                        if(!(directoryName.startsWith("app/") || directoryName.startsWith("public/"))){
+                            continue;
+                        }
+
+                        directoryName = directoryName.replace("__","/");
+                        fh.setFileName(directoryName.substring(directoryName.lastIndexOf("/") + 1));
+                        zipFile.extractFile(fh, directoryName.substring(0,directoryName.lastIndexOf("/")));
+                    }
+                }
+            } catch (ZipException e) {
+                e.printStackTrace();
+                return internalServerError("Error reading your ZIP file: " + fileName);
+            }
+
+            return redirect("/");
+        }
+
+        return internalServerError("File not found.");
     }
 
     public static Result changeExperimentFields(String experimentName) {
@@ -283,7 +314,7 @@ public class ManageExperiments extends Controller {
     }
 
     private static List<Field> getFields(Class c) throws ClassNotFoundException {
-        String[] unusedFields = new String[]{"finder", "_idGetSet", "random", "questions", "id", "availability", "experimentID", "disabled"};
+        String[] unusedFields = new String[]{"finder", "_idGetSet", "random", "questions", "id", "availability", "experimentID", "disabled", "subList"};
         List<Field> fieldNames = new LinkedList<>();
         do {
             for (Field f : c.getDeclaredFields()) {
@@ -740,7 +771,7 @@ public class ManageExperiments extends Controller {
             }
         }
 
-        response().setCookie("name_" + expId, Crypto.encryptAES(workerId), 999999);
+        response().setCookie("name_" + expId, Crypto.encryptAES(workerId), 3600);
 
         if (group instanceof LinkingGroup) {
             PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT DISTINCT lhs_script, rhs_script FROM LinkingResult WHERE workerId = ?");
