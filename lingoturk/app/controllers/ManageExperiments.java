@@ -18,8 +18,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import models.LingoExpModel;
 import models.Groups.AbstractGroup;
 import models.Groups.GroupFactory;
-import models.Questions.LinkingV1Experiment.Prolific.Combination;
-import models.Questions.LinkingV1Experiment.Prolific.LinkingGroup;
 import models.Questions.PartQuestion;
 import models.Questions.Question;
 import models.Repository;
@@ -773,23 +771,6 @@ public class ManageExperiments extends Controller {
 
         response().setCookie("name_" + expId, Crypto.encryptAES(workerId), 3600);
 
-        if (group instanceof LinkingGroup) {
-            PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT DISTINCT lhs_script, rhs_script FROM LinkingResult WHERE workerId = ?");
-            statement.setString(1, workerId);
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                int lhs_script = rs.getInt("lhs_script");
-                int rhs_script = rs.getInt("rhs_script");
-
-                for (Iterator<PartQuestion> combinationIterator = group.getQuestions().iterator(); combinationIterator.hasNext(); ) {
-                    Combination c = (Combination) combinationIterator.next();
-                    if (c.getLhs() == lhs_script && c.getRhs() == rhs_script) {
-                        combinationIterator.remove();
-                    }
-                }
-            }
-        }
-
         ObjectMapper mapper = new ObjectMapper();
         JsonNode actualObj = mapper.readTree(group.returnJSON().toString());
         return ok(stringify(actualObj));
@@ -812,9 +793,20 @@ public class ManageExperiments extends Controller {
         String additionalExplanations = json.get("additionalExplanations").asText();
         String experimentType = json.get("type").asText();
 
+
+        String listType = null;
+        Properties experimentProperties = new Properties();
+        try {
+            experimentProperties.load(new FileReader("app/models/Questions/" + experimentType + "/experiment.properties"));
+            listType = experimentProperties.getProperty("listType");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return internalServerError("Can't find experiment type: " + experimentType);
+        }
+
         // new experiment
         if (json.get("id").asInt() == -1) {
-            experiment = LingoExpModel.createLingoExpModel(name, description, additionalExplanations, nameOnAmt, experimentType);
+            experiment = LingoExpModel.createLingoExpModel(name, description, additionalExplanations, nameOnAmt, experimentType,listType);
         } else {
             experiment = LingoExpModel.byId(json.get("id").asInt());
             experiment.setName(name);
@@ -822,18 +814,20 @@ public class ManageExperiments extends Controller {
             experiment.setNameOnAmt(nameOnAmt);
             experiment.setAdditionalExplanations(additionalExplanations);
             experiment.setExperimentType(experimentType);
+
+            if(listType != null) {
+                experiment.setListType(listType);
+            }
         }
 
         experiment.update();
 
         // Create Parts
-        List<AbstractGroup> groups = new LinkedList<>();
+
         for (Iterator<JsonNode> partIterator = json.get("parts").iterator(); partIterator.hasNext(); ) {
             JsonNode partNode = partIterator.next();
             AbstractGroup p = GroupFactory.createPart(partNode.get("_type").asText(), experiment, partNode);
-            if (p != null) {
-                groups.add(p);
-            } else {
+            if (p == null) {
                 return internalServerError("Unknown Group type: " + partNode.get("_type").asText());
             }
         }

@@ -54,11 +54,15 @@ public class LingoExpModel extends Model {
     @Column(name="experimentType")
     protected String experimentType;
 
+    @Basic
+    @Column(name="listType", columnDefinition = "varchar(255) default 'DISJOINT LISTS'")
+    protected String listType;
+
     /* END OF VARIABLES BLOCK */
 
     private static Finder<Integer,LingoExpModel> finder = new Finder<Integer,LingoExpModel>(Integer.class,LingoExpModel.class);
 
-    public LingoExpModel(String name, String description, String additionalExplanations, String nameOnAmt, String experimentType) {
+    public LingoExpModel(String name, String description, String additionalExplanations, String nameOnAmt, String experimentType, String listType) {
         this.name = name;
         this.description = description;
         this.additionalExplanations = additionalExplanations;
@@ -69,10 +73,16 @@ public class LingoExpModel extends Model {
 
         this.nameOnAmt = nameOnAmt;
         this.experimentType = experimentType;
+
+        if(listType != null){
+            this.listType = listType;
+        }else{
+            this.listType = "DISJOINT LISTS";
+        }
     }
 
-    public static LingoExpModel createLingoExpModel(String name, String description, String additionalExplanations, String nameOnAmt, String experimentType) {
-        LingoExpModel result = new LingoExpModel(name,description,additionalExplanations,nameOnAmt,experimentType);
+    public static LingoExpModel createLingoExpModel(String name, String description, String additionalExplanations, String nameOnAmt, String experimentType, String listType) {
+        LingoExpModel result = new LingoExpModel(name,description,additionalExplanations,nameOnAmt,experimentType, listType);
         result.save();
         return result;
     }
@@ -118,6 +128,11 @@ public class LingoExpModel extends Model {
 
     public void setName(String name) {
         this.name = name;
+        this.update();
+    }
+
+    public void setListType(String listType) {
+        this.listType = listType;
         this.update();
     }
 

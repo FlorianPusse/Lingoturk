@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import controllers.Application;
 import models.Groups.AbstractGroup;
 import models.LingoExpModel;
-import models.Questions.LinkingV1Experiment.Prolific.Combination;
 import models.Questions.LinkingV1Experiment.Script;
 import models.Questions.PartQuestion;
 import models.Questions.Question;
@@ -200,18 +199,6 @@ public class LinkingV1PoolGroup extends AbstractGroup {
         } catch (SQLException e) {
             return internalServerError("Can't connect to DB.");
         }
-    }
-
-    public List<Combination> getQuestionCombinations() throws SQLException {
-        List<Combination> combinations = new LinkedList<>();
-        for (Script lhs : getLeftHandSide()) {
-            for (Script rhs : getRightHandSide()) {
-                Combination c = new Combination(new int[]{lhs.getId(), rhs.getId()});
-                c.save();
-                combinations.add(c);
-            }
-        }
-        return combinations;
     }
 
     @Override

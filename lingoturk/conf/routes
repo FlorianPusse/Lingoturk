@@ -46,7 +46,6 @@ POST        /publishMturk                           controllers.Application.publ
 POST        /publishProlific                        controllers.Application.publishProlific()
 GET         /publishOnMturk                         controllers.Application.publishOnMturk(expId:Int)
 GET         /publishOnProlific                      controllers.Application.publishOnProlific(expId:Int)
-GET         /publishProlific                        models.Questions.LinkingV1Experiment.Prolific.LinkingGroup.publishProlific(expId:Int)
 
 GET         /modify/:id                             controllers.Application.modify(id:Int)
 
@@ -55,12 +54,10 @@ GET         /render			                        controllers.RenderController.rende
 GET         /renderAMT                              controllers.RenderController.renderAMT(Type: String, id: Int, assignmentId: String ?= null, hitId: String, workerId: String ?= null, turkSubmitTo ?= null)
 GET         /renderProlific                         controllers.RenderController.renderProlific(expId: Integer, partId : Integer ?= null, questionId : Integer ?= null)
 
-GET         /renderLinkingProlific                  models.Questions.LinkingV1Experiment.Prolific.LinkingGroup.renderLinkingProlific(expId:Int)
-
 GET         /delete                                 controllers.Application.delete(id: Int)
 GET         /deleteExperimentType                   controllers.ManageExperiments.deleteExperimentType(experimentName: String)
 GET         /exportExperimentType                   controllers.ManageExperiments.exportExperimentType(experimentName: String)
-POST        /importExperimentType                  controllers.ManageExperiments.importExperimentType()
+POST        /importExperimentType                   controllers.ManageExperiments.importExperimentType()
 
 ######      Global Settings ######
 

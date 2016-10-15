@@ -29,57 +29,56 @@ public class ElicitingParaphrasesQuestion extends PartQuestion {
 
     /* BEGIN OF VARIABLES BLOCK */
 
-	@Basic
-	@Column(name="ElicitingParaphrases_text", columnDefinition = "TEXT")
-	public java.lang.String ElicitingParaphrases_text = "";
+    @Basic
+    @Column(name = "ElicitingParaphrases_text", columnDefinition = "TEXT")
+    public java.lang.String ElicitingParaphrases_text = "";
 
-	@Basic
-	@Column(name="ElicitingParaphrases_fileName", columnDefinition = "TEXT")
-	public java.lang.String ElicitingParaphrases_fileName = "";
+    @Basic
+    @Column(name = "ElicitingParaphrases_fileName", columnDefinition = "TEXT")
+    public java.lang.String ElicitingParaphrases_fileName = "";
 
-	@Basic
-	@Column(name="ElicitingParaphrases_type", columnDefinition = "TEXT")
-	public java.lang.String ElicitingParaphrases_type = "";
+    @Basic
+    @Column(name = "ElicitingParaphrases_type", columnDefinition = "TEXT")
+    public java.lang.String ElicitingParaphrases_type = "";
 
-	@Basic
-	@Column(name="ElicitingParaphrases_tplan", columnDefinition = "TEXT")
-	public java.lang.String ElicitingParaphrases_tplan = "";
+    @Basic
+    @Column(name = "ElicitingParaphrases_tplan", columnDefinition = "TEXT")
+    public java.lang.String ElicitingParaphrases_tplan = "";
 
-	@Basic
-	@Column(name="ElicitingParaphrases_shortId", columnDefinition = "TEXT")
-	public java.lang.String ElicitingParaphrases_shortId = "";
+    @Basic
+    @Column(name = "ElicitingParaphrases_shortId", columnDefinition = "TEXT")
+    public java.lang.String ElicitingParaphrases_shortId = "";
 
     @Override
     public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {
-		JsonNode textNode = questionNode.get("text");
-		if (textNode != null){
-			this.ElicitingParaphrases_text = textNode.asText();
-		}
+        JsonNode textNode = questionNode.get("text");
+        if (textNode != null) {
+            this.ElicitingParaphrases_text = textNode.asText();
+        }
 
-		JsonNode fileNameNode = questionNode.get("fileName");
-		if (fileNameNode != null){
-			this.ElicitingParaphrases_fileName = fileNameNode.asText();
-		}
+        JsonNode fileNameNode = questionNode.get("fileName");
+        if (fileNameNode != null) {
+            this.ElicitingParaphrases_fileName = fileNameNode.asText();
+        }
 
-		JsonNode typeNode = questionNode.get("type");
-		if (typeNode != null){
-			this.ElicitingParaphrases_type = typeNode.asText();
-		}
+        JsonNode typeNode = questionNode.get("type");
+        if (typeNode != null) {
+            this.ElicitingParaphrases_type = typeNode.asText();
+        }
 
-		JsonNode tplanNode = questionNode.get("tplan");
-		if (tplanNode != null){
-			this.ElicitingParaphrases_tplan = tplanNode.asText();
-		}
+        JsonNode tplanNode = questionNode.get("tplan");
+        if (tplanNode != null) {
+            this.ElicitingParaphrases_tplan = tplanNode.asText();
+        }
 
-		JsonNode shortIdNode = questionNode.get("shortId");
-		if (shortIdNode != null){
-			this.ElicitingParaphrases_shortId = shortIdNode.asText();
-		}
+        JsonNode shortIdNode = questionNode.get("shortId");
+        if (shortIdNode != null) {
+            this.ElicitingParaphrases_shortId = shortIdNode.asText();
+        }
 
     }
 
 	/* END OF VARIABLES BLOCK */
-
 
 
     @Override
@@ -90,7 +89,7 @@ public class ElicitingParaphrasesQuestion extends PartQuestion {
     @Override
     public void writeResults(JsonNode resultNode) throws SQLException {
         String workerId = resultNode.get("workerId").asText();
-		String partId = resultNode.get("partId").asText();
+        String partId = resultNode.get("partId") != null ? resultNode.get("partId").asText() : "-1";
 
         for (Iterator<JsonNode> resultIterator = resultNode.get("answers").iterator(); resultIterator.hasNext(); ) {
             PreparedStatement statement = Repository.getConnection().prepareStatement(
@@ -104,7 +103,7 @@ public class ElicitingParaphrasesQuestion extends PartQuestion {
             String answer = result.get("answer").asText();
 
             statement.setInt(2, questionId);
-			statement.setInt(3, Integer.parseInt(partId));
+            statement.setInt(3, Integer.parseInt(partId));
             statement.setString(4, answer);
 
             statement.execute();

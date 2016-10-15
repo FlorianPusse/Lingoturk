@@ -122,6 +122,10 @@ public class Application extends Controller {
         int expId = Integer.parseInt(df.get("expId"));
         LingoExpModel expModel = LingoExpModel.byId(expId);
 
+        if(expModel == null){
+            return internalServerError("Experiment ID does not exist!");
+        }
+
         return ok();
     }
 

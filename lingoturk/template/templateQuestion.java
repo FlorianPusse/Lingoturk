@@ -38,7 +38,7 @@ public class _TEMPLATE_Question extends PartQuestion {
         String workerId = resultNode.get("workerId").asText();
         String assignmentId = resultNode.get("assignmentId").asText();
         String hitId = resultNode.get("hitId").asText();
-        int partId = resultNode.get("partId").asInt();
+        int partId = resultNode.get("partId") != null ? resultNode.get("partId").asInt() : -1;
 
         int expId = -1;
         JsonNode expIdNode = resultNode.get("expId");

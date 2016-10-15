@@ -5,23 +5,18 @@ import com.amazonaws.mturk.service.axis.RequesterService;
 import com.fasterxml.jackson.databind.JsonNode;
 import controllers.Application;
 import models.LingoExpModel;
-import models.Questions.PartQuestion;
 import models.Worker;
 import play.data.DynamicForm;
 import play.mvc.Result;
 import play.twirl.api.Html;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 
 import static controllers.RenderController.getRenderMethod;

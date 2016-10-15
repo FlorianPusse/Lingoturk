@@ -6,31 +6,21 @@ import com.amazonaws.mturk.service.axis.RequesterService;
 import com.fasterxml.jackson.databind.JsonNode;
 import controllers.Application;
 import models.LingoExpModel;
-import models.Questions.LinkingV1Experiment.Prolific.Combination;
-import models.Questions.LinkingV1Experiment.Script;
 import models.Questions.PartQuestion;
-import models.Questions.Question;
 import models.Repository;
 import models.Worker;
 import play.data.DynamicForm;
 import play.mvc.Result;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 import static play.mvc.Results.internalServerError;
-import static play.mvc.Results.ok;
 
 @Entity
 @Inheritance
