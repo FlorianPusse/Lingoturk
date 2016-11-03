@@ -22,3 +22,14 @@
   
 ## Help
 You can find more information and how to get started in the Lingoturk [Wiki](https://github.com/FlorianPusse/Lingoturk/wiki).
+
+## Update on 03/11/2016
+
+e4eed19f5d35ad292b85703060d01af3548bf584
+
+After pulling the newest updates, you should run `activator clean` in order to delete unnecessary files.
+
+If you have created new experiment types, you will be faced a compile error after pulling the latest changes. To resolve them, go to your `app/models/Questions/<ExperimentName>/<ExperimentName>Question.java` file and replace the following occurences:
+- `import models.Repository;` -> `import controllers.DatabaseController;`
+- `Repository.getConnection()` -> `DatabaseController.getConnection()`
+We'll probably implement an update tool for these things in the future.
