@@ -5,6 +5,7 @@ import com.amazonaws.mturk.requester.HIT;
 import com.amazonaws.mturk.service.axis.RequesterService;
 import com.fasterxml.jackson.databind.JsonNode;
 import controllers.Application;
+import controllers.DatabaseController;
 import models.Groups.AbstractGroup;
 import models.LingoExpModel;
 import models.Questions.LinkingV1Experiment.Item;
@@ -12,7 +13,6 @@ import models.Questions.LinkingV1Experiment.Script;
 import models.Questions.LinkingV2Experiment.ScriptV2;
 import models.Questions.PartQuestion;
 import models.Questions.Question;
-import models.Repository;
 import models.Worker;
 import play.data.DynamicForm;
 import play.mvc.Result;
@@ -21,7 +21,6 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.persistence.Basic;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -89,7 +88,7 @@ public class LinkingV2PoolGroup extends AbstractGroup {
     }
 
     public void insert(String hitID, int publishedId, int question1, int question2) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("INSERT INTO PartPublishedAs(PartID,mTurkID,publishedId,question1,question2) VALUES(?,?,?,?,?)");
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("INSERT INTO PartPublishedAs(PartID,mTurkID,publishedId,question1,question2) VALUES(?,?,?,?,?)");
         statement.setInt(1, getId());
         statement.setString(2, hitID);
         statement.setInt(3, publishedId);

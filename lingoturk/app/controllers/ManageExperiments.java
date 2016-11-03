@@ -5,8 +5,8 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,12 +20,12 @@ import models.Groups.AbstractGroup;
 import models.Groups.GroupFactory;
 import models.Questions.PartQuestion;
 import models.Questions.Question;
-import models.Repository;
 import models.Worker;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import play.Logger;
+import play.api.libs.Files;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.libs.Crypto;
@@ -60,7 +60,10 @@ public class ManageExperiments extends Controller {
         return directories;
     }
 
+    @Security.Authenticated(Secured.class)
     public static Result deleteExperimentType(String experimentName) {
+        DatabaseController.backupDatabase();
+
         for (File d : getDirectories(experimentName)) {
             if (d.exists() && d.isDirectory()) {
                 try {
@@ -80,9 +83,12 @@ public class ManageExperiments extends Controller {
         File f;
 
         try {
-            f = new File("C:\\Users\\anon\\Desktop\\" + experimentName +  ".zip");
+            f = File.createTempFile(experimentName,".zip");
+            f.delete();
+
             zipFile = new ZipFile(f);
-        } catch (ZipException e) {
+            f.deleteOnExit();
+        } catch (ZipException | IOException e) {
             e.printStackTrace();
             return internalServerError("Error: " + e.getMessage());
         }
@@ -100,10 +106,13 @@ public class ManageExperiments extends Controller {
             }
         }
 
+        response().setHeader("Content-Disposition", "attachment; filename=" + experimentName + ".zip");
         return ok(zipFile.getFile());
     }
 
     public static Result importExperimentType(){
+        DatabaseController.backupDatabase();
+
         Http.MultipartFormData body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart experimentData = body.getFile("experimentData");
         if (experimentData != null) {
@@ -147,6 +156,8 @@ public class ManageExperiments extends Controller {
     /* Render experiment creation page */
     @BodyParser.Of(value = BodyParser.Json.class, maxLength = 200 * 1024 * 10)
     public static Result submitNewFields() throws IOException {
+        DatabaseController.backupDatabase();
+
         JsonNode json = request().body().asJson();
         String experimentType = json.get("type").asText();
 
@@ -334,7 +345,7 @@ public class ManageExperiments extends Controller {
         String workerId = json.get("workerId").asText();
         String feedback = json.get("feedback").asText();
 
-        PreparedStatement statement = Repository.getConnection().prepareStatement("INSERT INTO participantFeedback(id,expId,workerId,feedback) VALUES (nextVal('ParticipantFeedback_Seq'),?,?,?)");
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("INSERT INTO participantFeedback(id,expId,workerId,feedback) VALUES (nextVal('ParticipantFeedback_Seq'),?,?,?)");
         statement.setString(1, expId);
         statement.setString(2, workerId);
         statement.setString(3, feedback);
@@ -549,6 +560,8 @@ public class ManageExperiments extends Controller {
     @Security.Authenticated(Secured.class)
     @BodyParser.Of(BodyParser.Json.class)
     public static Result createNewExperimentType() {
+        DatabaseController.backupDatabase();
+
         JsonNode json = request().body().asJson();
 
         String newTypeName = json.get("newTypeName").asText().trim();
@@ -747,7 +760,7 @@ public class ManageExperiments extends Controller {
                         }
                     }
                 }
-                worker.addParticipatesInPart(group, null, null, "Prolific", null);
+                worker.addParticipatesInPart(group, null, null, "Prolific" + ZonedDateTime.now(), null);
             } else {
                 group = AbstractGroup.byId(participation.getPartID());
             }
@@ -776,12 +789,7 @@ public class ManageExperiments extends Controller {
         return ok(stringify(actualObj));
     }
 
-    /**
-     * Submits a new DragNDrop experiment and saves it into the database.
-     * It collects all data, which was submitted via POST.
-     *
-     * @return the index-page
-     */
+    @Security.Authenticated(Secured.class)
     @BodyParser.Of(value = BodyParser.Json.class, maxLength = 200 * 1024 * 10)
     public static Result submitNewExperiment() throws SQLException {
         JsonNode json = request().body().asJson();

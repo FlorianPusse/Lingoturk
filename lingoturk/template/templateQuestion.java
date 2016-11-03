@@ -14,7 +14,8 @@ import javax.json.JsonObject;
 import javax.persistence.*;
 import java.sql.SQLException;
 import java.util.*;
-import models.Repository;
+//import models.Repository;
+import controllers.DatabaseController;
 import java.sql.PreparedStatement;
 
 import static play.mvc.Results.ok;
@@ -64,7 +65,7 @@ public class _TEMPLATE_Question extends PartQuestion {
             JsonNode result = questionNode.get("answer");
 
             if(result != null){
-                PreparedStatement preparedStatement = Repository.getConnection().prepareStatement(
+                PreparedStatement preparedStatement = DatabaseController.getConnection().prepareStatement(
                         "INSERT INTO _TEMPLATE_Results(id,workerId,assignmentId,hitId,partId,questionId,answer) VALUES(nextval('_TEMPLATE_Results_seq'),?,?,?,?,?,?)"
                 );
                 preparedStatement.setString(1,workerId);

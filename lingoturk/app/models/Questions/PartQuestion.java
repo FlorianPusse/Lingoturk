@@ -10,11 +10,10 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.cfg.MapperConfig;
 import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
+import controllers.DatabaseController;
 import models.Groups.AbstractGroup;
 import models.LingoExpModel;
-import models.Repository;
 import org.apache.commons.beanutils.BeanUtils;
 import play.db.ebean.Model;
 
@@ -39,7 +38,7 @@ public abstract class PartQuestion extends PublishableQuestion {
 
     @JsonIgnore
     public void addUsedInPart(AbstractGroup p) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement(
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                 "INSERT INTO Parts_contain_Questions(PartID, QuestionID) " +
                         "SELECT " + p.getId() + ", " + this.getId() +
                         " WHERE NOT EXISTS (" +
@@ -50,7 +49,7 @@ public abstract class PartQuestion extends PublishableQuestion {
     }
 
     public AbstractGroup getPartUsedIn() throws SQLException {
-        Statement statement = Repository.getConnection().createStatement();
+        Statement statement = DatabaseController.getConnection().createStatement();
         ResultSet rs = statement.executeQuery("SELECT PartID FROM Parts_contain_Questions WHERE QuestionID=" + getId());
 
         AbstractGroup group = null;

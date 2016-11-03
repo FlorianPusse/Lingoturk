@@ -4,16 +4,14 @@ import com.amazonaws.mturk.requester.Assignment;
 import com.fasterxml.jackson.databind.JsonNode;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
-import models.Repository;
+import controllers.DatabaseController;
 import models.Results.AssignmentResult;
 import models.Worker;
 import org.dom4j.DocumentException;
 import play.data.DynamicForm;
 import play.mvc.Result;
 
-import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.persistence.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -85,7 +83,7 @@ public class PlausibilityQuestion extends PartQuestion{
         String workerId = resultNode.get("workerId").asText();
         int partId = resultNode.get("partId").asInt();
 
-        PreparedStatement statement = Repository.getConnection().prepareStatement(
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                 "INSERT INTO PlausibilityResults(id,WorkerId,partId,questionId,answer) VALUES(nextval('PlausibilityResults_seq'),?,?,?,?)"
         );
 

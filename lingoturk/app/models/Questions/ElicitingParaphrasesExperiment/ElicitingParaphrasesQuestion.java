@@ -3,9 +3,9 @@ package models.Questions.ElicitingParaphrasesExperiment;
 
 import com.amazonaws.mturk.requester.Assignment;
 import com.fasterxml.jackson.databind.JsonNode;
+import controllers.DatabaseController;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
-import models.Repository;
 import models.Results.AssignmentResult;
 import models.Worker;
 import org.dom4j.DocumentException;
@@ -92,7 +92,7 @@ public class ElicitingParaphrasesQuestion extends PartQuestion {
         String partId = resultNode.get("partId") != null ? resultNode.get("partId").asText() : "-1";
 
         for (Iterator<JsonNode> resultIterator = resultNode.get("answers").iterator(); resultIterator.hasNext(); ) {
-            PreparedStatement statement = Repository.getConnection().prepareStatement(
+            PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                     "INSERT INTO ElicitingParaphrasesResults(id,WorkerId,questionId,partId,answer) VALUES(nextval('ElicitingParaphrasesResults_seq'),?,?,?,?)"
             );
 

@@ -1,29 +1,18 @@
 package models.Questions.SentenceCompletionExperiment;
 
 import com.amazonaws.mturk.requester.Assignment;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.*;
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
-import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
+import controllers.DatabaseController;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
-import models.Repository;
 import models.Results.AssignmentResult;
 import models.Worker;
 import org.dom4j.DocumentException;
 import play.data.DynamicForm;
-import play.db.ebean.Model;
 import play.mvc.Result;
 
-import javax.json.Json;
 import javax.json.JsonObject;
 import javax.persistence.*;
-import java.io.StringReader;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Iterator;
@@ -97,7 +86,7 @@ public class SentenceCompletionQuestion extends PartQuestion {
         String workerId = resultNode.get("workerId").asText();
         int partId = resultNode.get("partId").asInt();
 
-        PreparedStatement statement = Repository.getConnection().prepareStatement(
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                 "INSERT INTO SentenceCompletionResults(id,WorkerId,partId,questionId,answer) VALUES(nextval('SentenceCompletionResults_seq'),?,?,?,?)"
         );
 

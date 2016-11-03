@@ -2,7 +2,7 @@ package models.Questions;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import models.LingoExpModel;
-import models.Repository;
+import controllers.DatabaseController;
 import models.Worker;
 import play.data.DynamicForm;
 import play.data.validation.Constraints;
@@ -58,7 +58,7 @@ public abstract class Question extends Model {
             return null;
         }
 
-        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT * FROM Questions WHERE QuestionID=" + this.getId());
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT * FROM Questions WHERE QuestionID=" + this.getId());
         ResultSet rs = statement.executeQuery();
 
         if (rs.next()) {
@@ -67,7 +67,7 @@ public abstract class Question extends Model {
 
         if (availability > 0) {
             this.availability--;
-            statement = Repository.getConnection().prepareStatement("UPDATE Questions SET Availability = ? WHERE QuestionID = ?");
+            statement = DatabaseController.getConnection().prepareStatement("UPDATE Questions SET Availability = ? WHERE QuestionID = ?");
             statement.setInt(1, this.availability);
             statement.setInt(2, this.getId());
             statement.execute();

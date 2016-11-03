@@ -4,7 +4,6 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.amazonaws.mturk.requester.HIT;
 import com.amazonaws.mturk.service.axis.RequesterService;
 import com.amazonaws.mturk.service.exception.ServiceException;
-import models.Repository;
 import models.LingoExpModel;
 
 import org.apache.commons.io.FileUtils;
@@ -53,7 +52,7 @@ public class Extract extends Controller{
                 return internalServerError("Query file does not exist for experiment type: " + experimentType);
             }else{
                 String queryString = FileUtils.readFileToString(queryFile);
-                statement = Repository.getConnection().prepareStatement(queryString);
+                statement = DatabaseController.getConnection().prepareStatement(queryString);
                 ResultSet resultSet = statement.executeQuery();
                 writer.writeAll(resultSet,true);
                 statement.close();
@@ -79,7 +78,7 @@ public class Extract extends Controller{
     }
 
     public static List<HIT> getHITs(int publishID, RequesterService service) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT mTurkID FROM QuestionPublishedAs WHERE publishedId = ?");
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT mTurkID FROM QuestionPublishedAs WHERE publishedId = ?");
         statement.setInt(1, publishID);
         ResultSet rs = statement.executeQuery();
 
@@ -103,7 +102,7 @@ public class Extract extends Controller{
      * @return A list of all HITs saved on AMT or null if an error occurred
      */
     public static List<PublishedExperiment> listPublishedExperiments(String destination) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT * FROM LingoExpModelPublishedAs WHERE Destination = ?");
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT * FROM LingoExpModelPublishedAs WHERE Destination = ?");
         statement.setString(1,destination);
         ResultSet rs = statement.executeQuery();
 

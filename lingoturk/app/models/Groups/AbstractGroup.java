@@ -3,11 +3,11 @@ package models.Groups;
 import com.amazonaws.mturk.service.axis.RequesterService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
+import controllers.DatabaseController;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
 import models.Questions.Question;
 import models.Questions.QuestionFactory;
-import models.Repository;
 import models.Worker;
 import play.data.DynamicForm;
 import play.db.ebean.Model;
@@ -92,7 +92,7 @@ public abstract class AbstractGroup extends Model {
     }
 
     public synchronized int getAvailability() throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT availability FROM Groups WHERE PartId=" + this.getId());
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT availability FROM Groups WHERE PartId=" + this.getId());
         ResultSet rs = statement.executeQuery();
 
         int result = -1;
@@ -105,13 +105,13 @@ public abstract class AbstractGroup extends Model {
     }
 
     public synchronized void setAvailability(int availability) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("UPDATE Groups SET availability = ? WHERE PartId=" + this.getId());
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("UPDATE Groups SET availability = ? WHERE PartId=" + this.getId());
         statement.setInt(1,availability);
         statement.execute();
     }
 
     public void insert(String hitID,int publishedId) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("INSERT INTO PartPublishedAs(PartID,mTurkID,publishedId) VALUES(?,?,?)");
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("INSERT INTO PartPublishedAs(PartID,mTurkID,publishedId) VALUES(?,?,?)");
         statement.setInt(1, getId());
         statement.setString(2, hitID);
         statement.setInt(3,publishedId);
@@ -154,7 +154,7 @@ public abstract class AbstractGroup extends Model {
     }
 
     public void addExperimentUsedIn(LingoExpModel exp) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement(
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                 "INSERT INTO LingoExpModels_contain_Parts(LingoExpModelID,PartID) " +
                         "SELECT " + exp.getId() + ", " + this.getId() +
                         " WHERE NOT EXISTS (" +
@@ -184,7 +184,7 @@ public abstract class AbstractGroup extends Model {
     }
 
     public Integer getExperimentUsedIn() throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT * FROM LingoExpModels_contain_Parts WHERE PartID=" + this.getId());
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT * FROM LingoExpModels_contain_Parts WHERE PartID=" + this.getId());
         ResultSet rs = statement.executeQuery();
 
         int result = -1;
@@ -196,7 +196,7 @@ public abstract class AbstractGroup extends Model {
 
     public List<PartQuestion> getQuestions() throws SQLException {
         if (questions == null){
-            PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT * FROM Parts_contain_Questions WHERE PartID=" + this.getId());
+            PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT * FROM Parts_contain_Questions WHERE PartID=" + this.getId());
             ResultSet rs = statement.executeQuery();
 
             List<PartQuestion> result = new LinkedList<>();
@@ -213,7 +213,7 @@ public abstract class AbstractGroup extends Model {
     public abstract Result renderAMT(Worker worker, String assignmentId, String hitId, String turkSubmitTo, LingoExpModel exp, DynamicForm df);
 
     public void saveQuestions() throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("INSERT INTO Parts_contain_Questions(PartID,QuestionID) SELECT " + getId() + ", ? " +
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("INSERT INTO Parts_contain_Questions(PartID,QuestionID) SELECT " + getId() + ", ? " +
                 "WHERE NOT EXISTS (" +
                 "SELECT * FROM Parts_contain_Questions WHERE PartID= " + getId() + " AND QuestionID= ? " +
                 ")");

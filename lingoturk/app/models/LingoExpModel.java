@@ -13,6 +13,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.persistence.*;
 
+import controllers.DatabaseController;
 import models.Groups.AbstractGroup;
 import models.Questions.ExampleQuestion;
 
@@ -111,7 +112,7 @@ public class LingoExpModel extends Model {
     }
 
     public void setBlockedWorkers(List<Worker> workerList) throws SQLException {
-        Statement statement = Repository.getConnection().createStatement();
+        Statement statement = DatabaseController.getConnection().createStatement();
         statement.execute("DELETE FROM Workers_areBlockedFor_LingoExpModels WHERE LingoExpModelID=" + this.getId());
         addBlockedWorkers(workerList);
     }
@@ -150,7 +151,7 @@ public class LingoExpModel extends Model {
     }
 
     public void setDescription(String description) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("UPDATE LingoExpModels SET Description=? WHERE LingoExpModelID=" + this.getId());
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("UPDATE LingoExpModels SET Description=? WHERE LingoExpModelID=" + this.getId());
         statement.setString(1, description);
         statement.execute();
     }
@@ -160,7 +161,7 @@ public class LingoExpModel extends Model {
     }
 
     public void setAdditionalExplanations(String additionalExplanations) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("UPDATE LingoExpModels SET additionalExplanations=? WHERE LingoExpModelID=" + this.getId());
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("UPDATE LingoExpModels SET additionalExplanations=? WHERE LingoExpModelID=" + this.getId());
         statement.setString(1, additionalExplanations);
         statement.execute();
         this.additionalExplanations = additionalExplanations;
@@ -169,7 +170,7 @@ public class LingoExpModel extends Model {
     /*public List<CheaterDetectionQuestion> getCheaterDetectionQuestions() throws SQLException {
         List<CheaterDetectionQuestion> result = new LinkedList<CheaterDetectionQuestion>();
 
-        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT * FROM LingoExpModels_contain_CheaterDetectionQuestions WHERE LingoExpModelID=" + this.getId());
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT * FROM LingoExpModels_contain_CheaterDetectionQuestions WHERE LingoExpModelID=" + this.getId());
         ResultSet rs = statement.executeQuery();
 
         while (rs.next()) {
@@ -180,7 +181,7 @@ public class LingoExpModel extends Model {
     }
 
     public void setCheaterDetectionQuestions(List<CheaterDetectionQuestion> cheaterDetectionQuestions) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("DELETE FROM LingoExpModels_contain_CheaterDetectionQuestions WHERE LingoExpModelID=" + this.getId());
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("DELETE FROM LingoExpModels_contain_CheaterDetectionQuestions WHERE LingoExpModelID=" + this.getId());
         statement.execute();
 
         for (CheaterDetectionQuestion cdq : cheaterDetectionQuestions) {
@@ -191,7 +192,7 @@ public class LingoExpModel extends Model {
     public List<ExampleQuestion> getExampleQuestions() throws SQLException {
         List<ExampleQuestion> result = new LinkedList<ExampleQuestion>();
 
-        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT * FROM LingoExpModels_contain_ExampleQuestions WHERE LingoExpModelID=" + this.getId());
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT * FROM LingoExpModels_contain_ExampleQuestions WHERE LingoExpModelID=" + this.getId());
         ResultSet rs = statement.executeQuery();
 
         while (rs.next()) {
@@ -202,7 +203,7 @@ public class LingoExpModel extends Model {
     }
 
     public void setExampleQuestions(List<ExampleQuestion> exampleQuestions) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("DELETE FROM LingoExpModels_contain_ExampleQuestions WHERE LingoExpModelID=" + this.getId());
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("DELETE FROM LingoExpModels_contain_ExampleQuestions WHERE LingoExpModelID=" + this.getId());
         statement.execute();
 
         for (ExampleQuestion eq : exampleQuestions) {
@@ -213,7 +214,7 @@ public class LingoExpModel extends Model {
     public List<Worker> getBlockedWorkers() throws SQLException {
         List<Worker> result = new LinkedList<>();
 
-        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT * FROM Workers_areBlockedFor_LingoExpModels WHERE LingoExpModelID=" + this.getId());
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT * FROM Workers_areBlockedFor_LingoExpModels WHERE LingoExpModelID=" + this.getId());
         ResultSet rs = statement.executeQuery();
 
         while (rs.next()) {
@@ -226,7 +227,7 @@ public class LingoExpModel extends Model {
     public List<Worker> getParticipatingWorkers() throws SQLException {
         List<Worker> result = new LinkedList<>();
 
-        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT * FROM Workers_participateIn_LingoExpModels WHERE LingoExpModelID=" + this.getId());
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT * FROM Workers_participateIn_LingoExpModels WHERE LingoExpModelID=" + this.getId());
         ResultSet rs = statement.executeQuery();
 
         while (rs.next()) {
@@ -239,7 +240,7 @@ public class LingoExpModel extends Model {
     public List<AbstractGroup> getParts() throws SQLException {
         List<AbstractGroup> result = new LinkedList<>();
 
-        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT * FROM LingoExpModels_contain_Parts WHERE LingoExpModelID=" + this.getId() + " ORDER BY LingoExpModelID,PartId");
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT * FROM LingoExpModels_contain_Parts WHERE LingoExpModelID=" + this.getId() + " ORDER BY LingoExpModelID,PartId");
         ResultSet rs = statement.executeQuery();
 
         while (rs.next()) {
@@ -269,7 +270,7 @@ public class LingoExpModel extends Model {
     }
 
     public boolean isCurrentlyRunning() throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT (timestamp +  INTERVAL '1 second' * lifetime) > NOW() AS running FROM LingoExpModelPublishedAs WHERE LingoExpModelID = ?");
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT (timestamp +  INTERVAL '1 second' * lifetime) > NOW() AS running FROM LingoExpModelPublishedAs WHERE LingoExpModelID = ?");
         statement.setInt(1,getId());
         ResultSet rs = statement.executeQuery();
 
@@ -283,7 +284,7 @@ public class LingoExpModel extends Model {
     }
 
     public int publish(long lifetime, String url, String destination) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT * FROM publishLingoExpModel(?,?,?,?)");
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT * FROM publishLingoExpModel(?,?,?,?)");
         statement.setInt(1,getId());
         statement.setLong(2,lifetime);
         statement.setString(3,url);
@@ -300,7 +301,7 @@ public class LingoExpModel extends Model {
     }
 
     public void setCurrentlyRunning(boolean currentlyRunning) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("UPDATE LingoExpModels SET currentlyRunning = ? WHERE LingoExpModelID=" + this.getId());
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("UPDATE LingoExpModels SET currentlyRunning = ? WHERE LingoExpModelID=" + this.getId());
         statement.setBoolean(1, currentlyRunning);
         statement.execute();
     }

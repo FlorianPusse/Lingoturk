@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import controllers.Application;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
-import models.Repository;
+import controllers.DatabaseController;
 import models.Worker;
 import play.data.DynamicForm;
 import play.mvc.Result;
@@ -62,7 +62,7 @@ public class PoolGroup extends AbstractGroup {
     }
 
     public void insert(String hitID, int publishedId, int questionId) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("INSERT INTO PartPublishedAs(PartID,mTurkID,publishedId,question1) VALUES(?,?,?,?)");
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("INSERT INTO PartPublishedAs(PartID,mTurkID,publishedId,question1) VALUES(?,?,?,?)");
         statement.setInt(1, getId());
         statement.setString(2, hitID);
         statement.setInt(3, publishedId);

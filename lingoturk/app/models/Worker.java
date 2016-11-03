@@ -1,5 +1,6 @@
 package models;
 
+import controllers.DatabaseController;
 import models.Groups.AbstractGroup;
 import models.Questions.Question;
 import play.data.validation.Constraints;
@@ -39,7 +40,7 @@ public class Worker extends Model {
     public void addParticipatesInPart(AbstractGroup group, Question question, Question question2, String assignmentId, String hitID) throws SQLException {
         // TODO: FIX
         if(question != null && question2 == null){
-            PreparedStatement statement = Repository.getConnection().prepareStatement(
+            PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                     "INSERT INTO Workers_participateIn_Parts(WorkerID,PartID,assignmentID, hitID,QuestionID) VALUES (?,?,?,?,?)");
             statement.setString(1, this.getId());
             if(group != null){
@@ -53,7 +54,7 @@ public class Worker extends Model {
             statement.setInt(5, question.getId());
             statement.execute();
         }else if(question != null){
-            PreparedStatement statement = Repository.getConnection().prepareStatement(
+            PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                     "INSERT INTO Workers_participateIn_Parts(WorkerID,assignmentID, hitID,QuestionID,QuestionID2) " +
                             "SELECT ?,?,?,?,? WHERE NOT EXISTS (SELECT * FROM Workers_participateIn_Parts WHERE WorkerId = ? AND assignmentId = ?)");
             statement.setString(1, this.getId());
@@ -67,7 +68,7 @@ public class Worker extends Model {
             statement.setString(7,assignmentId);
             statement.execute();
         } else{
-            PreparedStatement statement = Repository.getConnection().prepareStatement(
+            PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                     "INSERT INTO Workers_participateIn_Parts(WorkerID,PartID,assignmentID, hitID) VALUES (?,?,?,?)");
             statement.setString(1, this.getId());
             statement.setInt(2, group.getId());
@@ -78,7 +79,7 @@ public class Worker extends Model {
     }
 
     public static void updateParticipatesInPart(String oldWorkerId, AbstractGroup group, String newWorkerId) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("UPDATE Workers_participateIn_Parts SET workerId = ? WHERE workerId = ? AND PartId = ?");
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("UPDATE Workers_participateIn_Parts SET workerId = ? WHERE workerId = ? AND PartId = ?");
         statement.setString(1,newWorkerId);
         statement.setString(2,oldWorkerId);
         statement.setInt(3, group.getId());
@@ -88,7 +89,7 @@ public class Worker extends Model {
     }
 
     public void addParticipatesInCD_Question(int questionID, String assignmentID, boolean answerCorrect) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement(
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                 "INSERT INTO participatesInCD_Question(QuestionID,workerID,assignmentID,answerCorrect) " +
                         "SELECT ?,?,?,? WHERE NOT EXISTS (SELECT * FROM participatesInCD_Question WHERE QuestionID = ? AND WorkerID = ?)");
         statement.setInt(1, questionID);
@@ -101,7 +102,7 @@ public class Worker extends Model {
     }
 
     public static void addStatistics(String workerId, int expId, String origin, String statistics) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement(
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                 "INSERT INTO ParticipantStatistics(id,workerId, origin, expId, statistics) VALUES (nextval('ParticipantStatistics_seq'),?,?,?,?)");
 
         statement.setString(1, workerId);
@@ -113,7 +114,7 @@ public class Worker extends Model {
     }
 
     public int countFalseAnswers() throws SQLException {
-        Statement statement = Repository.getConnection().createStatement();
+        Statement statement = DatabaseController.getConnection().createStatement();
         ResultSet rs = statement.executeQuery("SELECT count(*) AS falseCount FROM participatesInCD_Question WHERE WorkerID='" + this.getId() +"' AND answerCorrect = false");
 
         int result = -1;
@@ -131,7 +132,7 @@ public class Worker extends Model {
      * @throws SQLException
      */
     public Participation getParticipatesInPart(AbstractGroup group) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT * FROM Workers_participateIn_Parts WHERE WorkerID=? AND PartID=?");
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT * FROM Workers_participateIn_Parts WHERE WorkerID=? AND PartID=?");
         statement.setString(1,this.getId());
         statement.setInt(2, group.getId());
         ResultSet rs = statement.executeQuery();
@@ -145,7 +146,7 @@ public class Worker extends Model {
     }
 
     public Participation getParticipatesInExperiment(LingoExpModel exp) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT * FROM Workers_participateIn_Parts JOIN LingoExpModels_contain_Parts USING (partId) WHERE WorkerID=? AND LingoExpModelId=?");
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT * FROM Workers_participateIn_Parts JOIN LingoExpModels_contain_Parts USING (partId) WHERE WorkerID=? AND LingoExpModelId=?");
         statement.setString(1,this.getId());
         statement.setInt(2,exp.getId());
         ResultSet rs = statement.executeQuery();
@@ -189,7 +190,7 @@ public class Worker extends Model {
     }
 
     public void addIsBlockedFor(LingoExpModel exp) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement(
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                 "INSERT INTO Workers_areBlockedFor_LingoExpModels(WorkerID,LingoExpModelID) SELECT '" + this.getId() + "',? " +
                         "WHERE NOT EXISTS (" +
                         "SELECT * FROM  Workers_areBlockedFor_LingoExpModels WHERE WorkerID ='" + this.getId() + "' AND LingoExpModelID=?" +
@@ -200,7 +201,7 @@ public class Worker extends Model {
     }
 
     public boolean getIsBlockedFor(int expId) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT * FROM Workers_areBlockedFor_LingoExpModels WHERE WorkerID=? AND LingoExpModelId=?");
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT * FROM Workers_areBlockedFor_LingoExpModels WHERE WorkerID=? AND LingoExpModelId=?");
         statement.setString(1,getId());
         statement.setInt(2,expId);
 
@@ -214,7 +215,7 @@ public class Worker extends Model {
 
     public void isBanned(boolean isBlocked) throws SQLException {
         this.banned = isBlocked;
-        PreparedStatement statement = Repository.getConnection().prepareStatement("UPDATE Workers SET banned = ? WHERE WorkerID ='" + this.getId() + "'");
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("UPDATE Workers SET banned = ? WHERE WorkerID ='" + this.getId() + "'");
         statement.setBoolean(1,isBlocked);
         statement.execute();
     }

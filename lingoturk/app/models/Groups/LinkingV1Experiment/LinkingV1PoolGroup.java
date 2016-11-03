@@ -10,7 +10,7 @@ import models.LingoExpModel;
 import models.Questions.LinkingV1Experiment.Script;
 import models.Questions.PartQuestion;
 import models.Questions.Question;
-import models.Repository;
+import controllers.DatabaseController;
 import models.Worker;
 import play.data.DynamicForm;
 import play.mvc.Result;
@@ -98,7 +98,7 @@ public class LinkingV1PoolGroup extends AbstractGroup {
     }
 
     public void insert(String hitID, int publishedId, int question1, int question2) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("INSERT INTO PartPublishedAs(PartID,mTurkID,publishedId,question1,question2) VALUES(?,?,?,?,?)");
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("INSERT INTO PartPublishedAs(PartID,mTurkID,publishedId,question1,question2) VALUES(?,?,?,?,?)");
         statement.setInt(1, getId());
         statement.setString(2, hitID);
         statement.setInt(3, publishedId);

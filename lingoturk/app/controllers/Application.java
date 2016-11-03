@@ -3,13 +3,15 @@ package controllers;
 // Mturk Requester
 
 import java.io.*;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 
 import com.amazonaws.mturk.requester.*;
 import models.Groups.*;
 import models.Worker;
-import play.mvc.*;
+import play.mvc.Controller;
+import play.mvc.Result;
+import play.mvc.Security;
 import views.html.*;
 
 import models.LingoExpModel;
@@ -65,9 +67,9 @@ public class Application extends Controller {
         List<LingoExpModel> runningExperiments = new LinkedList<>();
 
         for (LingoExpModel expModels : LingoExpModel.getAllExperiments()) {
-            if(expModels.isCurrentlyRunning()){
+            if (expModels.isCurrentlyRunning()) {
                 runningExperiments.add(expModels);
-            }else{
+            } else {
                 offlineExperiments.add(expModels);
             }
         }
@@ -77,6 +79,7 @@ public class Application extends Controller {
 
     /**
      * Lets the user choose an experiment platform to publish an experiment on.
+     *
      * @param expId The Id of the experiment that should be published
      * @return the experiment decision page
      */
@@ -109,7 +112,7 @@ public class Application extends Controller {
     @Security.Authenticated(Secured.class)
     public static Result publishOnProlific(int expId) {
         LingoExpModel expModel = LingoExpModel.byId(expId);
-        if(expModel == null){
+        if (expModel == null) {
             return internalServerError("Experiment ID does not exist!");
         }
 
@@ -122,7 +125,7 @@ public class Application extends Controller {
         int expId = Integer.parseInt(df.get("expId"));
         LingoExpModel expModel = LingoExpModel.byId(expId);
 
-        if(expModel == null){
+        if (expModel == null) {
             return internalServerError("Experiment ID does not exist!");
         }
 
@@ -167,7 +170,7 @@ public class Application extends Controller {
             String workerId = scanner.next().trim();
             Worker w = Worker.getWorkerById(workerId);
 
-            if(w == null){
+            if (w == null) {
                 w = Worker.createWorker(workerId);
             }
 
@@ -187,7 +190,7 @@ public class Application extends Controller {
             service = Service.getService(Service.source.SANDBOX);
         } else if (df.get("destination").equals("amt")) {
             service = Service.getService(Service.source.MTURK);
-        }else{
+        } else {
             return badRequest("Unknown destination.");
         }
 
@@ -221,6 +224,7 @@ public class Application extends Controller {
 
     /**
      * Renders the about information page
+     *
      * @return Result object containing the page
      */
     @Security.Authenticated(Secured.class)

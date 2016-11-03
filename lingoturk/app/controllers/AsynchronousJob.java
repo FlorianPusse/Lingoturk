@@ -1,29 +1,7 @@
 package controllers;
 
 import akka.actor.UntypedActor;
-import com.amazonaws.mturk.requester.Assignment;
-import com.amazonaws.mturk.requester.GetAssignmentResult;
-import com.amazonaws.mturk.requester.HIT;
-import com.amazonaws.mturk.service.axis.RequesterService;
-import com.amazonaws.mturk.service.exception.InvalidStateException;
-import com.amazonaws.mturk.service.exception.ObjectDoesNotExistException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import models.Repository;
-import models.Results.AssignmentResult;
-import models.Questions.PublishableQuestion;
-import models.Worker;
-import org.dom4j.DocumentException;
-import play.mvc.Result;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -95,7 +73,7 @@ public class AsynchronousJob extends UntypedActor {
                     int tries = failedTries.get(assignmentID);
                     if(tries >= 10){
                         toRemove.add(assignmentID);
-                        PreparedStatement statement = Repository.getConnection().prepareStatement("INSERT INTO failedAssignments(assignmentID) " +
+                        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("INSERT INTO failedAssignments(assignmentID) " +
                                 "SELECT ? WHERE NOT EXISTS (SELECT * FROM failedAssignments WHERE assignmentID = ?)");
                         statement.setString(1,assignmentID);
                         statement.setString(2,assignmentID);
@@ -118,7 +96,7 @@ public class AsynchronousJob extends UntypedActor {
     }
 
     public static void loadQueue() throws SQLException {
-        Connection connection = Repository.getConnection();
+        Connection connection = DatabaseController.getConnection();
         PreparedStatement statement = connection.prepareStatement("SELECT assignmentID FROM pendingAssignments");
         ResultSet rs = statement.executeQuery();
 
@@ -133,7 +111,7 @@ public class AsynchronousJob extends UntypedActor {
     }
 
     public static Result failedAssignments() throws SQLException, IOException {
-        Connection connection = Repository.getConnection();
+        Connection connection = DatabaseController.getConnection();
         PreparedStatement statement = connection.prepareStatement("SELECT assignmentID FROM failedAssignments");
         ResultSet rs = statement.executeQuery();
 
@@ -150,7 +128,7 @@ public class AsynchronousJob extends UntypedActor {
     }
 
     public static void saveQueue() throws SQLException {
-        Connection connection = Repository.getConnection();
+        Connection connection = DatabaseController.getConnection();
         for(String assignmentID : waitingAssignmentIDs){
             PreparedStatement statement = connection.prepareStatement("INSERT INTO pendingAssignments(assignmentID) " +
                     "SELECT ? WHERE NOT EXISTS (SELECT * FROM pendingAssignments WHERE assignmentID = ?)");

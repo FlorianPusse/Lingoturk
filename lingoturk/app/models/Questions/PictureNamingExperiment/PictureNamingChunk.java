@@ -2,19 +2,16 @@ package models.Questions.PictureNamingExperiment;
 
 import com.amazonaws.mturk.requester.Assignment;
 import com.fasterxml.jackson.databind.JsonNode;
+import controllers.DatabaseController;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
-import models.Repository;
 import models.Results.AssignmentResult;
 import models.Worker;
 import org.dom4j.DocumentException;
 import play.data.DynamicForm;
 import play.mvc.Result;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.persistence.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -72,7 +69,7 @@ public class PictureNamingChunk extends PartQuestion {
     }
 
     public static Result submitMailAddress(String mailAddress, String workerId) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement(
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                 "INSERT INTO PictureNamingMailAddress(id,workerId,mailAddress) VALUES(nextval('PictureNamingResults_seq'),?,?)"
         );
         statement.setString(1, workerId);
@@ -88,7 +85,7 @@ public class PictureNamingChunk extends PartQuestion {
         int partId = resultNode.get("partId").asInt();
         int chunkId = resultNode.get("chunkId").asInt();
 
-        PreparedStatement statement = Repository.getConnection().prepareStatement(
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                 "INSERT INTO PictureNamingResults(id,WorkerId,partId,chunkId,pictureId,answer) VALUES(nextval('PictureNamingResults_seq'), ?,?,?,?,?)"
         );
 

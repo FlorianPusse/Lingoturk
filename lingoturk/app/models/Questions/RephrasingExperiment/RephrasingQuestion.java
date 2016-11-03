@@ -4,7 +4,7 @@ import com.amazonaws.mturk.requester.Assignment;
 import com.fasterxml.jackson.databind.JsonNode;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
-import models.Repository;
+import controllers.DatabaseController;
 import models.Results.AssignmentResult;
 import models.Worker;
 import org.dom4j.DocumentException;
@@ -128,7 +128,7 @@ public class RephrasingQuestion extends PartQuestion {
         int age = resultNode.get("age").asInt();
         int startedLearning = resultNode.get("startedLearning").asInt();
 
-        PreparedStatement statement = Repository.getConnection().prepareStatement(
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                 "INSERT INTO RephrasingResults(id,workerId,questionId,answer1,answer2,choice1,choice2,readingTime1,readingTime2, age, startedLearning) VALUES(nextval('RephrasingResults_seq'),?,?,?,?,?,?,?,?,?,?)"
         );
 

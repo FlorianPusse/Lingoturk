@@ -1,7 +1,7 @@
 package models.Questions;
 
 import models.LingoExpModel;
-import models.Repository;
+import controllers.DatabaseController;
 import play.mvc.Result;
 import play.db.ebean.Model;
 
@@ -30,7 +30,7 @@ public interface ExampleQuestion{
         }
 
         public static void addUsedInExperiments(LingoExpModel lingoExpModel, ExampleQuestion exampleQuestion) throws SQLException {
-            PreparedStatement statement = Repository.getConnection().prepareStatement(
+            PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                     "INSERT INTO LingoExpModels_contain_ExampleQuestions(LingoExpModelID,QuestionID) " +
                             "SELECT " + lingoExpModel.getId() + ", " + exampleQuestion.getId() +
                             " WHERE NOT EXISTS (" +

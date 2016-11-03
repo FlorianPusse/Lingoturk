@@ -2,10 +2,9 @@ package models.Questions.LinkingV1Experiment;
 
 import com.amazonaws.mturk.requester.Assignment;
 import com.fasterxml.jackson.databind.JsonNode;
+import controllers.DatabaseController;
 import models.LingoExpModel;
-import models.Questions.LinkingV2Experiment.ScriptV2;
 import models.Questions.PartQuestion;
-import models.Repository;
 import models.Results.AssignmentResult;
 import models.Worker;
 import org.dom4j.DocumentException;
@@ -15,7 +14,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import play.api.db.evolutions.Evolutions;
 import play.data.DynamicForm;
 import play.mvc.Result;
 
@@ -98,7 +96,7 @@ public class Script extends PartQuestion {
 
             if (rhs_item.startsWith("before")) {
                 String[] answer = rhs_item.split("_");
-                PreparedStatement statement = Repository.getConnection().prepareStatement(
+                PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                         "INSERT INTO LinkingV1Results(id,WorkerId,AssignmentId,HitId,lhs_script,rhs_script,lhs_item,before,workingTimes) VALUES(nextval('LinkingV1Results_seq'),?,?,?,?,?,?,?,?)"
                 );
 
@@ -115,7 +113,7 @@ public class Script extends PartQuestion {
                 statement.close();
             } else if (rhs_item.startsWith("after")) {
                 String[] answer = rhs_item.split("_");
-                PreparedStatement statement = Repository.getConnection().prepareStatement(
+                PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                         "INSERT INTO LinkingV1Results(id,WorkerId,AssignmentId,HitId,lhs_script,rhs_script,lhs_item,after,workingTimes) VALUES(nextval('LinkingV1Results_seq'),?,?,?,?,?,?,?,?)"
                 );
 
@@ -132,7 +130,7 @@ public class Script extends PartQuestion {
                 statement.close();
             } else if (rhs_item.startsWith("between")) {
                 String[] answer = rhs_item.split("_");
-                PreparedStatement statement = Repository.getConnection().prepareStatement(
+                PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                         "INSERT INTO LinkingV1Results(id,WorkerId,AssignmentId,HitId,lhs_script,rhs_script,lhs_item,after,before,workingTimes) VALUES(nextval('LinkingV1Results_seq'),?,?,?,?,?,?,?,?,?)"
                 );
 
@@ -149,7 +147,7 @@ public class Script extends PartQuestion {
                 statement.execute();
                 statement.close();
             } else if (rhs_item.startsWith("noLinkingPossible")) {
-                PreparedStatement statement = Repository.getConnection().prepareStatement(
+                PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                         "INSERT INTO LinkingV1Results(id,WorkerId,AssignmentId,HitId,lhs_script,rhs_script,lhs_item,noLinkingPossible,workingTimes) VALUES(nextval('LinkingV1Results_seq'),?,?,?,?,?,?,?,?)"
                 );
 
@@ -165,7 +163,7 @@ public class Script extends PartQuestion {
                 statement.execute();
                 statement.close();
             } else {
-                PreparedStatement statement = Repository.getConnection().prepareStatement(
+                PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                         "INSERT INTO LinkingV1Results(id,WorkerId,AssignmentId,HitId,lhs_script,rhs_script,lhs_item,rhs_item,workingTimes) VALUES(nextval('LinkingV1Results_seq'),?,?,?,?,?,?,?,?)"
                 );
 
@@ -310,7 +308,7 @@ public class Script extends PartQuestion {
     }
 
     private static int countFalseAnswers(String workerId) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT wrongAnswersCount(?)");
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT wrongAnswersCount(?)");
         statement.setString(1, workerId);
         ResultSet resultSet = statement.executeQuery();
 

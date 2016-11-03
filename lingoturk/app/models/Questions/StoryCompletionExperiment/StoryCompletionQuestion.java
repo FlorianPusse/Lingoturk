@@ -4,16 +4,14 @@ import com.amazonaws.mturk.requester.Assignment;
 import com.fasterxml.jackson.databind.JsonNode;
 import models.LingoExpModel;
 import models.Questions.PartQuestion;
-import models.Repository;
+import controllers.DatabaseController;
 import models.Results.AssignmentResult;
 import models.Worker;
 import org.dom4j.DocumentException;
 import play.data.DynamicForm;
 import play.mvc.Result;
 
-import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.persistence.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -95,7 +93,7 @@ public class StoryCompletionQuestion extends PartQuestion {
     public void writeResults(JsonNode resultNode) throws SQLException {
         String workerId = resultNode.get("workerId").asText();
 
-        PreparedStatement statement = Repository.getConnection().prepareStatement(
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                 "INSERT INTO StoryCompletionResults(id, WorkerId,itemId,result) VALUES(nextval('StoryCompletionResults_seq'),?,?,?)"
         );
 

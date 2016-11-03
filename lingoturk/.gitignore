@@ -14,3 +14,4 @@ dist
 /RUNNING_PID
 /.settings
 conf/evolutions/default/1.sql
+conf/backup.sql

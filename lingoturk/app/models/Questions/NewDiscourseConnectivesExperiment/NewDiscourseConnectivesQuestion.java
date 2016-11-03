@@ -3,14 +3,12 @@ package models.Questions.NewDiscourseConnectivesExperiment;
 import com.amazonaws.mturk.requester.Assignment;
 import com.fasterxml.jackson.databind.JsonNode;
 import models.LingoExpModel;
-import models.Repository;
+import controllers.DatabaseController;
 import models.Results.AssignmentResult;
 import models.Questions.PartQuestion;
 import models.Worker;
 import org.dom4j.DocumentException;
-import org.h2.command.Prepared;
 import play.data.DynamicForm;
-import play.libs.Json;
 import play.mvc.Result;
 
 import javax.json.JsonObject;
@@ -161,7 +159,7 @@ public class NewDiscourseConnectivesQuestion extends PartQuestion {
             String manualAnswer1 =  answer.get("manualAnswer1").asText();
             String manualAnswer2 = answer.get("manualAnswer2").asText();
 
-            PreparedStatement statement = Repository.getConnection().prepareStatement("INSERT INTO NewDiscourseConnectivesResults(id,workerId,partId,questionId,connective1,connective2,manualAnswer1,manualAnswer2) VALUES (nextval('NewDiscourseConnectivesResults_seq'), ?,?,?,?,?,?,?)");
+            PreparedStatement statement = DatabaseController.getConnection().prepareStatement("INSERT INTO NewDiscourseConnectivesResults(id,workerId,partId,questionId,connective1,connective2,manualAnswer1,manualAnswer2) VALUES (nextval('NewDiscourseConnectivesResults_seq'), ?,?,?,?,?,?,?)");
             statement.setString(1,workerId);
             statement.setInt(2, partId);
             statement.setInt(3, questionId);

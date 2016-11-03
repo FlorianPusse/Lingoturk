@@ -4,7 +4,6 @@ import models.Groups.AbstractGroup;
 import models.LingoExpModel;
 import models.Questions.ExampleQuestion;
 import models.Questions.Question;
-import models.Repository;
 import models.Worker;
 import play.data.DynamicForm;
 import play.mvc.Controller;
@@ -27,7 +26,7 @@ public class RenderController extends Controller {
     }
 
     private static LeastUsedChunksAnswer getLeastUsedChunk(int expId) throws SQLException {
-        PreparedStatement statement = Repository.getConnection().prepareStatement("SELECT * FROM (SELECT partId,chunkId,floor(count(*)/31) AS occurences FROM (SELECT * FROM PictureNamingResult JOIN LingoExpModels_contain_Parts USING (PartId) WHERE LingoExpModelId = ? ) AS tmp GROUP BY partId, chunkId) AS tmp2 ORDER BY occurences ASC LIMIT 1;");
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT * FROM (SELECT partId,chunkId,floor(count(*)/31) AS occurences FROM (SELECT * FROM PictureNamingResult JOIN LingoExpModels_contain_Parts USING (PartId) WHERE LingoExpModelId = ? ) AS tmp GROUP BY partId, chunkId) AS tmp2 ORDER BY occurences ASC LIMIT 1;");
         statement.setInt(1, expId);
 
         ResultSet rs = statement.executeQuery();

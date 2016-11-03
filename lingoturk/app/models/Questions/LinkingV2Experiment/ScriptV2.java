@@ -2,9 +2,8 @@ package models.Questions.LinkingV2Experiment;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import models.LingoExpModel;
-import models.Questions.LinkingV1Experiment.Item;
 import models.Questions.LinkingV1Experiment.Script;
-import models.Repository;
+import controllers.DatabaseController;
 import models.Worker;
 import play.data.DynamicForm;
 import play.mvc.Result;
@@ -12,8 +11,6 @@ import play.mvc.Result;
 import javax.persistence.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.List;
 
 import static play.mvc.Results.ok;
 
@@ -37,7 +34,7 @@ public class ScriptV2 extends Script {
         int rhs_slot = resultNode.get("rhs_slot").asInt();
         String result = resultNode.get("result").asText();
 
-        PreparedStatement statement = Repository.getConnection().prepareStatement(
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                 "INSERT INTO LinkingV2Results(id,WorkerId,AssignmentId,HitId,lhs_script,rhs_script,lhs_slot,rhs_slot,result) VALUES(nextval('LinkingV2Results_seq'),?,?,?,?,?,?,?,?)"
         );
 

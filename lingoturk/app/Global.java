@@ -1,39 +1,47 @@
-import models.Repository;
+import controllers.DatabaseController;
 import org.apache.commons.io.FileUtils;
-import play.*;
+import play.Application;
+import play.GlobalSettings;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class Global extends GlobalSettings{
+public class Global extends GlobalSettings {
 
-    static boolean loadDemoExperiments = false;
+    static boolean loadBackUp = false;
 
     @Override
     public void onStart(Application app) {
         System.out.println("[info] play - Application has started...");
-        Connection c = Repository.getConnection();
+        Connection c = DatabaseController.getConnection();
 
-        if(loadDemoExperiments) {
+        if (loadBackUp) {
             try {
                 Statement s = c.createStatement();
                 ResultSet resultSet = s.executeQuery("SELECT count(*) FROM LingoExpModels");
                 if (resultSet.next()) {
                     int experimentCount = resultSet.getInt(1);
                     if (experimentCount == 0) {
-                        // Populate with demo experiments
-                        String query = FileUtils.readFileToString(new File("template/LingoturkDEMO.sql"));
-                        s.execute(query);
-                        s.close();
+                        String queryData;
+                        try{
+                            queryData = FileUtils.readFileToString(new File("conf/backup.sql"));
+                        }catch (FileNotFoundException fnfe){
+                            // No backup yet. That isn't unusual
+                            return;
+                        }
+                        System.out.println("[info] play - Load backup file.");
+
+                        DatabaseController.restoreDatabase(queryData);
+
+                        System.out.println("[info] play - Backup imported successfully.");
                     }
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (SQLException | IOException e) {
                 e.printStackTrace();
             }
         }
