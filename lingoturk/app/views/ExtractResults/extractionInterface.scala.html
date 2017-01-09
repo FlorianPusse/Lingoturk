@@ -1,0 +1,52 @@
+@(expId: Integer, experimentType: String)
+@main("Results") {
+
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/ExtractResults/extractionInterface.js")"></script>
+    <style>
+        .disabled {
+            background-color: #d9d9d9;
+            cursor: no-drop;
+        }
+        .disabled > table {
+            pointer-events:none;
+        }
+    </style>
+
+    <div ng-app="ExtractionInterface" ng-controller="ExtractionController as EC" id="angularApp">
+        <input type="hidden" value="@expId" id="expId">
+        <input type="hidden" value="@experimentType" id="experimentType">
+
+        <label>Use the last stored query instead of creating a new one:
+            <input type="checkbox" ng-model="EC.useStored" ng-true-value="true" ng-false-value="false">
+        </label>
+
+        <hr/>
+
+        <label for="fields">Choose fields to extract. (All fields will be extracted by default):</label>
+        <div ng-class="{'disabled' : EC.useStored}" style="width:80%;height:30vh;overflow-y:auto; margin: 30px auto;" id="fields">
+            <table id="fieldTable" class="table" style="cursor: pointer">
+                <thead>
+                <tr><th>Field</th><th>Extract field?</th></tr>
+                </thead>
+                <tbody>
+                    <tr class="field" id="field_{{$index}}" ng-repeat="field in EC.allFields track by $index">
+                    <td>{{field}}</td>
+                    <td><input ng-change="EC.buildQuery()" type="checkbox" ng-model="EC.useField[$index]" ng-true-value="true" ng-false-value="false"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p style="text-align: center">
+            <strong>Hint: You can order the fields using drag and drop.</strong>
+        </p>
+
+        <hr/>
+
+        <label for="preview">The following query will be executed against the DB:</label>
+        <pre id="preview">{{EC.query}}</pre>
+
+        <hr/>
+
+        <a style="float:right" class="btn btn-primary" ng-href="{{EC.executeQuery()}}">Execute Query</a>
+    </div>
+}

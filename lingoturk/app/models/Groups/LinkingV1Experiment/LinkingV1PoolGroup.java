@@ -52,11 +52,6 @@ public class LinkingV1PoolGroup extends AbstractGroup {
     public LinkingV1PoolGroup(){}
 
     @Override
-    public List<ProlificPublish> prepareProlificPublish() {
-        return null;
-    }
-
-    @Override
     public void publishOnProlific(int maxAssignments) {
         throw new RuntimeException("Not implemented");
     }

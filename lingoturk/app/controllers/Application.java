@@ -7,8 +7,10 @@ import java.sql.*;
 import java.util.*;
 
 import com.amazonaws.mturk.requester.*;
+import com.fasterxml.jackson.databind.JsonNode;
 import models.Groups.*;
 import models.Worker;
+import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
@@ -28,6 +30,11 @@ public class Application extends Controller {
     public final static String DEFAULT_PASSWORD = "admin";
     public static QualificationRequirement[] qualificationRequirements;
     public static int actCounter = 0;
+
+    public static Properties properties = null;
+    public static final String propertiesLocation = "conf/lingoturk.properties";
+
+    public static Result prototype(){ return ok(views.html.ExperimentRendering.prototype.render()); }
 
     /**
      * Renders the index-page.
@@ -120,14 +127,76 @@ public class Application extends Controller {
     }
 
     @Security.Authenticated(Secured.class)
+    @BodyParser.Of(BodyParser.Json.class)
     public static Result publishProlific() {
-        DynamicForm df = new DynamicForm().bindFromRequest();
-        int expId = Integer.parseInt(df.get("expId"));
+        JsonNode json = request().body().asJson();
+        int expId = json.get("expId").asInt();
         LingoExpModel expModel = LingoExpModel.byId(expId);
 
-        if (expModel == null) {
-            return internalServerError("Experiment ID does not exist!");
+        if(expModel == null){
+            return internalServerError("LingoExpModel does not exist.");
         }
+
+        int lifetime = json.get("lifetime").asInt();
+        switch (json.get("type").asText()){
+            case "DISJOINT LISTS":
+                int maxWorkingTime = json.get("maxWorkingTime").asInt();
+                int defaultValue = json.get("defaultValue").asInt();
+                boolean useAdvancedMode = json.get("useAdvancedMode").asBoolean();
+
+                for(Iterator<Map.Entry<String,JsonNode>> updateIt = json.get("updates").fields(); updateIt.hasNext(); ){
+                    Map.Entry<String,JsonNode> update = updateIt.next();
+
+                    try {
+                        int partId = Integer.parseInt(update.getKey());
+                        AbstractGroup group = AbstractGroup.byId(partId);
+                        boolean disabled;
+                        int maxParticipants;
+                        if(useAdvancedMode) {
+                            maxParticipants = update.getValue().get("maxParticipants").asInt();
+                        }else{
+                            maxParticipants = defaultValue;
+                        }
+                        int availability = maxParticipants - group.countParticipants();
+                        disabled = availability <= 0;
+
+                        PreparedStatement ps = DatabaseController.getConnection().prepareStatement("UPDATE Groups SET disabled = ?, maxParticipants = ?, availability = ?, maxWorkingTime = ? WHERE partId = ?");
+                        System.out.println("[info] play - Update Group " + partId + ": Setting disabled to '" + disabled + "' and maxParticipants to '" + maxParticipants + "'");
+
+                        ps.setBoolean(1,disabled);
+                        ps.setInt(2,maxParticipants);
+                        ps.setInt(3,availability);
+                        ps.setInt(4,maxWorkingTime);
+                        ps.setInt(5,partId);
+                        ps.execute();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        return internalServerError("Can't update Groups: " + e.getMessage());
+                    }
+                }
+                break;
+            case "MULTIPLE LISTS":
+                try {
+                    for(AbstractGroup g : expModel.getParts()){
+                        PreparedStatement ps = DatabaseController.getConnection().prepareStatement("UPDATE Groups SET disabled = false WHERE partId = ?");
+                        ps.setInt(1,g.getId());
+                        ps.execute();
+                        System.out.println("[info] play - Update Group " + g.getId() + ": Setting disabled to '" + false + "'");
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    return internalServerError("Could not load Groups: " + e.getMessage());
+                }
+            default:
+        }
+
+        try {
+            expModel.publish(lifetime,null,"PROLIFIC");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return internalServerError("Could not store publish to DB.");
+        }
+        System.out.println("[info] play - Published Experiment " + expId + " successfully to Prolific.");
 
         return ok();
     }
@@ -238,6 +307,7 @@ public class Application extends Controller {
      * @param id the experiment's- id
      * @return the rendered index-page
      */
+    @Security.Authenticated(Secured.class)
     public static Result delete(int id) throws SQLException {
         LingoExpModel exp = LingoExpModel.byId(id);
 
@@ -249,35 +319,26 @@ public class Application extends Controller {
     }
 
     /**
-     * Saves the given ip into the "ip.properties" file, which is saved in the conf directory
+     * Saves the given ip into the "lingoturk.properties" file, which is saved in the conf directory
      *
      * @param ip the ip-string
      */
     public static void setStaticIp(String ip) {
         try {
-            File file = new File("conf/ip.properties");
-            FileWriter fw = new FileWriter(file);
-            fw.write(ip);
-            fw.close();
+            properties.setProperty("serverip",ip);
+            properties.store(new FileWriter(propertiesLocation),null);
         } catch (Throwable e) {
             ok(errorpage.render("Could not write config.", "/"));
         }
     }
 
     /**
-     * Looks up the saved ip from the "ip.properties" file, which is saved in the conf directory
+     * Looks up the saved ip from the "lingoturk.properties" file, which is saved in the conf directory
      *
      * @return the saved IP
      */
     public static String getStaticIp() {
-        try {
-            File file = new File("conf/ip.properties");
-            Scanner scanner = new Scanner(file);
-            return scanner.nextLine();
-        } catch (Throwable e) {
-            ok(errorpage.render("Could not read config.", "/"));
-        }
-        return null;
+        return properties.getProperty("serverip");
     }
 
 }

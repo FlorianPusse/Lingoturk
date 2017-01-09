@@ -129,7 +129,7 @@ public class ManageExperiments extends Controller {
                         String directoryName = fh.getFileName();
 
                         // if that is the case, something is seriously wrong here
-                        if(!(directoryName.startsWith("app/") || directoryName.startsWith("public/"))){
+                        if(!(directoryName.startsWith("app__") || directoryName.startsWith("public__"))){
                             continue;
                         }
 
@@ -206,18 +206,31 @@ public class ManageExperiments extends Controller {
         return ok();
     }
 
+    private static String replaceLast(String string, String toReplace, String replacement) {
+        int pos = string.lastIndexOf(toReplace);
+        if (pos > -1) {
+            return string.substring(0, pos)
+                    + replacement
+                    + string.substring(pos + toReplace.length(), string.length());
+        } else {
+            return string;
+        }
+    }
+
     public static Result getExperimentDetails(String experimentName) throws ClassNotFoundException, IOException {
         Properties experimentProperties = new Properties();
         experimentProperties.load(new FileReader("app/models/Questions/" + experimentName + "Experiment/experiment.properties"));
 
         String questionName = experimentProperties.getProperty("questionType");
         String groupName = experimentProperties.getProperty("groupType");
+        String resultName = replaceLast(questionName,"Question","Results");
 
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
 
         Set<String> observedTypes = new HashSet<>();
         addFieldType(groupName, objectBuilder, observedTypes, false, true);
         addFieldType(questionName, objectBuilder, observedTypes, true, false);
+        addFieldType(resultName, objectBuilder, observedTypes, false, false);
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode actualObj = mapper.readTree(objectBuilder.build().toString());
@@ -323,7 +336,7 @@ public class ManageExperiments extends Controller {
     }
 
     private static List<Field> getFields(Class c) throws ClassNotFoundException {
-        String[] unusedFields = new String[]{"finder", "_idGetSet", "random", "questions", "id", "availability", "experimentID", "disabled", "subList"};
+        String[] unusedFields = new String[]{"finder", "_idGetSet", "random", "questions", "id", "availability", "experimentID", "disabled", "subList", "maxWorkingTime", "maxParticipants"};
         List<Field> fieldNames = new LinkedList<>();
         do {
             for (Field f : c.getDeclaredFields()) {
@@ -364,6 +377,19 @@ public class ManageExperiments extends Controller {
 
         if (experimentClass == null) {
             return internalServerError("Unknown experiment type: " + experimentType);
+        }
+
+        if(json.get("statistics") != null && json.get("workerId") != null){
+            String origin = json.get("origin") != null ? json.get("origin").asText() : null;
+            String statistics = json.get("statistics").toString();
+            String workerId = json.get("workerId").asText();
+            int expId = json.get("expId").asInt();
+
+            try {
+                Worker.addStatistics(workerId,expId,origin,statistics);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         try {
@@ -711,8 +737,50 @@ public class ManageExperiments extends Controller {
         }
     }
 
-    static Map<Integer, Integer> fallBack = new HashMap<>();
-    public static Result returnPartAsJSON(int expId, String workerId) throws SQLException, IOException {
+    private enum ScheduleType { AVAILABLE, ENABLED, ALL }
+    private static AbstractGroup getNextPart(LingoExpModel exp, ScheduleType type) throws SQLException {
+        int oldValue;
+        int listCounter;
+        AbstractGroup group = null;
+        int expId = exp.getId();
+
+        if (lastUsedList.containsKey(expId)) {
+            oldValue = listCounter = lastUsedList.get(expId);
+        } else {
+            oldValue = listCounter = 0;
+            lastUsedList.put(expId, 0);
+        }
+
+        List<AbstractGroup> lists = exp.getParts();
+
+        boolean found;
+        do {
+            found = false;
+            AbstractGroup g = lists.get(listCounter);
+
+            if (type == ScheduleType.AVAILABLE && g.decreaseIfAvailable()
+                    || type == ScheduleType.ENABLED && (!g.disabled)
+                    || type == ScheduleType.ALL) {
+                group = g;
+                found = true;
+            }
+
+            listCounter++;
+            if (listCounter >= lists.size()) {
+                listCounter = 0;
+            }
+            lastUsedList.put(expId, listCounter);
+        }while(!found && listCounter != oldValue);
+
+        if(group != null){
+            System.out.println("Schedule List " + group.getId() + " next for exp: " + expId + " in mode " + type);
+        }
+
+        return group;
+    }
+
+    static Map<Integer, Integer> lastUsedList = new HashMap<>();
+    synchronized public static Result returnPartAsJSON(int expId, String workerId) throws SQLException, IOException {
         LingoExpModel exp = LingoExpModel.byId(expId);
 
         Worker worker = Worker.getWorkerById(workerId);
@@ -725,40 +793,19 @@ public class ManageExperiments extends Controller {
         if (stored_workerId != null) {
             stored_worker = Worker.getWorkerById(stored_workerId);
         }
-        AbstractGroup group = null;
+        AbstractGroup group;
 
         // Worker didn't accept this hit yet
         if (stored_workerId == null || stored_worker == null) {
             Worker.Participation participation = worker.getParticipatesInExperiment(exp);
 
             if (participation == null) {
-                for (AbstractGroup p : exp.getParts()) {
-                    if (p.decreaseIfAvailable()) {
-                        group = p;
-                        break;
-                    }
+                group = getNextPart(exp,ScheduleType.AVAILABLE);
+                if(group == null){
+                    group = getNextPart(exp,ScheduleType.ENABLED);
                 }
-                if (group == null) {
-                    while(true){
-                        int fallBackCounter;
-                        if (fallBack.containsKey(expId)) {
-                            fallBackCounter = fallBack.get(expId);
-                        } else {
-                            fallBackCounter = 0;
-                            fallBack.put(expId, 0);
-                        }
-
-                        group = exp.getParts().get(fallBackCounter);
-                        fallBackCounter++;
-                        if (fallBackCounter >= exp.getParts().size()) {
-                            fallBackCounter = 0;
-                        }
-                        fallBack.put(expId, fallBackCounter);
-                        if(!group.disabled){
-                            System.out.println("No Parts available. Fallback to Group Nr. " + group.getId());
-                            break;
-                        }
-                    }
+                if(group == null){
+                    group = getNextPart(exp, ScheduleType.ALL);
                 }
                 worker.addParticipatesInPart(group, null, null, "Prolific" + ZonedDateTime.now(), null);
             } else {

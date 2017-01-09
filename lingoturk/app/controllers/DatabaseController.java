@@ -1,5 +1,7 @@
 package controllers;
 
+import models.Groups.AbstractGroup;
+import models.LingoExpModel;
 import play.db.DB;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -160,11 +162,18 @@ public class DatabaseController extends Controller {
         return queryValues.toArray(new String[0]);
     }
 
-    public static void backupDatabase() {
+    public static Result backupDatabase() {
         Connection c = DatabaseController.getConnection();
 
         try {
-            File backupFile = new File("conf/backup.sql");
+            File f = new File("backup/");
+            if(!f.exists()){
+                if(!f.mkdir()){
+                    return internalServerError("Could not create directory 'backup/'");
+                }
+            }
+
+            File backupFile = new File("backup/backup.sql");
             BufferedWriter writer = new BufferedWriter(new FileWriter(backupFile));
 
             // Retrieve all tables
@@ -226,6 +235,8 @@ public class DatabaseController extends Controller {
         } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
+
+        return ok();
     }
 
     public static void restoreDatabase(String data) throws SQLException {
@@ -319,6 +330,24 @@ public class DatabaseController extends Controller {
                 s.execute(query);
             }catch (SQLException sqle){
                 System.out.println("[info] play - Couldn't execute action: \"" + sqle.getMessage() + "\" If you deleted an experiment type, this is completely normal.");
+            }
+        }
+
+        // Delete experiments that became useless after deleting experiment types
+        List<String> availableExperimentTypes = ManageExperiments.getExperimentNames();
+        for(LingoExpModel exp : LingoExpModel.getAllExperiments()){
+            if(!availableExperimentTypes.contains(exp.getExperimentType())){
+                System.out.println("[info] play - Delete experiment \"" + exp.getName() + "\" because type \"" + exp.getExperimentType() + "\" got deleted.");
+                // We can't use exp.delete() here, because the experiment type doesn't exist anymore.
+                // We have to delete all that stuff individually
+                Statement deleteStatement = connection.createStatement();
+                for (AbstractGroup part : exp.getParts()) {
+                    deleteStatement.execute("DELETE FROM Groups WHERE PartId = " + part.getId());
+                }
+                deleteStatement.execute("DELETE FROM Questions WHERE dtype LIKE '" + exp.getExperimentType() + ".%'");
+                deleteStatement.execute("DELETE FROM LingoExpModels WHERE LingoExpModelId = " + exp.getId());
+
+                deleteStatement.close();
             }
         }
     }

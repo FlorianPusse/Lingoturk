@@ -212,6 +212,7 @@
             self.hitId = ($("#hitId").length > 0) ? $("#hitId").val() : "NOT AVAILABLE";
             self.assignmentId = ($("#assignmentId").length > 0) ? $("#assignmentId").val() : "NOT AVAILABLE";
             self.origin = ($("#origin").length > 0) ? $("#origin").val() : "NOT AVAILABLE";
+            self.redirectUrl = ($("#redirectUrl").length > 0) ? $("#redirectUrl").val() : null;
 
             if(self.questionId != null || self.partId != null){
                 self.load();

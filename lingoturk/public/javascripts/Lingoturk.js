@@ -10,6 +10,7 @@
             templateUrl: '/assets/templates/statisticsDirective.html',
             scope: {
                 statistics : '=',
+                statistics : '=',
                 click : '=',
                 content : '='
             },

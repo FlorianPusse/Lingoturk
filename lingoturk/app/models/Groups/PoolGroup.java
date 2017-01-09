@@ -52,11 +52,6 @@ public class PoolGroup extends AbstractGroup {
     }
 
     @Override
-    public List<ProlificPublish> prepareProlificPublish() {
-        return null;
-    }
-
-    @Override
     public void publishOnProlific(int maxAssignments) {
 
     }

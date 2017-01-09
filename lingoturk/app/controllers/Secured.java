@@ -29,7 +29,7 @@ public class Secured extends Security.Authenticator{
             return false;
         }
 
-        Properties props = new java.util.Properties();
+        Properties props = new Properties();
         try {
             props.load(new java.io.FileInputStream(new java.io.File("conf/mturk.properties")));
         } catch (IOException e) {

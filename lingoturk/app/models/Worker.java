@@ -37,8 +37,17 @@ public class Worker extends Model {
 
      */
 
+    public void addParticipatesInPart(AbstractGroup group, String assignmentId, String hitID) throws SQLException {
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
+                "INSERT INTO Workers_participateIn_Parts(WorkerID,PartID,assignmentID, hitID) VALUES (?,?,?,?)");
+        statement.setString(1, this.getId());
+        statement.setInt(2, group.getId());
+        statement.setString(3, assignmentId);
+        statement.setString(4,hitID);
+        statement.execute();
+    }
+
     public void addParticipatesInPart(AbstractGroup group, Question question, Question question2, String assignmentId, String hitID) throws SQLException {
-        // TODO: FIX
         if(question != null && question2 == null){
             PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
                     "INSERT INTO Workers_participateIn_Parts(WorkerID,PartID,assignmentID, hitID,QuestionID) VALUES (?,?,?,?,?)");
@@ -68,13 +77,7 @@ public class Worker extends Model {
             statement.setString(7,assignmentId);
             statement.execute();
         } else{
-            PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
-                    "INSERT INTO Workers_participateIn_Parts(WorkerID,PartID,assignmentID, hitID) VALUES (?,?,?,?)");
-            statement.setString(1, this.getId());
-            statement.setInt(2, group.getId());
-            statement.setString(3, assignmentId);
-            statement.setString(4,hitID);
-            statement.execute();
+            addParticipatesInPart(group,assignmentId,hitID);
         }
     }
 

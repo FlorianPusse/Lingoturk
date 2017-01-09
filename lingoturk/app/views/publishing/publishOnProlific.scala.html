@@ -1,41 +1,118 @@
 @(expModel: LingoExpModel)
 
 @main("Preview") {
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/ExperimentPublishing/publishOnProlific.js")"></script>
 
-    <script>
-    $(document).ready (function(){
-        $("#tabs").tabs({});
+    <style>
+        td {
+            text-align: left;
+        }
+    </style>
 
-    }) ;
-    </script>
-
-    <div class="alert alert-warning">
-        <strong>Warning!</strong> Currently disabled.
-    </div>
-
-    <div class="panel panel-success" style="margin-bottom : 70px; width : 100%">
-        <div class="panel-heading">
-            <h3 class="panel-title">Set publishing options</h3>
+    <div id="angularApp" ng-app="PublishProlific" ng-controller="PublishingController as PC" ng-init="PC.expId = @expModel.getId" >
+        <div class="alert alert-warning">
+            <strong>Warning!</strong> Currently disabled.
         </div>
 
-        <form action="@routes.Application.publishProlific()" method="POST" role="form" enctype="multipart/form-data" align="center">
-            <div class="panel-body" style="width: 100%;overflow:auto;">
-
-                <div id="inputOptions">
-                    <input type="hidden" value="@expModel.getId()" name="expId">
-                    <div class="form-group">
-                        <label> Use the following URL as experiment URL: </label><br/>
-                        -- URL WILL BE SHOWN HERE --
-                    </div>
-
-                    <div class="form-group">
-                        <label for="keywords"> Enter the completion URL: </label>
-                        <input value="" class="form-control" id="keywords" name="keywords">
-                    </div>
-                </div>
-                <button type="button" disabled="disabled" class="btn btn-default" style="float:right">Submit</button>
+        <div class="panel panel-success" style="margin-bottom : 70px; width : 100%">
+            <div class="panel-heading">
+                <h3 class="panel-title">Set publishing options</h3>
             </div>
 
-        </form>
+            <form ng-init="PC.expId = @expModel.getId()" action="@routes.Application.publishProlific()" method="POST" role="form" enctype="multipart/form-data" align="center">
+                <div class="panel-body" style="width: 100%;overflow:auto;">
+                    <div id="inputOptions">
+                        @if(expModel.getListType == "DISJOINT LISTS"){
+                            <div ng-init="PC.type = 'DISJOINT LISTS'"></div>
+
+                            @** We only need 1 link for the whole experiment **@
+                            <div class="form-group">
+                                <label for="keywords"> Enter the "Completion URL" Prolific provides you for the study: </label>
+                                <input ng-model="PC.completionUrl" class="form-control" id="completionUrl" name="completionUrl">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Enter the following URL as study URL:</label><br/>
+                                <pre>@Application.getStaticIp/renderProlific?expId=@expModel.getId()&redirectUrl=<span id="experimentUrl"></span></pre>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="maxWorkingTime"> How long are participants allowed to work on a study? (in min.) </label>
+                                <input ng-model="PC.maxWorkingTime" min="0" type="number" class="form-control" id="maxWorkingTime" name="maxWorkingTime">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="participantsPerList"> Maximum participants per list? </label>
+                                <div class="form-inline">
+                                    <input min="@expModel.getMinParticipants" type="number" style="width:100%" ng-disabled="PC.useAdvancedMode" class="form-control" id="participantsPerList" ng-model="PC.defaultValue">
+                                </div>
+
+                                <div class="checkbox">
+                                    <label><input type="checkbox" id="useAdvancedMode" name="useAdvancedMode">Use individual number of participants for each list</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group" id="advancedModeBox" style="display:none">
+                            @** In case we want to set individual values for each group **@
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>listNumber</th>
+                                        <th>Filename</th>
+                                        <th>participants</th>
+                                        <th>disabled</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @for(part <- expModel.getParts()){
+                                        <tr ng-init="PC.updates[@part.getId()] = {disabled : @part.disabled, maxParticipants : @if(part.maxParticipants != null){@part.maxParticipants}else{0}}">
+                                            <td>@part.getId()</td>
+                                            <td>@if(part.listNumber != null){ @part.listNumber } else { none }</td>
+                                            <td>@if(part.fileName != ""){ @part.fileName } else { none }</td>
+                                            <td><input min="@part.countParticipants()" name="individualNumber" type="number" ng-model="PC.updates[@part.getId()]['maxParticipants']"></td>
+                                            <td><input type="checkbox" ng-model="PC.updates[@part.getId()]['disabled']"></td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        @if(expModel.getListType == "MULTIPLE LISTS"){
+                            <div ng-init="PC.type = 'MULTIPLE LISTS'"></div>
+                            @** We only need 1 link for the whole experiment **@
+                            @for((part,index) <- expModel.getParts().zipWithIndex){
+                                <div class="panel panel-primary" ng-init="PC.updates[@part.getId()] = {completionUrl : ''}">
+                                    <div class="panel-heading">
+                                        List @{index + 1}
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="form-group">
+                                            <label for="keywords"> Enter the "Completion URL" Prolific provides you for this list: </label>
+                                            <input oninput="$('#experimentUrl@part.getId()').text(encodeURIComponent($(this).val()))" class="form-control" id="completionUrl" name="completionUrl">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Enter the following URL as study URL:</label><br/>
+                                            <pre>@Application.getStaticIp/renderProlific?expId=@expModel.getId()&partId=@part.getId()&redirectUrl=<span id="experimentUrl@part.getId()"></span></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <button id="submitButton" type="button" ng-disabled="PC.completionUrl.trim() == ''" ng-click="PC.submit()" class="btn btn-default" style="float:right">Submit</button>
+                    <div id="successButton" style="float:right">
+                        <button type="button" disabled="disabled" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></button>
+                    </div>
+                    <div id="failButton" style="float:right">
+                        <p class="text-center"><strong>An error occured!</strong></p>
+                        <p class="text-center" id="message"></p>
+                        <button type="button" disabled="disabled" class="btn btn-warning"><span class="glyphicon glyphicon-remove"></span></button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
     </div>
 }

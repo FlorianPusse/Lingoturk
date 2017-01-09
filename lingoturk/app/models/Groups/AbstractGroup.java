@@ -21,6 +21,7 @@ import javax.persistence.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,6 +56,16 @@ public abstract class AbstractGroup extends Model {
     @Column(name = "listNumber")
     public Integer listNumber;
 
+    @JsonIgnore
+    @Basic
+    @Column(name = "maxWorkingTime", columnDefinition = "integer default -1")
+    public Integer maxWorkingTime;
+
+    @JsonIgnore
+    @Basic
+    @Column(name = "maxParticipants", columnDefinition = "integer default -1")
+    public Integer maxParticipants;
+
     /* END OF VARIABLES BLOCK */
 
     public AbstractGroup(){}
@@ -67,24 +78,17 @@ public abstract class AbstractGroup extends Model {
 
     public abstract String publishOnAMT(RequesterService service, int publishedId, String hitTypeId, Long lifetime, Integer maxAssignments) throws SQLException;
 
-    public abstract List<ProlificPublish> prepareProlificPublish();
-
-    public class ProlificPublish{
-        private ProlificPublish(){
-
-        }
-    }
-
     public abstract void publishOnProlific(int maxAssignments);
 
     public synchronized boolean decreaseIfAvailable() throws SQLException {
         boolean answer;
         int availability = getAvailability();
-        if((!disabled) && availability > 0){
-            setAvailability(availability - 1);
-            answer = true;
-        }else{
+
+        if(disabled || availability <= 0 || (maxParticipants != null && maxParticipants > 0 && countParticipants() > maxParticipants)){
             answer = false;
+        }else{
+            answer = true;
+            setAvailability(availability - 1);
         }
 
         System.out.println("Part " + getId() + " availability: " + (availability) + " -> return " + answer);
@@ -127,6 +131,22 @@ public abstract class AbstractGroup extends Model {
             }
         }
         return null;
+    }
+
+    public int countParticipants() throws SQLException {
+        LingoExpModel expModel = LingoExpModel.byId(getExperimentUsedIn());
+
+        Statement s = DatabaseController.getConnection().createStatement();
+        String table = expModel.getExperimentType().substring(0,expModel.getExperimentType().length() - "Experiment".length());
+        ResultSet resultSet = s.executeQuery("SELECT count(*) FROM (SELECT DISTINCT workerId FROM " + table + "Results WHERE partId = " + getId() + ") AS tmp");
+
+        if(resultSet.next()){
+            return resultSet.getInt(1);
+        }
+
+        s.close();
+
+        return -1;
     }
 
     public void setJSONData(LingoExpModel experiment, JsonNode partNode) throws SQLException {

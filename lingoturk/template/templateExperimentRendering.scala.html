@@ -98,6 +98,9 @@
         @if(exp != null){
             <input type="hidden" id="expId" value="@exp.getId()">
         }
+        @if(df.get("redirectUrl") != null){
+            <input type="hidden" id="redirectUrl" value="@df.get("redirectUrl")">
+        }
         <input type="hidden" name="origin" id="origin" value="@origin">
         <input type="hidden" name="assignmentId" id="assignmentId" value="@assignmentId">
         <input type="hidden" name="hitId" id="hitId" value="@hitId">

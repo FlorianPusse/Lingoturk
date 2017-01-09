@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -123,50 +124,6 @@ public class LingoExpModel extends Model {
         }
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-        this.update();
-    }
-
-    public void setListType(String listType) {
-        this.listType = listType;
-        this.update();
-    }
-
-    public String getNameOnAmt() {
-        return nameOnAmt;
-    }
-
-    public void setNameOnAmt(String nameOnAmt) {
-        this.nameOnAmt = nameOnAmt;
-        this.update();
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) throws SQLException {
-        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("UPDATE LingoExpModels SET Description=? WHERE LingoExpModelID=" + this.getId());
-        statement.setString(1, description);
-        statement.execute();
-    }
-
-    public String getAdditionalExplanations() {
-        return additionalExplanations;
-    }
-
-    public void setAdditionalExplanations(String additionalExplanations) throws SQLException {
-        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("UPDATE LingoExpModels SET additionalExplanations=? WHERE LingoExpModelID=" + this.getId());
-        statement.setString(1, additionalExplanations);
-        statement.execute();
-        this.additionalExplanations = additionalExplanations;
-    }
-
     /*public List<CheaterDetectionQuestion> getCheaterDetectionQuestions() throws SQLException {
         List<CheaterDetectionQuestion> result = new LinkedList<CheaterDetectionQuestion>();
 
@@ -269,20 +226,6 @@ public class LingoExpModel extends Model {
         super.delete();
     }
 
-    public boolean isCurrentlyRunning() throws SQLException {
-        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT (timestamp +  INTERVAL '1 second' * lifetime) > NOW() AS running FROM LingoExpModelPublishedAs WHERE LingoExpModelID = ?");
-        statement.setInt(1,getId());
-        ResultSet rs = statement.executeQuery();
-
-        boolean result = false;
-        if (rs.next()) {
-            result = rs.getBoolean("running");
-        } else {
-            assert false;
-        }
-        return result;
-    }
-
     public int publish(long lifetime, String url, String destination) throws SQLException {
         PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT * FROM publishLingoExpModel(?,?,?,?)");
         statement.setInt(1,getId());
@@ -300,14 +243,40 @@ public class LingoExpModel extends Model {
         return result;
     }
 
-    public void setCurrentlyRunning(boolean currentlyRunning) throws SQLException {
-        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("UPDATE LingoExpModels SET currentlyRunning = ? WHERE LingoExpModelID=" + this.getId());
-        statement.setBoolean(1, currentlyRunning);
-        statement.execute();
+    public boolean isCurrentlyRunning() throws SQLException {
+        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT (timestamp +  INTERVAL '1 second' * lifetime) > NOW() AS running FROM LingoExpModelPublishedAs WHERE LingoExpModelID = ?");
+        statement.setInt(1,getId());
+        ResultSet rs = statement.executeQuery();
+
+        boolean result = false;
+        if (rs.next()) {
+            result = rs.getBoolean("running");
+        } else {
+            assert false;
+        }
+        return result;
     }
 
-    public int getId() {
-        return id;
+    public static int countExperiments() throws SQLException {
+        Statement s = DatabaseController.getConnection().createStatement();
+        ResultSet resultSet = s.executeQuery("SELECT count(*) FROM LingoExpModels");
+        if (resultSet.next()) {
+            return resultSet.getInt(1);
+        }
+        return -1;
+    }
+
+    public int getMinParticipants(){
+        try {
+            List<AbstractGroup> groups = getParts();
+            List<Integer> participants = new LinkedList<>();
+            for(AbstractGroup g: groups){
+                participants.add(g.countParticipants());
+            }
+            return Collections.min(participants);
+        } catch (SQLException e) {
+            return -1;
+        }
     }
 
     public JsonObject returnJSON() throws SQLException {
@@ -340,11 +309,58 @@ public class LingoExpModel extends Model {
         return experimentBuilder.build();
     }
 
+    public int getId() {
+        return id;
+    }
+
     public String getExperimentType() {
         return experimentType;
     }
 
     public void setExperimentType(String experimentType) {
         this.experimentType = experimentType;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        this.update();
+    }
+
+    public void setListType(String listType) {
+        this.listType = listType;
+        this.update();
+    }
+
+    public String getListType(){ return  listType; }
+
+    public String getNameOnAmt() {
+        return nameOnAmt;
+    }
+
+    public void setNameOnAmt(String nameOnAmt) {
+        this.nameOnAmt = nameOnAmt;
+        this.update();
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) throws SQLException {
+        this.description = description;
+        this.update();
+    }
+
+    public String getAdditionalExplanations() {
+        return additionalExplanations;
+    }
+
+    public void setAdditionalExplanations(String additionalExplanations) throws SQLException {
+        this.additionalExplanations = additionalExplanations;
+        this.update();
     }
 }
