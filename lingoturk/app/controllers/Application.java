@@ -63,25 +63,13 @@ public class Application extends Controller {
 	 */
 
     /**
-     * Renders the manage page, first it gets all experiments, splits them into the ones which are on currently published
-     * and the ones which are not. Then it renders the page with two different tables based on the splitted lists.
+     * Returns a list of all stored experiments and then renders the managing page
      *
      * @return renders the page
      */
     @Security.Authenticated(Secured.class)
     public static Result manage() throws SQLException {
-        List<LingoExpModel> offlineExperiments = new LinkedList<>();
-        List<LingoExpModel> runningExperiments = new LinkedList<>();
-
-        for (LingoExpModel expModels : LingoExpModel.getAllExperiments()) {
-            if (expModels.isCurrentlyRunning()) {
-                runningExperiments.add(expModels);
-            } else {
-                offlineExperiments.add(expModels);
-            }
-        }
-
-        return ok(views.html.ManageExperiments.manage.render(offlineExperiments, runningExperiments));
+        return ok(views.html.ManageExperiments.manage.render(LingoExpModel.getAllExperiments()));
     }
 
     /**

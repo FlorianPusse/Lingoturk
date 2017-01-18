@@ -2,82 +2,86 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-
-GET         /prototype                              controllers.Application.prototype()
-
-GET         /getExperimentDetails                   controllers.ManageExperiments.getExperimentDetails(experimentName: String)
+GET         /getExperimentDetails               controllers.ManageExperiments.getExperimentDetails(experimentName: String)
 
 # Home page
-GET         /                                       controllers.Application.index()
-GET         /about                                  controllers.Application.about()
+GET         /                                   controllers.Application.index()
+GET         /about                              controllers.Application.about()
 
 ######        Extracten     ######
-GET         /extract                                controllers.Extract.extract()
-GET         /extractResult                          controllers.Extract.result(id:Int)
-GET        /loadResults                            controllers.Extract.loadResults(d : String)
+GET         /extract                            controllers.Extract.extract()
+GET         /extractResult                      controllers.Extract.result(id:Int)
+GET         /loadResults                        controllers.Extract.loadResults(d : String)
 
 #GET         /failedAssignments                      controllers.AsynchronousJob.failedAssignments()
 
 ######         Createn      ######
 
-GET         /overviewPage                           controllers.Application.overviewPage()
-GET         /createExperiment                       controllers.ManageExperiments.createExperiment(name:String)
+GET         /overviewPage                       controllers.Application.overviewPage()
+GET         /createExperiment                   controllers.ManageExperiments.createExperiment(name:String)
 
 
-POST        /submitNew_Experiment                   controllers.ManageExperiments.submitNewExperiment()
+POST        /submitNew_Experiment               controllers.ManageExperiments.submitNewExperiment()
 
 ######      Manage/Publish ######
 
-GET         /experimentCreationInterface            controllers.ManageExperiments.experimentCreationInterface()
-POST        /createNewExperimentType                controllers.ManageExperiments.createNewExperimentType()
-GET         /changeExperimentFields                 controllers.ManageExperiments.changeExperimentFields(experimentName: String)
-POST        /submitNewFields                        controllers.ManageExperiments.submitNewFields()
+GET         /experimentCreationInterface        controllers.ManageExperiments.experimentCreationInterface()
+POST        /createNewExperimentType            controllers.ManageExperiments.createNewExperimentType()
+GET         /changeExperimentFields             controllers.ManageExperiments.changeExperimentFields(experimentName: String)
+POST        /submitNewFields                    controllers.ManageExperiments.submitNewFields()
 
-GET         /editInstructions                       controllers.ManageExperiments.editInstructions(expId:Int)
-POST        /submitNewInstructions                  controllers.ManageExperiments.submitNewInstructions()
+GET         /editInstructions                   controllers.ManageExperiments.editInstructions(expId:Int)
+POST        /submitNewInstructions              controllers.ManageExperiments.submitNewInstructions()
 
-GET         /returnJson/:id                         controllers.ManageExperiments.returnJSON(id:Int)
-GET         /returnPart                             controllers.ManageExperiments.returnPart(partId:Int)
-GET         /getPart                                controllers.ManageExperiments.returnPartAsJSON(expId : Int, workerId : String)
+GET         /returnJson/:id                     controllers.ManageExperiments.returnJSON(id:Int)
+GET         /returnPart                         controllers.ManageExperiments.returnPart(partId:Int)
+GET         /getPart                            controllers.ManageExperiments.returnPartAsJSON(expId : Int, workerId : String)
 
-GET         /returnQuestionASJSON                   models.Groups.DisjointGroup.returnQuestionAsJson(groupId: Int, workerId: String, assignmentId: String ?= null, hitId: String ?= null)
-GET         /getQuestion/:id                        controllers.ManageExperiments.getQuestion(id:Int)
-GET         /getConnectives/:id                     models.Questions.DiscourseConnectivesExperiment.DiscourseConnectivesQuestion.getConnectives(id:Int)
+GET         /returnQuestionASJSON               models.Groups.DisjointGroup.returnQuestionAsJson(groupId: Int, workerId: String, assignmentId: String ?= null, hitId: String ?= null)
+GET         /getQuestion/:id                    controllers.ManageExperiments.getQuestion(id:Int)
+GET         /getConnectives/:id                 models.Questions.DiscourseConnectivesExperiment.DiscourseConnectivesQuestion.getConnectives(id:Int)
 
-GET         /manage                                 controllers.Application.manage()
-GET         /publishingPlatform                     controllers.Application.publishingPlatform(expId: Int)
-POST        /publishMturk                           controllers.Application.publishMturk()
-POST        /publishProlific                        controllers.Application.publishProlific()
-GET         /publishOnMturk                         controllers.Application.publishOnMturk(expId:Int)
-GET         /publishOnProlific                      controllers.Application.publishOnProlific(expId:Int)
+GET         /manage                             controllers.Application.manage()
+GET         /modify/:id                         controllers.Application.modify(id:Int)
+GET         /delete                             controllers.Application.delete(id: Int)
+GET         /deleteExperimentType               controllers.ManageExperiments.deleteExperimentType(experimentName: String)
+GET         /exportExperimentType               controllers.ManageExperiments.exportExperimentType(experimentName: String)
+POST        /importExperimentType               controllers.ManageExperiments.importExperimentType()
 
-GET         /modify/:id                             controllers.Application.modify(id:Int)
+######      Publishing      ######
 
-GET         /renderExampleQuestion/:id              controllers.RenderController.renderExampleQuestion(id: Int)
-GET         /render			                        controllers.RenderController.renderAMT(Type: String, id: Int, assignmentId: String ?= null, hitId: String, workerId: String ?= null, turkSubmitTo ?= null)
-GET         /renderAMT                              controllers.RenderController.renderAMT(Type: String, id: Int, assignmentId: String ?= null, hitId: String, workerId: String ?= null, turkSubmitTo ?= null)
-GET         /renderProlific                         controllers.RenderController.renderProlific(expId: Integer, partId : Integer ?= null, questionId : Integer ?= null)
+GET         /publishingPlatform                 controllers.Application.publishingPlatform(expId: Int)
+POST        /publishMturk                       controllers.Application.publishMturk()
+POST        /publishProlific                    controllers.Application.publishProlific()
+GET         /publishOnMturk                     controllers.Application.publishOnMturk(expId:Int)
+GET         /publishOnProlific                  controllers.Application.publishOnProlific(expId:Int)
 
-GET         /delete                                 controllers.Application.delete(id: Int)
-GET         /deleteExperimentType                   controllers.ManageExperiments.deleteExperimentType(experimentName: String)
-GET         /exportExperimentType                   controllers.ManageExperiments.exportExperimentType(experimentName: String)
-POST        /importExperimentType                   controllers.ManageExperiments.importExperimentType()
+######      Rendering       ######
+
+GET         /render                             controllers.RenderController.render(expId: Integer, partId : Integer ?= null, questionId : Integer ?= null, workerId : String ?= null, origin ?= null)
+GET         /renderProlific                     controllers.RenderController.render(expId: Integer, partId : Integer ?= null, questionId : Integer ?= null, workerId : String ?= null, origin ?= "Prolific")
+GET         /renderAMT                          controllers.RenderController.renderAMT(Type: String, id: Int, assignmentId: String ?= null, hitId: String, workerId: String ?= null, turkSubmitTo ?= null)
+GET         /previewLists                       controllers.RenderController.previewLists(expId: Integer)
 
 ######      Global Settings ######
 
-GET         /settings                               controllers.Settings.settings()
-POST        /globalSettingsChanged                  controllers.Settings.globalSettingsChanged()
+GET         /settings                           controllers.Settings.settings()
+POST        /globalSettingsChanged              controllers.Settings.globalSettingsChanged()
 
 ######      Login           ######
 
-GET         /login                                  controllers.Secured.login()
-POST        /authenticate                           controllers.Secured.authenticate()
+GET         /login                              controllers.Secured.login()
+POST        /authenticate                       controllers.Secured.authenticate()
 
 ######      Results         ######
-POST        /submitResults                          controllers.ManageExperiments.submitResults()
-POST        /submitFeedback                         controllers.ManageExperiments.submitFeedback()
+POST        /submitResults                      controllers.ManageExperiments.submitResults()
+POST        /submitFeedback                     controllers.ManageExperiments.submitFeedback()
 
-GET         /backupDatabase                         controllers.DatabaseController.backupDatabase()
+######      Database        ######
+GET         /backupDatabase                     controllers.DatabaseController.backupDatabase()
+
+######      Prototype       ######
+GET         /prototype                          controllers.Application.prototype()
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                           controllers.Assets.at(path="/public", file)
+GET         /assets/*file                       controllers.Assets.at(path="/public", file)

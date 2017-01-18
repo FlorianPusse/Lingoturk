@@ -78,6 +78,7 @@ public class ManageExperiments extends Controller {
         return redirect("/");
     }
 
+    @Security.Authenticated(Secured.class)
     public static Result exportExperimentType(String experimentName) {
         ZipFile zipFile;
         File f;
@@ -110,6 +111,7 @@ public class ManageExperiments extends Controller {
         return ok(zipFile.getFile());
     }
 
+    @Security.Authenticated(Secured.class)
     public static Result importExperimentType(){
         DatabaseController.backupDatabase();
 
@@ -155,6 +157,7 @@ public class ManageExperiments extends Controller {
 
     /* Render experiment creation page */
     @BodyParser.Of(value = BodyParser.Json.class, maxLength = 200 * 1024 * 10)
+    @Security.Authenticated(Secured.class)
     public static Result submitNewFields() throws IOException {
         DatabaseController.backupDatabase();
 
@@ -217,6 +220,7 @@ public class ManageExperiments extends Controller {
         }
     }
 
+    @Security.Authenticated(Secured.class)
     public static Result getExperimentDetails(String experimentName) throws ClassNotFoundException, IOException {
         Properties experimentProperties = new Properties();
         experimentProperties.load(new FileReader("app/models/Questions/" + experimentName + "Experiment/experiment.properties"));

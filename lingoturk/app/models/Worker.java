@@ -223,14 +223,14 @@ public class Worker extends Model {
         statement.execute();
     }
 
-    public static Worker createWorker(String id) throws SQLException {
+    public static Worker createWorker(String id) {
         Worker worker = new Worker(id,false);
         worker.save();
 
         return worker;
     }
 
-    public static Worker getWorkerById(String id) throws SQLException {
+    public static Worker getWorkerById(String id) {
         return finder.byId(id);
     }
 
@@ -246,25 +246,6 @@ public class Worker extends Model {
 
     public String getId(){
         return id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Worker worker = (Worker) o;
-
-        if (!id.equals(worker.id)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + id.hashCode();
-        return result;
     }
 
     @Override

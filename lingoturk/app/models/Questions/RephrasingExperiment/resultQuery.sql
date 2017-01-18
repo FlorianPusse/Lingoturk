@@ -1,32 +1,7 @@
-SELECT * FROM
-(
-	SELECT
-		Rephrasing_sentence1 AS sentence,
-		Rephrasing_question1 AS question,
-		Rephrasing_questionFirst1 AS questionFirst,
-		workerId,
-		readingTime1 AS readingTime,
-		choice1 AS choice,
-		regexp_replace(answer1, E'[\\n\\r\\u2028]+', ' ', 'g' ) AS answer
-	FROM
-		RephrasingResults
-	JOIN
-		Questions
-	USING (QuestionId)
-) AS tmp
-UNION
-(
-	SELECT
-		Rephrasing_sentence2 AS sentence,
-		Rephrasing_question2 AS question,
-		Rephrasing_questionFirst2 AS questionFirst,
-		workerId,
-		readingTime2 AS readingTime,
-		choice2 AS choice,
-		regexp_replace(answer2, E'[\\n\\r\\u2028]+', ' ', 'g' ) AS answer
-	FROM
-		RephrasingResults
-	JOIN
-		Questions
-USING (QuestionId)
-)
+SELECT Rephrasing_sentence1, fileName, Rephrasing_question1, Rephrasing_questionFirst1, Rephrasing_sentence2, Rephrasing_question2, Rephrasing_questionFirst2, assignmentId, hitId, timestamp, partId, questionId, choice1, choice2, answer1, answer2, readingTime1, readingTime2, startedLearning FROM (
+	SELECT * FROM RephrasingResults
+	LEFT OUTER JOIN Questions USING (QuestionId)
+	LEFT OUTER JOIN Groups USING (PartId)
+) as tmp
+WHERE LingoExpModelId = 41
+ORDER BY partId, questionId, workerId

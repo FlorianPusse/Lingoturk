@@ -1,11 +1,9 @@
-@(offlineExperiments: java.util.List[LingoExpModel], runningExperiments: java.util.List[LingoExpModel])
+@(experiments: java.util.List[LingoExpModel])
 
     @main("Manage") {
 
         <script>
         $ (document).ready ( function ( ) {
-            $ ( "#tabs" ).tabs ( ) ;
-            $ ( "#tabs2" ).tabs ( ) ;
             $ ( "#accordion" ).accordion ( ) ;
         });
         function deleteExperiment(nr){
@@ -16,78 +14,51 @@
             });
         }
         </script>
+        <style>
+            .experiment-icon {
+                float : right ;
+                margin-right : 10px ;
+                cursor: pointer;
+            }
+        </style>
 
         <div id="accordion" style="margin-bottom : 70px">
-            <h3>Saved experiments</h3>
+            <h3>Stored experiments:</h3>
             <div class="row">
-                @if(offlineExperiments.isEmpty) {
+                @if(experiments.isEmpty) {
                     <div class="ui-state-highlight ui-corner-all" style="margin-top : 20px ; padding : 0.7em ;">
                         <p><span class="ui-icon ui-icon-info" style="float : left ; margin-right :.3em ;"></span>
-                            No offline experiment saved at the moment.</p>
+                            No experiments saved at the moment.</p>
                     </div>
                 } else {
-                    @for(exp <- offlineExperiments) {
+                    @for(exp <- experiments) {
                         <div class="col-md-8 experimentSelection" style="width : 100%; line-height:50px">
                             <div style="float : left ;">
-                                @exp.getName()
+                                @exp.getName
                             </div>
 
-                            <div style="float : right ; margin-right : 10px ;">
-                                <a title="download results" href="/extractResult?id=@exp.getId()" class="noLinkColor"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
-                            </div>
-                            <div style="float : right ; margin-right : 10px ;">
-                                <a title="publish experiment" href="publishingPlatform?expId=@exp.getId()" class="noLinkColor"><span class="glyphicon glyphicon-share" aria-hidden="true"></span></a>
-                            </div>
-                            <div style="float : right ; margin-right : 10px ;">
-                                <a title="view experiment" href="/render?id=@exp.getParts.get(0).getId&assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE_TEST&hitId=2DDOX7H57DZKRJGLCO4HGM25YA70AL&workerId=TEST&Type=part" class="noLinkColor"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
+                            <div class="experiment-icon">
+                                <a title="download results" href="/extractResult?id=@exp.getId" class="noLinkColor"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
                             </div>
 
-                            <div style="float : right ; margin-right : 10px ;">
-                                <a title="edit instructions" href="editInstructions?expId=@exp.getId()" class="noLinkColor"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                            <div class="experiment-icon">
+                                <a title="publish experiment" href="publishingPlatform?expId=@exp.getId" class="noLinkColor"><span class="glyphicon glyphicon-share" aria-hidden="true"></span></a>
                             </div>
 
-                            <div style="float : right ; margin-right : 10px ; cursor: pointer">
-                                <a title="delete experiment" onclick="deleteExperiment(@exp.getId())" class="noLinkColor"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+                            <div class="experiment-icon">
+                                <a title="view experiment" href="previewLists?expId=@exp.getId" class="noLinkColor"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
+                            </div>
+
+                            <div class="experiment-icon">
+                                <a title="edit instructions" href="editInstructions?expId=@exp.getId" class="noLinkColor"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                            </div>
+
+                            <div class="experiment-icon">
+                                <a title="delete experiment" onclick="deleteExperiment(@exp.getId)" class="noLinkColor"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
                             </div>
                         </div>
                     }
                 }
-            </div>
-
-            <h3>Experiments running on AMT</h3>
-            <div class="row">
-            @if(runningExperiments.isEmpty) {
-                <div class="ui-state-highlight ui-corner-all" style="margin-top : 20px ; padding : 0.7em ;">
-                    <p><span class="ui-icon ui-icon-info" style="float : left ; margin-right :.3em ;"></span>
-                        No running experiment saved at the moment.</p>
-                </div>
-            } else {
-                @for(exp <- runningExperiments) {
-                    <div class="col-md-8 experimentSelection" style="width : 100%; line-height:50px">
-                        <div style="float : left ;">
-                        @exp.getName()
-                        </div>
-
-                        <div style="float : right ; margin-right : 10px ;">
-                            <a title="download results" href="/extractResult?id=@exp.getId()" class="noLinkColor"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
-                        </div>
-                        <div style="float : right ; margin-right : 10px ;">
-                            <a title="publish experiment" href="publishingPlatform?expId=@exp.getId()" class="noLinkColor"><span class="glyphicon glyphicon-share" aria-hidden="true"></span></a>
-                        </div>
-                        <div style="float : right ; margin-right : 10px ;">
-                            <a title="view experiment" href="/render?id=@exp.getParts.get(0).getId&assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE_TEST&hitId=2DDOX7H57DZKRJGLCO4HGM25YA70AL&workerId=TEST&Type=part" class="noLinkColor"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
-                        </div>
-
-                        <div style="float : right ; margin-right : 10px ;">
-                            <a title="edit instructions" href="editInstructions?expId=@exp.getId()" class="noLinkColor"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
-                        </div>
-
-                        <div style="float : right ; margin-right : 10px ; cursor: pointer">
-                            <a title="delete experiment" onclick="deleteExperiment(@exp.getId())" class="noLinkColor"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
-                        </div>
-                    </div>
-                }
-            }
             </div>
         </div>
 

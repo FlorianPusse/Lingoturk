@@ -15,15 +15,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import play.mvc.Security;
 import play.twirl.api.Html;
 
 public class RenderController extends Controller {
-
-    // TODO: Reimplement
-    public static Result renderExampleQuestion(int id) {
-        ExampleQuestion exampleQuestion = (ExampleQuestion) Question.byId(id);
-        return exampleQuestion.render();
-    }
 
     private static LeastUsedChunksAnswer getLeastUsedChunk(int expId) throws SQLException {
         PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT * FROM (SELECT partId,chunkId,floor(count(*)/31) AS occurences FROM (SELECT * FROM PictureNamingResult JOIN LingoExpModels_contain_Parts USING (PartId) WHERE LingoExpModelId = ? ) AS tmp GROUP BY partId, chunkId) AS tmp2 ORDER BY occurences ASC LIMIT 1;");
@@ -49,21 +44,26 @@ public class RenderController extends Controller {
     }
 
     /**
-     * Renders an experiment on Prolific Academic
+     * Renders an experiment for the given origin.
      *
      * @param expId The experiment to display
      * @return Result object containing the page.
      */
-    public static Result renderProlific(Integer expId, Integer partId, Integer questionId) {
+    public static Result render(Integer expId, Integer partId, Integer questionId, String workerId, String origin) {
         DynamicForm df = new DynamicForm().bindFromRequest();
         LingoExpModel lingoExpModel = LingoExpModel.byId(expId);
         if (lingoExpModel == null) {
             return internalServerError("Unknown experiment Id");
         }
 
+        Worker w = null;
+        if(workerId != null){
+            w = Worker.getWorkerById(workerId);
+        }
+
         try {
             Method m = getRenderMethod(lingoExpModel.getExperimentType());
-            Html webpage = (Html) m.invoke(null, (questionId == null ? null : Question.byId(questionId)), (partId == null ? null : AbstractGroup.byId(partId)), null, null, null, null, lingoExpModel, df, "PROLIFIC");
+            Html webpage = (Html) m.invoke(null, (questionId == null ? null : Question.byId(questionId)), (partId == null ? null : AbstractGroup.byId(partId)), w, null, null, null, lingoExpModel, df, origin);
             return ok(webpage);
         } catch (ClassNotFoundException e) {
             return internalServerError("Unknown experiment name: " + lingoExpModel.getExperimentType());
@@ -153,6 +153,16 @@ public class RenderController extends Controller {
         } catch (SQLException e) {
             return internalServerError("Can't connect to DB.");
         }
+    }
+
+    @Security.Authenticated(Secured.class)
+    public static Result previewLists(int expId){
+        LingoExpModel exp = LingoExpModel.byId(expId);
+        if(exp == null){
+            return internalServerError("Experiment Id: " + expId + " does not exist");
+        }
+
+        return ok(views.html.ExperimentRendering.previewLists.render(exp));
     }
 
 }
