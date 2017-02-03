@@ -19,7 +19,7 @@
         };
 
         this.instructionsFinished = function(){
-            if(self.origin == "prolific"){
+            if(self.origin == "PROLIFIC"){
                 $('#instructionsSlide').hide();
                 $('#workerIdSlide').show();
             }else if (self.origin == "mail"){
@@ -55,7 +55,7 @@
 
         this.submitResults = function(){
             var workerId = "";
-            if(self.origin == "prolific"){
+            if(self.origin == "PROLIFIC"){
                 workerId = self.workerId;
             }else if (self.origin == "mail"){
                 self.workerId = "mail_" + self.generateRandomId();
@@ -165,7 +165,7 @@
                     });
 
                     $(document).on("click","#submitButton", function(){
-                        if(self.origin == "prolific"){
+                        if(self.origin == "PROLIFIC"){
                             window.location.href = "https://prolificacademic.co.uk/submissions/563a0647be9cac000faaa4c9/complete?cc=L2QAYPD9";
                         }else if (self.origin == "mail"){
                             $http.get("/submitMailAddress?mailAddress=" + encodeURIComponent(self.mail) + "&workerId=" + encodeURIComponent(self.workerId)).success(function () {

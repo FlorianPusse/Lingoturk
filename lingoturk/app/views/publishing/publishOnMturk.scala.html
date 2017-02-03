@@ -117,14 +117,14 @@
                         </ul>
                         <div id="preview" style="height:450px">
                             @if(!exp.getParts.isEmpty) {
-                                <iframe src="@Application.getStaticIp()/render?id=@exp.getParts.get(0).getId()&assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE&hitId=2DDOX7H57DZKRJGLCO4HGM25YA70AL&Type=part" style="margin:0 ; padding:0 ; border : none ; width : 100% ; height : 100%" name="seite"></iframe>
+                                <iframe src="@Application.getStaticIp()/renderAMT?id=@exp.getParts.get(0).getId()&assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE&hitId=2DDOX7H57DZKRJGLCO4HGM25YA70AL&Type=part" style="margin:0 ; padding:0 ; border : none ; width : 100% ; height : 100%" name="seite"></iframe>
                             }else{
                                 <p>Preview not available, since there are no parts used in this experiment.</p>
                             }
                         </div>
                         <div id="part" style="height:450px">
                             @if(!exp.getParts.isEmpty) {
-                                <iframe src="/render?id=@exp.getParts.get(0).getId&assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE_TEST&hitId=2DDOX7H57DZKRJGLCO4HGM25YA70AL&workerId=TEST&Type=part" style="margin : 0 ; padding : 0 ; border : none ; width : 100% ; height : 100%" name="seite"></iframe>
+                                <iframe src="/renderAMT?id=@exp.getParts.get(0).getId&assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE_TEST&hitId=2DDOX7H57DZKRJGLCO4HGM25YA70AL&workerId=TEST&Type=part" style="margin : 0 ; padding : 0 ; border : none ; width : 100% ; height : 100%" name="seite"></iframe>
                                 <button type="button" class="btn btn-default" onclick="window.open('/render?id=@exp.getParts.get(0).getId&assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE_TEST&hitId=2DDOX7H57DZKRJGLCO4HGM25YA70AL&workerId=TEST&Type=part','_blank');">Open Fullscreen</button>
                             }else{
                                 <p>Preview not available, since there are no parts used in this experiment.</p>

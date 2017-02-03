@@ -210,6 +210,7 @@
             self.partId = ($("#partId").length > 0) ? $("#partId").val() : null;
             self.expId = ($("#expId").length > 0) ? $("#expId").val() : null;
             self.hitId = ($("#hitId").length > 0) ? $("#hitId").val() : "NOT AVAILABLE";
+            self.workerId = ($("#workerId").length > 0) ? $("#workerId").val() : "";
             self.assignmentId = ($("#assignmentId").length > 0) ? $("#assignmentId").val() : "NOT AVAILABLE";
             self.origin = ($("#origin").length > 0) ? $("#origin").val() : "NOT AVAILABLE";
             self.redirectUrl = ($("#redirectUrl").length > 0) ? $("#redirectUrl").val() : null;

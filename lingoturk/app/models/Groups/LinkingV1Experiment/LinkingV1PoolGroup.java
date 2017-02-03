@@ -76,7 +76,7 @@ public class LinkingV1PoolGroup extends AbstractGroup {
 
             for (Script rhs : getRightHandSide()) {
                 String question = "<ExternalQuestion xmlns=\"http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd\">"
-                        + "<ExternalURL> " + Application.getStaticIp() + "/render?id=" + lhs.getId() + "&amp;id2=" + rhs.getId() + "&amp;Type=question</ExternalURL>"
+                        + "<ExternalURL> " + Application.getStaticIp() + "/renderAMT?id=" + lhs.getId() + "&amp;id2=" + rhs.getId() + "&amp;Type=question</ExternalURL>"
                         + "<FrameHeight>" + 800 + "</FrameHeight>" + "</ExternalQuestion>";
 
                 HIT hit = service.createHIT(hitTypeId, null, null, null, question, null, null, null, lifetime, maxAssignmentsPerCombination, null, null, null, null, null, null);

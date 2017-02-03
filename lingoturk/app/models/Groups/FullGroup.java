@@ -38,10 +38,12 @@ public class FullGroup extends AbstractGroup {
     public String publishOnAMT(RequesterService service, int publishedId, String hitTypeId, Long lifetime, Integer maxAssignments) throws SQLException {
 
         String question = "<ExternalQuestion xmlns=\"http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd\">"
-                + "<ExternalURL> " + Application.getStaticIp() + "/render?id=" + getId() + "&amp;Type=part</ExternalURL>"
+                + "<ExternalURL> " + Application.getStaticIp() + "/renderAMT?id=" + getId() + "&amp;Type=part</ExternalURL>"
                 + "<FrameHeight>" + 800 + "</FrameHeight>" + "</ExternalQuestion>";
         HIT hit = service.createHIT(hitTypeId, null, null, null, question, null, null, null, lifetime, maxAssignments, null, null, null, null, null, null);
         String url = service.getWebsiteURL() + "/mturk/preview?groupId=" + hit.getHITTypeId();
+
+        System.out.println(url);
 
         insert(hit.getHITId(), publishedId);
 

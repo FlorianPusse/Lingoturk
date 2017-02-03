@@ -59,7 +59,7 @@ GET         /publishOnProlific                  controllers.Application.publishO
 ######      Rendering       ######
 
 GET         /render                             controllers.RenderController.render(expId: Integer, partId : Integer ?= null, questionId : Integer ?= null, workerId : String ?= null, origin ?= null)
-GET         /renderProlific                     controllers.RenderController.render(expId: Integer, partId : Integer ?= null, questionId : Integer ?= null, workerId : String ?= null, origin ?= "Prolific")
+GET         /renderProlific                     controllers.RenderController.render(expId: Integer, partId : Integer ?= null, questionId : Integer ?= null, workerId : String ?= null, origin ?= "PROLIFIC")
 GET         /renderAMT                          controllers.RenderController.renderAMT(Type: String, id: Int, assignmentId: String ?= null, hitId: String, workerId: String ?= null, turkSubmitTo ?= null)
 GET         /previewLists                       controllers.RenderController.previewLists(expId: Integer)
 

@@ -9,7 +9,11 @@
             function show(obj){
                 obj.show();
                 var iframe = obj.find('iframe');
-                iframe.attr('src', origin + iframe.data("src"));
+                var src = origin + iframe.data("src");
+                if(origin == "renderProlific"){
+                    src += "&redirectUrl=" + encodeURIComponent("https://www.prolific.ac/");
+                }
+                iframe.attr('src', src);
             }
             function updateOrigin(o){
                 origin = o;

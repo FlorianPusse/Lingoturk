@@ -66,7 +66,7 @@ public class _TEMPLATE_Question extends PartQuestion {
 
             if(result != null){
                 PreparedStatement preparedStatement = DatabaseController.getConnection().prepareStatement(
-                        "INSERT INTO _TEMPLATE_Results(id,workerId,assignmentId,hitId,partId,questionId,answer) VALUES(nextval('_TEMPLATE_Results_seq'),?,?,?,?,?,?)"
+                        "INSERT INTO _TEMPLATE_Results(id,workerId,assignmentId,hitId,partId,questionId,answer,origin) VALUES(nextval('_TEMPLATE_Results_seq'),?,?,?,?,?,?,?)"
                 );
                 preparedStatement.setString(1,workerId);
                 preparedStatement.setString(2,assignmentId);
@@ -74,6 +74,7 @@ public class _TEMPLATE_Question extends PartQuestion {
                 preparedStatement.setInt(4,partId);
                 preparedStatement.setInt(5,questionId);
                 preparedStatement.setString(6,result.toString());
+                preparedStatement.setString(7,origin);
 
                 preparedStatement.execute();
                 preparedStatement.close();
