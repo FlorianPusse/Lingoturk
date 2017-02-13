@@ -128,7 +128,8 @@ public class Application extends Controller {
         int lifetime = json.get("lifetime").asInt();
         switch (json.get("type").asText()){
             case "DISJOINT LISTS":
-                int maxWorkingTime = json.get("maxWorkingTime").asInt();
+                // convert from ms to minutes
+                int maxWorkingTime = json.get("maxWorkingTime").asInt()*1000*60;
                 int defaultValue = json.get("defaultValue").asInt();
                 boolean useAdvancedMode = json.get("useAdvancedMode").asBoolean();
 

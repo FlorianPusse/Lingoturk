@@ -1,141 +1,102 @@
 package controllers;
 
 import akka.actor.UntypedActor;
+import models.Groups.AbstractGroup;
+import models.LingoExpModel;
 
+import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static play.mvc.Results.ok;
 
-
+@SuppressWarnings("ALL")
 public class AsynchronousJob extends UntypedActor {
 
     private static ConcurrentLinkedQueue<String> waitingAssignmentIDs = new ConcurrentLinkedQueue();
     private static List<String> toRemove = new LinkedList<>();
     private static Map<String,Integer> failedTries = new HashMap<>();
 
-    @Override
-    public void onReceive(Object message) throws Exception {
+    private static void updateAvailabilities(int partId) throws SQLException {
+        AbstractGroup group = AbstractGroup.byId(partId);
+        if (group != null && group.maxParticipants != null){
+            int maxParticipants = group.maxParticipants;
+            int availability = maxParticipants - group.countParticipants();
+            if(availability != group.availability) {
+                boolean disabled = availability <= 0;
+                PreparedStatement ps = DatabaseController.getConnection().prepareStatement("UPDATE Groups SET disabled = ?, maxParticipants = ?, availability = ? WHERE partId = ?");
+                System.out.println("[info] play - Update Group " + partId + ": Setting disabled to '" + disabled + "' and availability to '" + availability + "/" + maxParticipants + "'");
 
-    }
-
-    /*@Override
-    public void onReceive(Object message) throws Exception {
-        for (String assignmentID : waitingAssignmentIDs) {
-            System.out.println("Test assignment with ID: " + assignmentID + " ...");
-            RequesterService requesterService = Service.getService(Service.source.MTURK);
-            try {
-                GetAssignmentResult gAR = requesterService.getAssignment(assignmentID);
-                HIT hit = gAR.getHIT();
-                CheaterDetectionQuestion question = (CheaterDetectionQuestion) PublishableQuestion.byHITId(hit.getHITId());
-                Assignment assignment = gAR.getAssignment();
-
-                AssignmentResult assignmentResult = question.parseAssignment(assignment);
-                String workerId = assignment.getWorkerId();
-
-                List<String> connectives = null;
-                if (assignmentResult.getManualAnswer() != null && assignmentResult.getCategory() != null && assignmentResult.getValidConnectives() != null) {
-                    connectives = new LinkedList<>(Arrays.asList(assignmentResult.getManualAnswer()));
-                    connectives.addAll(Arrays.asList(assignmentResult.getValidConnectives()));
-                    connectives.add(assignmentResult.getCategory());
-                }
-
-                List<String> notValid = Arrays.asList(assignmentResult.getNotRelevant());
-
-                boolean actConnectivesAndMustNotHavesDisjoint = Collections.disjoint(connectives, question.getMustNotHaveConnectives_asString());
-                boolean notValidAndMustHaveDisjoint = Collections.disjoint(notValid,question.getProposedConnectives());
-                List<String> remainingProposedConnectives = question.getProposedConnectives_asString();
-                remainingProposedConnectives.removeAll(connectives);
-                boolean containsAllProposedConnectives = remainingProposedConnectives.isEmpty();
-
-                Worker worker = Worker.getWorkerById(workerId);
-                if (worker != null){
-                    if (notValidAndMustHaveDisjoint && actConnectivesAndMustNotHavesDisjoint && containsAllProposedConnectives) {
-                        worker.addParticipatesInCD_Question(question.getId(),assignmentID,true);
-                    } else {
-                        worker.addParticipatesInCD_Question(question.getId(),assignmentID,false);
-                    }
-                }
-                if(worker.countFalseAnswers() >= 2){
-                    worker.isBanned(true);
-                }
-                System.out.println("AssignmentID " + assignmentID + " successfully processed!");
-                toRemove.add(assignmentID);
-            } catch (InvalidStateException ise) {
-
-            } catch (DocumentException e) {
-                e.printStackTrace();
-            } catch (ObjectDoesNotExistException oe){
-                System.out.println("AssignmentID " + assignmentID + " does not exist yet!");
-                if(!failedTries.containsKey(assignmentID)){
-                    failedTries.put(assignmentID,1);
-                }else{
-                    int tries = failedTries.get(assignmentID);
-                    if(tries >= 10){
-                        toRemove.add(assignmentID);
-                        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("INSERT INTO failedAssignments(assignmentID) " +
-                                "SELECT ? WHERE NOT EXISTS (SELECT * FROM failedAssignments WHERE assignmentID = ?)");
-                        statement.setString(1,assignmentID);
-                        statement.setString(2,assignmentID);
-                        statement.execute();
-                        System.out.println("AssignmentID " + assignmentID + " failed 10 times. Abort.");
-                    }else{
-                        failedTries.put(assignmentID,tries + 1);
-                    }
-                }
-            } catch (Throwable e){
-                e.printStackTrace();
+                ps.setBoolean(1, disabled);
+                ps.setInt(2, maxParticipants);
+                ps.setInt(3, availability);
+                ps.setInt(4, partId);
+                ps.execute();
             }
         }
-        waitingAssignmentIDs.removeAll(toRemove);
-        toRemove = new LinkedList<String>();
     }
 
-    public static void addAssignmentID(String assignmentID) {
-        waitingAssignmentIDs.add(assignmentID);
+    private static void deleteEntry(String workerId, int partId) throws SQLException {
+        Statement deleteStatement = DatabaseController.getConnection().createStatement();
+        deleteStatement.execute("DELETE FROM Workers_participateIn_Parts WHERE workerId = '" + workerId + "' AND PartId = " + partId);
+        deleteStatement.close();
     }
 
-    public static void loadQueue() throws SQLException {
-        Connection connection = DatabaseController.getConnection();
-        PreparedStatement statement = connection.prepareStatement("SELECT assignmentID FROM pendingAssignments");
-        ResultSet rs = statement.executeQuery();
+    private static void verifyEntry(String workerId, int partId) throws SQLException{
+        Statement verifyStatement = DatabaseController.getConnection().createStatement();
+        verifyStatement.execute("UPDATE Workers_participateIn_Parts SET verified = true WHERE workerId = '" + workerId + "' AND PartId = " + partId);
+        verifyStatement.close();
+    }
 
-        ConcurrentLinkedQueue<String> pendingAssignments = new ConcurrentLinkedQueue<String>();
+    @Override
+    public void onReceive(Object message) throws Exception {
+        Statement s = DatabaseController.getConnection().createStatement();
+        ResultSet rs = s.executeQuery("SELECT Workers_participateIn_Parts.*,LingoExpModels_contain_Parts.*, maxworkingtime FROM Workers_participateIn_Parts JOIN LingoExpModels_contain_Parts USING (PartId) JOIN Groups USING (PartId) WHERE verified = false");
+
+        // Check if we can delete entries in our list of participants per list
         while(rs.next()){
-            pendingAssignments.add(rs.getString("assignmentID"));
+            LingoExpModel expModel = LingoExpModel.byId(rs.getInt("LingoExpModelID"));
+            if (expModel != null){
+                int partId = rs.getInt("partId");
+                Timestamp timestamp = rs.getTimestamp("timestamp");
+                int maxWorkingTime = rs.getInt("maxWorkingTime");
+                Timestamp endTime = new Timestamp(timestamp.getTime() + maxWorkingTime);
+                if(maxWorkingTime > 0 && (new Timestamp(System.currentTimeMillis())).after(endTime)){
+                    String expType = expModel.getExperimentType().substring(0,expModel.getExperimentType().lastIndexOf("Experiment"));
+                    String workerId = rs.getString("workerId");
+
+                    boolean exists = false;
+                    Statement answerStatement = DatabaseController.getConnection().createStatement();
+                    ResultSet answerResult = answerStatement.executeQuery("SELECT * FROM " + expType + "Results WHERE workerId = '" + workerId + "' AND PartId = " + partId);
+                    if(!answerResult.next()){
+                        exists = true;
+                        deleteEntry(workerId,partId);
+                    }else{
+                        verifyEntry(workerId,partId);
+                    }
+                    answerStatement.close();
+                }
+            }
         }
 
-        waitingAssignmentIDs = pendingAssignments;
-        statement = connection.prepareStatement("DELETE FROM pendingAssignments");
-        statement.execute();
-    }
-
-    public static Result failedAssignments() throws SQLException, IOException {
-        Connection connection = DatabaseController.getConnection();
-        PreparedStatement statement = connection.prepareStatement("SELECT assignmentID FROM failedAssignments");
-        ResultSet rs = statement.executeQuery();
-
-        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-
+        // Free space if part hasn't been touched lately
+        rs = s.executeQuery("SELECT * FROM (SELECT partId, max(timestamp) as maxTime FROM Workers_participateIn_Parts GROUP BY (partId)) as tmp JOIN LingoExpModels_contain_Parts USING (PartId) JOIN Groups USING (PartId)");
         while(rs.next()){
-           arrayBuilder.add(rs.getString("assignmentID"));
+            int partId = rs.getInt("partId");
+            int maxWorkingTime = rs.getInt("maxWorkingTime");
+            Timestamp maxTime = rs.getTimestamp("maxTime");
+            Timestamp endTime = new Timestamp(maxTime.getTime() + maxWorkingTime);
+            LingoExpModel expModel = LingoExpModel.byId(rs.getInt("LingoExpModelID"));
+            if (expModel != null) {
+                if(maxWorkingTime > 0 && (new Timestamp(System.currentTimeMillis())).after(endTime)) {
+                    updateAvailabilities(partId);
+                }
+            }
         }
-        objectBuilder.add("assignmentIDs", arrayBuilder.build());
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode actualObj = mapper.readTree(objectBuilder.build().toString());
-        return ok(actualObj);
+
+        // Also check parts that aren't in the list at all (possibly because all entries have been deleted)
+        rs = s.executeQuery("SELECT PartId FROM Groups WHERE partId NOT IN (SELECT DISTINCT partId FROM Workers_participateIn_Parts)");
+        while(rs.next()){
+            updateAvailabilities(rs.getInt("PartId"));
+        }
     }
-
-    public static void saveQueue() throws SQLException {
-        Connection connection = DatabaseController.getConnection();
-        for(String assignmentID : waitingAssignmentIDs){
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO pendingAssignments(assignmentID) " +
-                    "SELECT ? WHERE NOT EXISTS (SELECT * FROM pendingAssignments WHERE assignmentID = ?)");
-            statement.setString(1,assignmentID);
-            statement.setString(2,assignmentID);
-            statement.execute();
-        }
-    }*/
-
 }
