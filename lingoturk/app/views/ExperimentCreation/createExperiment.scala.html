@@ -46,11 +46,6 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="nameOnAmt">Name on AMT</label>
-                    <input ng-model="cc.nameOnAmt" type="text" class="form-control" id="nameOnAmt" placeholder="Name on AMT">
-                </div>
-
-                <div class="form-group">
                     <label for="description">Description</label>
                     <textarea ng-model="cc.description" type="text" class="form-control" id="description" placeholder="Experiment Description" cols="50" rows="5"></textarea>
                 </div>
@@ -88,7 +83,7 @@
                 <div style="clear:both"></div>
 
                 <div id="allquestions">
-                    <h3 ng-repeat-start="group in cc.groups track by $index">List {{$index}}</h3>
+                    <h3 ng-repeat-start="group in cc.groups track by $index">List {{$index + 1}}</h3>
                     <div class="repeatBody" ng-repeat-end>
                         <div ng-if="field != 'questions' && field != '_type' && field != 'questionFieldNames' && field != 'parsedContent' && field != 'questionColumnNames'" ng-repeat="(field,value) in group" class="form-group">
                             <label for="{{field}}">{{field}}</label>
@@ -135,7 +130,7 @@
             </div>
         </div>
         <div>
-            <button type="submit" ng-disabled="!(cc.groups.length > 0 && cc.name != '')" ng-click="cc.submit()" class="btn btn-default" style="float : right ; margin-bottom : 100px">Save in Database</button>
+            <button type="submit" ng-disabled="!(cc.groups.length > 0 && cc.name != '')" ng-click="cc.submit()" class="btn btn-primary" style="float : right ; margin-bottom : 100px">Save in Database</button>
         </div>
     </div>
 }

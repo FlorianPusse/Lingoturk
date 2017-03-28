@@ -45,6 +45,6 @@ public class StoryCompletionResults extends Model{
     String itemId;
 
     @Basic
-    @Column(columnDefinition = "TEXT", name = "result")
-    String result;
+    @Column(columnDefinition = "TEXT", name = "answer")
+    String answer;
 }

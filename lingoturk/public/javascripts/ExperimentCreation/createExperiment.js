@@ -63,7 +63,6 @@
             var experiment = {
                 id: this.id,
                 name: this.name,
-                nameOnAmt: this.nameOnAmt,
                 description: this.description,
                 additionalExplanations: this.additionalExplanations,
                 type : this.type + "Experiment",

@@ -1,5 +1,7 @@
 package models;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,6 +9,7 @@ import java.sql.Statement;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -41,12 +44,16 @@ public class LingoExpModel extends Model {
     protected String name;
 
     @Basic
-    @Column(name="description")
+    @Column(name="description", columnDefinition = "TEXT")
     protected String description;
 
     @Basic
     @Column(name="nameOnAmt")
     protected String nameOnAmt;
+
+    @Basic
+    @Column(name="descriptionOnAmt")
+    protected String descriptionOnAmt;
 
     @Constraints.Required
     @Column(name="additionalExplanations", columnDefinition = "TEXT")
@@ -75,12 +82,6 @@ public class LingoExpModel extends Model {
 
         this.nameOnAmt = nameOnAmt;
         this.experimentType = experimentType;
-
-        if(listType != null){
-            this.listType = listType;
-        }else{
-            this.listType = "DISJOINT LISTS";
-        }
     }
 
     public static LingoExpModel createLingoExpModel(String name, String description, String additionalExplanations, String nameOnAmt, String experimentType, String listType) {
@@ -330,12 +331,19 @@ public class LingoExpModel extends Model {
         this.update();
     }
 
-    public void setListType(String listType) {
-        this.listType = listType;
-        this.update();
+    public String getListType(){
+        Properties experimentProperties = new Properties();
+        try {
+            experimentProperties.load(new FileReader("app/models/Questions/" + getExperimentType() + "/experiment.properties"));
+        } catch (IOException e) {
+            return "DISJOINT LISTS";
+        }
+        String listType = experimentProperties.getProperty("listType");
+        if(listType != null){
+            return listType.trim();
+        }
+        return "DISJOINT LISTS";
     }
-
-    public String getListType(){ return  listType; }
 
     public String getNameOnAmt() {
         return nameOnAmt;
@@ -343,6 +351,15 @@ public class LingoExpModel extends Model {
 
     public void setNameOnAmt(String nameOnAmt) {
         this.nameOnAmt = nameOnAmt;
+        this.update();
+    }
+
+    public String getDescriptionOnAmt() {
+        return descriptionOnAmt;
+    }
+
+    public void setDescriptionOnAmt(String descriptionOnAmt) {
+        this.descriptionOnAmt = descriptionOnAmt;
         this.update();
     }
 

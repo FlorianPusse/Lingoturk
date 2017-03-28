@@ -81,26 +81,48 @@ public class PlausibilityQuestion extends PartQuestion{
     @Override
     public void writeResults(JsonNode resultNode) throws SQLException {
         String workerId = resultNode.get("workerId").asText();
-        int partId = resultNode.get("partId").asInt();
+        String assignmentId = resultNode.get("assignmentId").asText();
+        String hitId = resultNode.get("hitId").asText();
+        int partId = resultNode.get("partId") != null ? resultNode.get("partId").asInt() : -1;
 
-        PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
-                "INSERT INTO PlausibilityResults(id,WorkerId,partId,questionId,answer) VALUES(nextval('PlausibilityResults_seq'),?,?,?,?)"
-        );
-
-        statement.setString(1, workerId);
-        statement.setInt(2, partId);
-
-        for (Iterator<JsonNode> resultIterator = resultNode.get("answers").iterator(); resultIterator.hasNext(); ) {
-            JsonNode result = resultIterator.next();
-            int questionId = result.get("questionId").asInt();
-            int answer = result.get("answer").asInt();
-
-            statement.setInt(3, questionId);
-            statement.setInt(4, answer);
-
-            statement.execute();
+        int expId = -1;
+        JsonNode expIdNode = resultNode.get("expId");
+        if(expIdNode != null){
+            expId = expIdNode.asInt();
         }
 
-        statement.close();
+        String origin = "NOT AVAILABLE";
+        JsonNode originNode = resultNode.get("origin");
+        if(originNode != null){
+            origin = originNode.asText();
+        }
+
+        JsonNode statisticsNode = resultNode.get("statistics");
+        if(statisticsNode != null){
+            String statistics = statisticsNode.toString();
+            Worker.addStatistics(workerId, expId, origin, statistics);
+        }
+
+        for(Iterator<JsonNode> questionNodeIterator = resultNode.get("results").iterator(); questionNodeIterator.hasNext(); ){
+            JsonNode questionNode = questionNodeIterator.next();
+            int questionId = questionNode.get("id").asInt();
+            JsonNode result = questionNode.get("answer");
+
+            if(result != null){
+                PreparedStatement preparedStatement = DatabaseController.getConnection().prepareStatement(
+                        "INSERT INTO PlausibilityResults(id,workerId,assignmentId,hitId,partId,questionId,answer,origin) VALUES(nextval('PlausibilityResults_seq'),?,?,?,?,?,?,?)"
+                );
+                preparedStatement.setString(1,workerId);
+                preparedStatement.setString(2,assignmentId);
+                preparedStatement.setString(3,hitId);
+                preparedStatement.setInt(4,partId);
+                preparedStatement.setInt(5,questionId);
+                preparedStatement.setInt(6,result.asInt());
+                preparedStatement.setString(7,origin);
+
+                preparedStatement.execute();
+                preparedStatement.close();
+            }
+        }
     }
 }

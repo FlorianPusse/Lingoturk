@@ -198,6 +198,12 @@ public abstract class AbstractGroup extends Model {
         }
 
         partBuilder.add("id", id);
+        if(fileName != null){
+            partBuilder.add("fileName", fileName);
+        }
+        if(listNumber != null){
+            partBuilder.add("listNumber", listNumber);
+        }
         partBuilder.add("questions", questionsBuilder.build());
 
         return partBuilder.build();

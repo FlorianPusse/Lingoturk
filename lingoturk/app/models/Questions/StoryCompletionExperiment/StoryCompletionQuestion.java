@@ -92,23 +92,49 @@ public class StoryCompletionQuestion extends PartQuestion {
     @Override
     public void writeResults(JsonNode resultNode) throws SQLException {
         String workerId = resultNode.get("workerId").asText();
+        String assignmentId = resultNode.get("assignmentId").asText();
+        String hitId = resultNode.get("hitId").asText();
+        int partId = resultNode.get("partId") != null ? resultNode.get("partId").asInt() : -1;
 
-        PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
-                "INSERT INTO StoryCompletionResults(id, WorkerId,itemId,result) VALUES(nextval('StoryCompletionResults_seq'),?,?,?)"
-        );
-
-        statement.setString(1, workerId);
-
-        for (Iterator<JsonNode> resultIterator = resultNode.get("results").iterator(); resultIterator.hasNext(); ) {
-            JsonNode r = resultIterator.next();
-            String itemId = r.get("itemId").asText();
-            String result = r.get("result").asText();
-
-            statement.setString(2, itemId);
-            statement.setString(3, result);
-            statement.execute();
+        int expId = -1;
+        JsonNode expIdNode = resultNode.get("expId");
+        if(expIdNode != null){
+            expId = expIdNode.asInt();
         }
-        statement.close();
+
+        String origin = "NOT AVAILABLE";
+        JsonNode originNode = resultNode.get("origin");
+        if(originNode != null){
+            origin = originNode.asText();
+        }
+
+        JsonNode statisticsNode = resultNode.get("statistics");
+        if(statisticsNode != null){
+            String statistics = statisticsNode.toString();
+            Worker.addStatistics(workerId, expId, origin, statistics);
+        }
+
+        for(Iterator<JsonNode> questionNodeIterator = resultNode.get("results").iterator(); questionNodeIterator.hasNext(); ){
+            JsonNode questionNode = questionNodeIterator.next();
+            int questionId = questionNode.get("id").asInt();
+            JsonNode result = questionNode.get("answer");
+
+            if(result != null){
+                PreparedStatement preparedStatement = DatabaseController.getConnection().prepareStatement(
+                        "INSERT INTO StoryCompletionResults(id,workerId,assignmentId,hitId,partId,questionId,answer,origin) VALUES(nextval('StoryCompletionResults_seq'),?,?,?,?,?,?,?)"
+                );
+                preparedStatement.setString(1,workerId);
+                preparedStatement.setString(2,assignmentId);
+                preparedStatement.setString(3,hitId);
+                preparedStatement.setInt(4,partId);
+                preparedStatement.setInt(5,questionId);
+                preparedStatement.setString(6,result.toString());
+                preparedStatement.setString(7,origin);
+
+                preparedStatement.execute();
+                preparedStatement.close();
+            }
+        }
     }
 
     @Override

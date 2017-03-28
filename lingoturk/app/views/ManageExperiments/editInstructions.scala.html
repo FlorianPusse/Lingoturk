@@ -1,4 +1,4 @@
-@(expId: Int, text: String)
+@(expId: Int, text: String, updated: Boolean)
 
 @main("Edit instructions") {
 
@@ -6,8 +6,17 @@
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
     <style>
     .container {
-        padding-left: 0 ;
+        padding-left: 0;
         padding-right: 0
+    }
+    .instruction-box{
+        width:49%;
+        display:inline-block;
+        height:100%
+    }
+    .float-button{
+        float:right;
+        margin-top:20px
     }
     </style>
     <script>
@@ -20,18 +29,20 @@
                 }).on('input', function () {
                     h(this);
                 });
-
                 $("#instructions").on("input",function(){
                     $("#previewBody").html($("#instructions").val());
                 });
                 $("#previewBody").html($("#instructions").val());
+                if(@updated){
+                    bootbox.alert("The instructions have been updated successfully.")
+                }
             });
     </script>
 
     <form action="/submitNewInstructions" method="POST">
         <div style="height: 100% ; width: 100% ; display: table ;">
             <div style=" display: table-cell ; height: 100% ; vertical-align: middle ;">
-                <div class="panel panel-primary" style="width:49% ; display:inline-block ; float:left">
+                <div class="panel panel-primary instruction-box" style="float:left;">
                     <div class="panel-heading" style="font-weight: bolder ;">
                         New instructions
                     </div>
@@ -41,20 +52,19 @@
                     </div>
                 </div>
 
-                <div id="preview" class="panel panel-primary" style="width:49% ; display:inline-block ; float:right">
+                <div id="preview" class="panel panel-primary instruction-box" style="float:right">
                     <div class="panel-heading" style="font-weight: bolder ;">
                         Instructions
                     </div>
                     <div class="panel-body">
-                        <div id="previewBody">
-
-                        </div>
-                        <button type="button" class="btn btn-default" style="float:right ; margin-top:20px" disabled="disabled">Next</button>
+                        <div id="previewBody"></div>
+                        <button type="button" class="btn btn-default float-button" disabled="disabled">Next</button>
                     </div>
                 </div>
                 <div style='clear:both'></div>
             </div>
         </div>
-        <button type="submit" class="textInput btn btn-default" style="float:right ; margin-top:20px">Submit</button>
+        <a class="btn btn-primary" style="float:left;margin-top:20px" href="/manage">Back to management overview</a>
+        <button type="submit" class="textInput btn btn-success float-button">Submit new instructions</button>
     </form>
 }

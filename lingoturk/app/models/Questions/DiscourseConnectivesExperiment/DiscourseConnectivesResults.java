@@ -39,4 +39,8 @@ public class DiscourseConnectivesResults extends Model{
     @Basic
     @Column(name = "questionId")
     int questionId;
+
+    @Basic
+    @Column(name = "answer", columnDefinition = "TEXT")
+    String answer;
 }

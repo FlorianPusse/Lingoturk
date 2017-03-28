@@ -3,6 +3,7 @@ package models.Questions.DiscourseConnectivesExperiment;
 import com.amazonaws.mturk.requester.Assignment;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import controllers.DatabaseController;
 import models.LingoExpModel;
 import models.Questions.Question;
 import models.Results.AssignmentResult;
@@ -20,6 +21,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.persistence.*;
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -344,7 +346,50 @@ public class DiscourseConnectivesQuestion extends PartQuestion {
     }
 
     @Override
-    public void writeResults(JsonNode resultNode) {
-        // TODO: Implement
+    public void writeResults(JsonNode resultNode) throws SQLException {
+        String workerId = resultNode.get("workerId").asText();
+        String assignmentId = resultNode.get("assignmentId").asText();
+        String hitId = resultNode.get("hitId").asText();
+        int partId = resultNode.get("partId") != null ? resultNode.get("partId").asInt() : -1;
+
+        int expId = -1;
+        JsonNode expIdNode = resultNode.get("expId");
+        if(expIdNode != null){
+            expId = expIdNode.asInt();
+        }
+
+        String origin = "NOT AVAILABLE";
+        JsonNode originNode = resultNode.get("origin");
+        if(originNode != null){
+            origin = originNode.asText();
+        }
+
+        JsonNode statisticsNode = resultNode.get("statistics");
+        if(statisticsNode != null){
+            String statistics = statisticsNode.toString();
+            Worker.addStatistics(workerId, expId, origin, statistics);
+        }
+
+        for(Iterator<JsonNode> questionNodeIterator = resultNode.get("results").iterator(); questionNodeIterator.hasNext(); ){
+            JsonNode questionNode = questionNodeIterator.next();
+            int questionId = questionNode.get("id").asInt();
+            JsonNode result = questionNode.get("answer");
+
+            if(result != null){
+                PreparedStatement preparedStatement = DatabaseController.getConnection().prepareStatement(
+                        "INSERT INTO DiscourseConnectivesResults(id,workerId,assignmentId,hitId,partId,questionId,answer,origin) VALUES(nextval('DiscourseConnectivesResults_seq'),?,?,?,?,?,?,?)"
+                );
+                preparedStatement.setString(1,workerId);
+                preparedStatement.setString(2,assignmentId);
+                preparedStatement.setString(3,hitId);
+                preparedStatement.setInt(4,partId);
+                preparedStatement.setInt(5,questionId);
+                preparedStatement.setString(6,result.toString());
+                preparedStatement.setString(7,origin);
+
+                preparedStatement.execute();
+                preparedStatement.close();
+            }
+        }
     }
 }

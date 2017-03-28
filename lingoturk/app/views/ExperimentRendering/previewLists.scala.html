@@ -2,7 +2,7 @@
 @main("Preview lists"){
 
     <script>
-            var currIndex = 0;
+            var currIndex = -1;
             var maxIndex = @exp.getParts.size - 1;
             var origin = "renderProlific";
 
@@ -40,7 +40,8 @@
             }
 
         $(document).ready(function(){
-            show($("#list0"));
+            next();
+            $("#lastButton").attr("disabled","disabled");
         });
     </script>
     <style>

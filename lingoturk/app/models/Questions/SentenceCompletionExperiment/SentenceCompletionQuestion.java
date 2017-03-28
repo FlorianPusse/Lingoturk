@@ -26,89 +26,111 @@ public class SentenceCompletionQuestion extends PartQuestion {
 
     /* BEGIN OF VARIABLES BLOCK */
 
-	@Basic
-	@Column(name="SentenceCompletion_story", columnDefinition = "TEXT")
-	public java.lang.String SentenceCompletion_story = "";
+    @Basic
+    @Column(name = "SentenceCompletion_story", columnDefinition = "TEXT")
+    public java.lang.String SentenceCompletion_story = "";
 
-	@Basic
-	@Column(name="SentenceCompletion_list", columnDefinition = "TEXT")
-	public java.lang.String SentenceCompletion_list = "";
+    @Basic
+    @Column(name = "SentenceCompletion_list", columnDefinition = "TEXT")
+    public java.lang.String SentenceCompletion_list = "";
 
-	@Basic
-	@Column(name="SentenceCompletion_itemNr", columnDefinition = "TEXT")
-	public java.lang.String SentenceCompletion_itemNr = "";
+    @Basic
+    @Column(name = "SentenceCompletion_itemNr", columnDefinition = "TEXT")
+    public java.lang.String SentenceCompletion_itemNr = "";
 
-	@Basic
-	@Column(name="SentenceCompletion_itemLength", columnDefinition = "TEXT")
-	public java.lang.String SentenceCompletion_itemLength = "";
+    @Basic
+    @Column(name = "SentenceCompletion_itemLength", columnDefinition = "TEXT")
+    public java.lang.String SentenceCompletion_itemLength = "";
 
-	@Basic
-	@Column(name="SentenceCompletion_itemType", columnDefinition = "TEXT")
-	public java.lang.String SentenceCompletion_itemType = "";
+    @Basic
+    @Column(name = "SentenceCompletion_itemType", columnDefinition = "TEXT")
+    public java.lang.String SentenceCompletion_itemType = "";
 
     @Override
     public void setJSONData(LingoExpModel experiment, JsonNode questionNode) throws SQLException {
-		JsonNode storyNode = questionNode.get("story");
-		if (storyNode != null){
-			this.SentenceCompletion_story = storyNode.asText();
-		}
+        JsonNode storyNode = questionNode.get("story");
+        if (storyNode != null) {
+            this.SentenceCompletion_story = storyNode.asText();
+        }
 
-		JsonNode listNode = questionNode.get("list");
-		if (listNode != null){
-			this.SentenceCompletion_list = listNode.asText();
-		}
+        JsonNode listNode = questionNode.get("list");
+        if (listNode != null) {
+            this.SentenceCompletion_list = listNode.asText();
+        }
 
-		JsonNode itemNrNode = questionNode.get("itemNr");
-		if (itemNrNode != null){
-			this.SentenceCompletion_itemNr = itemNrNode.asText();
-		}
+        JsonNode itemNrNode = questionNode.get("itemNr");
+        if (itemNrNode != null) {
+            this.SentenceCompletion_itemNr = itemNrNode.asText();
+        }
 
-		JsonNode itemLengthNode = questionNode.get("itemLength");
-		if (itemLengthNode != null){
-			this.SentenceCompletion_itemLength = itemLengthNode.asText();
-		}
+        JsonNode itemLengthNode = questionNode.get("itemLength");
+        if (itemLengthNode != null) {
+            this.SentenceCompletion_itemLength = itemLengthNode.asText();
+        }
 
-		JsonNode itemTypeNode = questionNode.get("itemType");
-		if (itemTypeNode != null){
-			this.SentenceCompletion_itemType = itemTypeNode.asText();
-		}
+        JsonNode itemTypeNode = questionNode.get("itemType");
+        if (itemTypeNode != null) {
+            this.SentenceCompletion_itemType = itemTypeNode.asText();
+        }
 
     }
 
 	/* END OF VARIABLES BLOCK */
 
 
-
-    public SentenceCompletionQuestion(){}
+    public SentenceCompletionQuestion() {
+    }
 
     @Override
     public void writeResults(JsonNode resultNode) throws SQLException {
         String workerId = resultNode.get("workerId").asText();
-        int partId = resultNode.get("partId").asInt();
+        String assignmentId = resultNode.get("assignmentId").asText();
+        String hitId = resultNode.get("hitId").asText();
+        int partId = resultNode.get("partId") != null ? resultNode.get("partId").asInt() : -1;
 
-        PreparedStatement statement = DatabaseController.getConnection().prepareStatement(
-                "INSERT INTO SentenceCompletionResults(id,WorkerId,partId,questionId,answer) VALUES(nextval('SentenceCompletionResults_seq'),?,?,?,?)"
-        );
-
-        statement.setString(1, workerId);
-        statement.setInt(2, partId);
-
-        for (Iterator<JsonNode> resultIterator = resultNode.get("answers").iterator(); resultIterator.hasNext(); ) {
-            JsonNode result = resultIterator.next();
-            int questionId = result.get("questionId").asInt();
-            String answer = result.get("answer").asText();
-
-            statement.setInt(3, questionId);
-            statement.setString(4, answer);
-
-            statement.execute();
+        int expId = -1;
+        JsonNode expIdNode = resultNode.get("expId");
+        if (expIdNode != null) {
+            expId = expIdNode.asInt();
         }
 
-        statement.close();
+        String origin = "NOT AVAILABLE";
+        JsonNode originNode = resultNode.get("origin");
+        if (originNode != null) {
+            origin = originNode.asText();
+        }
+
+        JsonNode statisticsNode = resultNode.get("statistics");
+        if (statisticsNode != null) {
+            String statistics = statisticsNode.toString();
+            Worker.addStatistics(workerId, expId, origin, statistics);
+        }
+
+        for (Iterator<JsonNode> questionNodeIterator = resultNode.get("results").iterator(); questionNodeIterator.hasNext(); ) {
+            JsonNode questionNode = questionNodeIterator.next();
+            int questionId = questionNode.get("id").asInt();
+            JsonNode result = questionNode.get("answer");
+
+            if (result != null) {
+                PreparedStatement preparedStatement = DatabaseController.getConnection().prepareStatement(
+                        "INSERT INTO SentenceCompletionResults(id,workerId,assignmentId,hitId,partId,questionId,answer,origin) VALUES(nextval('SentenceCompletionResults_seq'),?,?,?,?,?,?,?)"
+                );
+                preparedStatement.setString(1, workerId);
+                preparedStatement.setString(2, assignmentId);
+                preparedStatement.setString(3, hitId);
+                preparedStatement.setInt(4, partId);
+                preparedStatement.setInt(5, questionId);
+                preparedStatement.setString(6, result.toString());
+                preparedStatement.setString(7, origin);
+
+                preparedStatement.execute();
+                preparedStatement.close();
+            }
+        }
     }
 
     @Override
-    public JsonObject returnJSON() throws SQLException{
+    public JsonObject returnJSON() throws SQLException {
         return super.returnJSON();
     }
 

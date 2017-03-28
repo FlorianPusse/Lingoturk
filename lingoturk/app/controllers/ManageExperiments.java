@@ -25,7 +25,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import play.Logger;
-import play.api.libs.Files;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.libs.Crypto;
@@ -509,7 +508,7 @@ public class ManageExperiments extends Controller {
         }
     }
 
-    private static void createExperimentType(String name, List<String[]> questionFields, String reusedGroupName) {
+    private static void createExperimentType(String name, List<String[]> questionFields, String listType, String reusedGroupName) {
         try {
             File f = new File("public/images/Experiments/" + name + "Experiment");
             if(!f.exists()){
@@ -553,10 +552,11 @@ public class ManageExperiments extends Controller {
             BufferedWriter writer = new BufferedWriter(new FileWriter(propertiesFile));
             writer.write("questionType = models.Questions." + name + "Experiment." + name + "Question\n");
             if (reusedGroupName != null) {
-                writer.write("groupType = models.Groups." + reusedGroupName);
+                writer.write("groupType = models.Groups." + reusedGroupName + "\n");
             } else {
-                writer.write("groupType = models.Groups." + name + "Experiment." + name + "Group");
+                writer.write("groupType = models.Groups." + name + "Experiment." + name + "Group\n");
             }
+            writer.write("listType = " + listType);
             writer.close();
         } catch (IOException e) {
             throw new IllegalStateException("Error occured while copying experiment files: " + e.getMessage());
@@ -608,6 +608,8 @@ public class ManageExperiments extends Controller {
             return internalServerError("Name \"template\" is reserved!");
         }
 
+        String sourceListType = json.get("sourceListType").asText();
+
         // Test if type name already exists or relevant directories are corrupt
         try {
             if (!isTypeNameAvailable(newTypeName + "Experiment")) {
@@ -635,12 +637,12 @@ public class ManageExperiments extends Controller {
                 copyExperimentType(sourceTypeName, newTypeName);
                 break;
             case "NEW":
-                createExperimentType(newTypeName, questionFields, null);
+                createExperimentType(newTypeName, questionFields, sourceListType, null);
                 break;
             case "REUSE":
                 String sourceGroup = json.get("sourceGroupName").asText();
                 try {
-                    createExperimentType(newTypeName, questionFields, sourceGroup);
+                    createExperimentType(newTypeName, questionFields, sourceListType, sourceGroup);
                 } catch (IllegalStateException e) {
                     return internalServerError(e.getMessage());
                 }
@@ -684,7 +686,7 @@ public class ManageExperiments extends Controller {
     @Security.Authenticated(Secured.class)
     public static Result editInstructions(int expId) {
         LingoExpModel expModel = LingoExpModel.byId(expId);
-        return ok(views.html.ManageExperiments.editInstructions.render(expId, expModel.getAdditionalExplanations()));
+        return ok(views.html.ManageExperiments.editInstructions.render(expId, expModel.getAdditionalExplanations(),false));
     }
 
     @Security.Authenticated(Secured.class)
@@ -694,7 +696,7 @@ public class ManageExperiments extends Controller {
         String instructions = requestData.get("instructions");
         LingoExpModel expModel = LingoExpModel.byId(expId);
         expModel.setAdditionalExplanations(instructions);
-        return ok(views.html.ManageExperiments.editInstructions.render(expId, expModel.getAdditionalExplanations()));
+        return ok(views.html.ManageExperiments.editInstructions.render(expId, expModel.getAdditionalExplanations(),true));
     }
 
     public static List<String> getExperimentNames() {
@@ -848,7 +850,6 @@ public class ManageExperiments extends Controller {
         LingoExpModel experiment;
         String name = json.get("name").asText();
         String description = json.get("description").asText();
-        String nameOnAmt = json.get("nameOnAmt").asText();
         String additionalExplanations = json.get("additionalExplanations").asText();
         String experimentType = json.get("type").asText();
 
@@ -865,18 +866,13 @@ public class ManageExperiments extends Controller {
 
         // new experiment
         if (json.get("id").asInt() == -1) {
-            experiment = LingoExpModel.createLingoExpModel(name, description, additionalExplanations, nameOnAmt, experimentType,listType);
+            experiment = LingoExpModel.createLingoExpModel(name, description, additionalExplanations, "", experimentType,listType);
         } else {
             experiment = LingoExpModel.byId(json.get("id").asInt());
             experiment.setName(name);
             experiment.setDescription(description);
-            experiment.setNameOnAmt(nameOnAmt);
             experiment.setAdditionalExplanations(additionalExplanations);
             experiment.setExperimentType(experimentType);
-
-            if(listType != null) {
-                experiment.setListType(listType);
-            }
         }
 
         experiment.update();

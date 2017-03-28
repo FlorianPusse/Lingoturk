@@ -81,7 +81,7 @@
         this.handleError = function(){
             if(self.failedTries < 100){
                 ++self.failedTries;
-                setTimeout(function() { self.submitResults() }, 1000);
+                setTimeout(function() { self.submitResults(self.resultsSubmitted, self.handleError) }, 1000);
             }else{
                 self.resultSubmissionError();
             }

@@ -87,16 +87,16 @@
         </div>
 
         @if(question != null) {
-            <input type="hidden" name="questionId" id="questionId" value="@question.getId()"/>
+            <input type="hidden" name="questionId" id="questionId" value="@question.getId"/>
         }
         @if(part != null) {
-            <input type="hidden" name="partId" id="partId" value="@part.getId()"/>
+            <input type="hidden" name="partId" id="partId" value="@part.getId"/>
         }
         @if(worker != null){
-            <input type="hidden" name="workerId" id="workerId" value="@worker.getId()">
+            <input type="hidden" name="workerId" id="workerId" value="@worker.getId">
         }
         @if(exp != null){
-            <input type="hidden" id="expId" value="@exp.getId()">
+            <input type="hidden" id="expId" value="@exp.getId">
         }
         @if(df.get("redirectUrl") != null){
             <input type="hidden" id="redirectUrl" value="@df.get("redirectUrl")">
@@ -104,7 +104,7 @@
         @if(origin != null){
             <input type="hidden" name="origin" id="origin" value="@origin">
         }
-        @if(origin != null){
+        @if(assignmentId != null){
             <input type="hidden" name="assignmentId" id="assignmentId" value="@assignmentId">
         }
         @if(hitId != null){

@@ -128,7 +128,7 @@ public class Application extends Controller {
         int lifetime = json.get("lifetime").asInt();
         switch (json.get("type").asText()){
             case "DISJOINT LISTS":
-                // convert from ms to minutes
+                // convert from minutes to ms
                 int maxWorkingTime = json.get("maxWorkingTime").asInt()*1000*60;
                 int defaultValue = json.get("defaultValue").asInt();
                 boolean useAdvancedMode = json.get("useAdvancedMode").asBoolean();
@@ -204,9 +204,11 @@ public class Application extends Controller {
 
         // Get experiment
         LingoExpModel experiment = LingoExpModel.byId(expId);
+        experiment.setNameOnAmt(df.get("nameOnAmt"));
+        experiment.setDescriptionOnAmt(df.get("descriptionOnAmt"));
 
         String title = experiment.getNameOnAmt();
-        String description = experiment.getDescription();
+        String description = experiment.getDescriptionOnAmt();
         double reward = Double.parseDouble(df.get("costsPerAssignment"));
 
 

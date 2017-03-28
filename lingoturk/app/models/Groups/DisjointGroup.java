@@ -167,14 +167,6 @@ public class DisjointGroup extends AbstractGroup {
     }
 
     public JsonObject returnJSON() throws SQLException {
-        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-        objectBuilder.add("id", id);
-        objectBuilder.add("number", listNumber);
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        for (PartQuestion question : getQuestions()) {
-            arrayBuilder.add(question.returnJSON());
-        }
-        objectBuilder.add("questions", arrayBuilder.build());
-        return objectBuilder.build();
+        return super.returnJSON();
     }
 }

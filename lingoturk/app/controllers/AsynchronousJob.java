@@ -18,7 +18,7 @@ public class AsynchronousJob extends UntypedActor {
 
     private static void updateAvailabilities(int partId) throws SQLException {
         AbstractGroup group = AbstractGroup.byId(partId);
-        if (group != null && group.maxParticipants != null){
+        if (group != null && group.maxParticipants != null && group.maxParticipants >= 0){
             int maxParticipants = group.maxParticipants;
             int availability = maxParticipants - group.countParticipants();
             if(availability != group.availability) {
@@ -94,9 +94,23 @@ public class AsynchronousJob extends UntypedActor {
         }
 
         // Also check parts that aren't in the list at all (possibly because all entries have been deleted)
-        rs = s.executeQuery("SELECT PartId FROM Groups WHERE partId NOT IN (SELECT DISTINCT partId FROM Workers_participateIn_Parts)");
+        rs = s.executeQuery("SELECT PartId FROM Groups WHERE partId NOT IN (SELECT DISTINCT partId FROM Workers_participateIn_Parts WHERE partId IS NOT NULL)");
         while(rs.next()){
             updateAvailabilities(rs.getInt("PartId"));
         }
+
+        // Check if we can disably some part
+        rs = s.executeQuery("SELECT DISTINCT partId,maxParticipants FROM Workers_participateIn_Parts JOIN Groups USING (partId) WHERE disabled = false");
+        while(rs.next()){
+            int partId = rs.getInt("partId");
+            int maxParticipants = rs.getInt("maxParticipants");
+            AbstractGroup group = AbstractGroup.byId(partId);
+            if(group != null && maxParticipants > 0){
+                if (group.countParticipants() >= maxParticipants){
+                    updateAvailabilities(partId);
+                }
+            }
+        }
+
     }
 }

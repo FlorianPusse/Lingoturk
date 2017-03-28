@@ -1,0 +1,115 @@
+<div ng-show="!noneOfThese && !noConnectives" id="top">
+    <label ng-if="!categorySet">Please drag the best-suited connective into the green target box below.</label>
+    <label ng-if="categorySet">Please drag each connective into the best-suiting container below.</label>
+    <div class="panel panel-warning">
+        <div class="panel-heading" style="color:#000000 ; padding-bottom: 6px ; padding-top: 6px">Candidate connectives</div>
+        <div class="panel-body" id="sortableBody" style="padding-bottom: 10px ; padding-top: 10px">
+            <ul ng-if="!categorySet" class="list-inline sortable" id="category" style="margin-bottom:0px">
+                <li class="ui-state-default draggable" ng-repeat="cat in categories track by $index">
+                    {{cat.category}}
+                </li>
+                <li ng-if="!categorySet" ng-click="setNoneOfThese(true)" style="float:right ; color:#292929 ; cursor: pointer">
+                    none of these
+                </li>
+            </ul>
+            <ul ng-if="categorySet" class="list-inline sortable" id="sortableConnectives" style="margin-bottom:0px">
+                <li class="ui-state-default draggable" ng-repeat="connective in connectives track by $index">
+                    {{connective}}
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<blockquote id="Sentence1" style="padding-bottom:7px ; padding-top:7px">
+    <p><strong>
+        Part 1: </strong>{{content.sentence1}}</p>
+</blockquote>
+
+<div ng-if="!categorySet" class="panel panel-warning" id="sortableDiv">
+    <div class="panel-heading" style="color:#000000 ; padding-top: 6px ; padding-bottom: 6px ;">
+        Suitable connectives
+    </div>
+    <div class="panel-body" style="background-color: #DFFFBF ; padding-bottom: 10px ; padding-top: 10px">
+        <!-- for Category Connective -->
+        <ul ng-if="!noneOfThese" class="list-inline sortable" id="suitableCategory">
+
+        </ul>
+        <!-- no suiting connective in first phase -> manual input -->
+        <div ng-if="noneOfThese" class="form-group" >
+            <input placeholder="enter connectives here (divided by ',')" class="form-control" style="width: 70% ; display: inline" type="text" ng-model="manualAnswer"/>
+            <button type="button" ng-click="setNoneOfThese(false)" class="btn btn-default" style="float:right ; display: inline">
+                I changed my mind</button>
+        </div>
+    </div>
+</div>
+
+<!-- Three different boxes to put connectives into : notRelevant, validConnective, cantDecide -->
+<div ng-if="categorySet && !noneOfThese">
+    <div style="padding-left: 10px ; padding-top: 4px ; padding-bottom: 4px ; margin-bottom: 14px ; background-color: #f7f7f9 ; border: 1px solid #e1e1e8 ; border-radius: 4px ;">
+        connectives chosen in first screen:
+                <span ng-repeat="suitableCategory in chosenCategories track by $index">
+                    <button type="button" style="cursor: default ; margin-top: 0px ; margin-bottom: 0px ; padding : .4em 1em !important ; text-align: center ; border : 1px solid #cccccc ; border-radius: 5px ; background : #f6f6f6 url('public/images/ui-bg_glass_100_f6f6f6_1x400.png') 50% 50% repeat-x;font-weight : bold; color : #1c94c4 ; box-shadow: 4px 3px 8px rgba(0, 0, 0, 0.5);">
+                        {{suitableCategory}}
+                    </button>
+                    <span>
+                        <a ng-click="removeSuitableCategory(suitableCategory)" href="#top" style="display : inline-block" class="ui-icon ui-icon-closethick"></a>
+                    </span>
+                </span>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-warning" style="">
+                <div class="panel-heading" style="color:#000000">not relevant</div>
+                <div class="panel-body" style="background-color: #DFFFBF ;">
+                    <ul style="margin-bottom:0px" class="list-inline sortable" id="sortableNotRelevant">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-4" id="validConnectivesContainer" style="text-align:center ;">
+            <div>
+                <div class="panel panel-warning" style="">
+                    <div class="panel-heading" style="color:#000000">valid connective</div>
+                    <div class="panel-body" style="background-color: #DFFFBF ;">
+                        <ul style="margin-bottom:0px" class="list-inline sortable sortableValidConnectives" id="sortableValidConnectives_1">
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-default" style="background-color: #f5f5f5 ;" ng-click="addValidConnectivesCategory()">+</button>
+        </div>
+
+        <div class="col-md-4">
+            <div class="panel panel-warning" style="" >
+                <div class="panel-heading" style="color:#000000">can't decide</div>
+                <div class="panel-body" style="background-color: #DFFFBF ;">
+                    <ul style="margin-bottom:0px" class="list-inline sortable" id="sortableCantDecide">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel-footer" ng-if="!noneOfThese && !noConnectives" style="margin-top:20px ; color:#000000 ; border: 2px solid #ddd ; padding-bottom:6px ; padding-top:6px ; margin-bottom: 1%">
+    <p style="margin-bottom:0px"><span class="ui-icon ui-icon-info" style="float : left ; margin-right :.3em ;"></span>
+        Note: You can always change your decision and drag the connectives between the different containers.<br>
+    </p>
+</div>
+
+<blockquote id="Sentence2" style="padding-bottom:7px ; padding-top:7px">
+    <p><strong>
+        Part 2: </strong>{{content.sentence2}}</p>
+</blockquote>
+
+<div style="text-align: center">
+    <button ng-if="categorySet" type="button" ng-click="finished()" class="btn btn-default" id="submitButton">Submit</button>
+    <button ng-if="!categorySet" id="categoriesChosenButton" ng-click="categoriesChosen()" type="button" class="btn btn-default" disabled="disabled">That's it</button>
+
+</div>

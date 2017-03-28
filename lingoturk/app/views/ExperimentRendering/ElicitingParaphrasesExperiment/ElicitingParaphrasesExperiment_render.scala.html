@@ -81,9 +81,18 @@
             @if(exp != null){
                 <input type="hidden" id="expId" value="@exp.getId()">
             }
-            <input type="hidden" name="origin" id="origin" value="@origin">
-            <input type="hidden" name="assignmentId" id="assignmentId" value="@assignmentId">
-            <input type="hidden" name="hitId" id="hitId" value="@hitId">
+            @if(df.get("redirectUrl") != null){
+                <input type="hidden" id="redirectUrl" value="@df.get("redirectUrl")">
+            }
+            @if(origin != null){
+                <input type="hidden" name="origin" id="origin" value="@origin">
+            }
+            @if(origin != null){
+                <input type="hidden" name="assignmentId" id="assignmentId" value="@assignmentId">
+            }
+            @if(hitId != null){
+                <input type="hidden" name="hitId" id="hitId" value="@hitId">
+            }
 
                 <!-- You can add more input elements here -->
             <input type="hidden" id="importantChunk" value="-1">

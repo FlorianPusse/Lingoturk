@@ -3,12 +3,29 @@
 
     app.controller('RenderController', ['$http', '$timeout', function ($http, $timeout) {
         var self = this;
-        self.part = null;
+        self.state = "";
+        self.allStates = [];
         self.questions = [];
-        self.index = -1;
+        self.part = null;
+        self.slideIndex = 0;
+        self.questionIndex = 0;
+        self.expId = null;
+        self.questionId = null;
+        self.partId = null;
+        self.origin = null;
+        self.hitId = "";
+        self.assignmentId = "";
         self.workerId = "";
-        self.feedback = "";
-        self.expId = "";
+        self.subListMap = {};
+        self.subListsIds = [];
+        self.showMessage = "none";
+        self.redirectUrl = null;
+        self.index = -1;
+
+        self.shuffleQuestions = true;
+        self.shuffleSublists = true;
+        self.useGoodByeMessage = true;
+        self.useStatistics = false;
 
         self.submitting = false;
         this.submitResults = function () {
@@ -87,7 +104,7 @@
 
             $http.post("/submitFeedback", {workerId: self.workerId, expId: self.expId, feedback: self.feedback})
                 .success(function () {
-                    var url = "https://prolificacademic.co.uk/submissions/57e3c6b347180e0001f10e11/complete?cc=OYU1T7G4";
+                    var url = self.redirectUrl;
                     if(inIframe()){
                         window.top.location.href = url;
                     }else{
@@ -112,9 +129,17 @@
         };
 
         $(document).ready(function () {
+            self.questionId = ($("#questionId").length > 0) ? $("#questionId").val() : null;
+            self.partId = ($("#partId").length > 0) ? $("#partId").val() : null;
             self.expId = ($("#expId").length > 0) ? $("#expId").val() : null;
-            var partId = $("#partId").val();
-            if (partId !== undefined && partId != "") {
+            self.hitId = ($("#hitId").length > 0) ? $("#hitId").val() : "NOT AVAILABLE";
+            self.workerId = ($("#workerId").length > 0) ? $("#workerId").val() : "";
+            self.assignmentId = ($("#assignmentId").length > 0) ? $("#assignmentId").val() : "NOT AVAILABLE";
+            self.origin = ($("#origin").length > 0) ? $("#origin").val() : "NOT AVAILABLE";
+            self.redirectUrl = ($("#redirectUrl").length > 0) ? $("#redirectUrl").val() : null;
+
+            var partId = self.partId;
+            if (partId !== null && partId != "") {
                 $http.get("/returnPart?partId=" + partId).success(function (data) {
                     var json = data;
                     self.part = json;

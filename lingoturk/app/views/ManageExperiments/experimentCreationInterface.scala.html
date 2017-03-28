@@ -30,15 +30,23 @@
                     <input id="newTypeName" type="text" class="form-control" ng-model="IC.newTypeName">
                 </div>
 
-                <div class="form-group">
+                <label for="itemType">Item type:</label>
+                <div id="itemType" class="form-group">
                     <div class="radio">
-                        <label><input type="radio" value="FullGroup" ng-model="IC.sourceGroupName" name="sourceGroupName" checked>Participants should do all of the questions in a list <strong>(default)</strong></label>
+                        <label><input type="radio" value="FullGroup" ng-model="IC.sourceGroupName" name="sourceGroupName" checked>Participants should do all of the items in a list <strong>(default)</strong></label>
                     </div>
                     <div class="radio">
-                        <label><input type="radio" value="DisjointGroup" ng-model="IC.sourceGroupName" name="sourceGroupName">Participants should only see one of the questions in a list</label>
+                        <label><input type="radio" value="PoolGroup" ng-model="IC.sourceGroupName" name="sourceGroupName">Participants should be able to see multiple items in a list</label>
+                    </div>
+                </div>
+
+                <label for="listType">List type:</label>
+                <div for="listType" class="form-group">
+                    <div class="radio">
+                        <label><input type="radio" value="MULTIPLE LISTS" ng-model="IC.sourceListType" name="sourceListType" checked>Participants can do as many lists as they want <strong>(default)</strong></label>
                     </div>
                     <div class="radio">
-                        <label><input type="radio" value="PoolGroup" ng-model="IC.sourceGroupName" name="sourceGroupName">Participants should be able see multiple questions in a list</label>
+                        <label><input type="radio" value="DISJOINT LISTS" ng-model="IC.sourceListType" name="sourceListType">Participants can do <strong>only</strong> one list</label>
                     </div>
                 </div>
 

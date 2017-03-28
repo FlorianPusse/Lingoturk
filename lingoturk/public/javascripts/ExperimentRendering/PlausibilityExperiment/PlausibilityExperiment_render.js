@@ -1,195 +1,238 @@
 (function () {
-    var app = angular.module('PlausibilityExperimentApp', []);
+    var app = angular.module('PlausibilityExperimentApp', ["Lingoturk"]);
 
-    app.controller('RenderController', ['$http', '$timeout', function ($http, $timeout) {
+    app.controller('RenderController', ['$http', '$timeout', '$scope', function ($http, $timeout, $scope) {
         var self = this;
-        this.assignmentId = -1;
-        this.part = null;
-        this.partId = null;
-        this.questions = [];
-        this.currentChunk = 0;
-        this.origin = "";
-        this.mail = "";
+        self.state = "";
+        self.allStates = [];
+        self.questions = [];
+        self.part = null;
+        self.slideIndex = 0;
+        self.questionIndex = 0;
+        self.expId = null;
+        self.questionId = null;
+        self.partId = null;
+        self.origin = null;
+        self.hitId = "";
+        self.assignmentId = "";
+        self.workerId = "";
+        self.subListMap = {};
+        self.subListsIds = [];
+        self.showMessage = "none";
+        self.redirectUrl = null;
 
-        this.update = function () {
-            var scope = angular.element($("#angularApp")).scope();
-            $timeout(function () {
-                scope.$apply();
-            });
-        };
+        self.shuffleQuestions = true;
+        self.shuffleSublists = true;
+        self.useGoodByeMessage = true;
+        self.useStatistics = false;
 
-        this.instructionsFinished = function(){
-            if(self.origin == "PROLIFIC"){
-                $('#instructionsSlide').hide();
-                $('#workerIdSlide').show();
-            }else if (self.origin == "mail"){
-                $('#instructionsSlide').hide();
-                $('.chunk').first().show();
+        self.statistics = [
+            {name : "Age", type: "number", answer : undefined},
+            {name : "Gender", type: "text", answer : ""},
+            {name : "Nationality", type: "text", answer : ""},
+            {name : "Mother's first language", type: "text", answer : ""},
+            {name : "Father's first language", type: "text", answer : ""},
+            {name : "Are you bilingual (grown up with more than one language)?", type: "boolean", answer : undefined},
+            {name : "Please list the languages you speak at at the advance level.", type: "text", answer : "", optional : true}
+        ];
+
+        this.resultsSubmitted = function(){
+            self.subListsIds.splice(0,1);
+            if(self.subListsIds.length > 0 ){
+                self.showMessage = "nextSubList";
             }else{
-                $('#instructionsSlide').hide();
-                $('.chunk').first().show();
+                self.processFinish();
             }
         };
 
-        this.nextPicture = function(index){
-            var currentSlide = $(".chunk").eq(index);
-            currentSlide.hide();
-            if(index + 1 < self.questions.length){
-                currentSlide.next(".chunk").show();
+        this.processFinish = function(){
+            if(!self.useGoodByeMessage){
+                self.finished();
             }else{
-                $(".chunk").hide();
-                self.submitResults();
+                self.showMessage = "goodBye";
             }
         };
 
-        this.generateRandomId = function()
-        {
-            var text = "";
-            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-            for( var i=0; i < 30; i++ )
-                text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-            return text;
+        this.finished = function(){
+            if(self.origin == null || self.origin == "NOT AVAILABLE"){
+                bootbox.alert("Results successfully submitted. You might consider redirecting your participants now.");
+            }else if(self.origin == "MTURK"){
+                $("#form").submit();
+            }else if(self.origin == "PROLIFIC"){
+                if(inIframe()){
+                    window.top.location.href = self.redirectUrl;
+                }else{
+                    window.location = self.redirectUrl;
+                }
+            }
         };
 
-        this.submitResults = function(){
-            var workerId = "";
-            if(self.origin == "PROLIFIC"){
-                workerId = self.workerId;
-            }else if (self.origin == "mail"){
-                self.workerId = "mail_" + self.generateRandomId();
-                workerId = self.workerId;
+        this.nextSublist = function(){
+            self.questionIndex = 0;
+            self.questions = self.subListMap[self.subListsIds[0]];
+            self.showMessage = "none";
+        };
+
+        this.resultSubmissionError = function(){
+            self.failedTries = 0;
+            bootbox.alert("An error occurred while submitting your results. Please try again in a few seconds.");
+        };
+
+        this.handleError = function(){
+            if(self.failedTries < 100){
+                ++self.failedTries;
+                setTimeout(function() { self.submitResults(self.resultsSubmitted, self.handleError) }, 1000);
             }else{
-                self.workerId = "other_" + self.generateRandomId();
-                workerId = self.workerId;
+                self.resultSubmissionError();
             }
+        };
 
-            var answerList = [];
-
-            for(var i = 0; i < self.questions.length; i++){
-                var question = self.questions[i];
-                var questionId = question.id;
-                var answer = question.answer;
-                answerList.push({questionId : questionId, answer: answer});
-            }
-
-            var result = {
+        self.failedTries = 0;
+        this.submitResults = function (successCallback, errorCallback) {
+            var results = {
                 experimentType : "PlausibilityExperiment",
-                workerId : workerId,
-                partId : self.partId,
-                answers : answerList
+                results : self.questions,
+                expId : self.expId,
+                origin : self.origin,
+                statistics : self.statistics,
+                assignmentId : self.assignmentId,
+                hitId : self.hitId,
+                workerId : self.workerId,
+                partId : (self.partId == null ? -1 : self.partId)
             };
 
-            $http.post("/submitResults", result)
-                .success(function () {
-                    $("#statistics").show();
-                })
-                .error(function () {
-                    setTimeout(function() { self.submitResults() }, 2000);
+
+            $http.post("/submitResults", results)
+                .success(successCallback)
+                .error(errorCallback);
+        };
+
+        this.next = function(){
+            if(self.state == "workerIdSlide"){
+                if(self.questionId == null && self.partId == null){
+                    self.load(function(){
+                        self.state = self.allStates[++self.slideIndex];
+                    });
+                    return;
+                }
+            }
+
+            if(self.slideIndex + 1 < self.allStates.length){
+                self.state = self.allStates[++self.slideIndex];
+            }else{
+                self.submitResults(self.resultsSubmitted, self.handleError);
+            }
+        };
+
+        this.nextQuestion = function(){
+            if(self.questionIndex + 1 < self.questions.length){
+                ++self.questionIndex;
+            }else{
+                self.next();
+            }
+        };
+
+        this.load = function(callback){
+            var subListMap = self.subListMap;
+
+            if(self.questionId != null){
+                $http.get("/getQuestion/" + self.questionId).success(function (data) {
+                    self.questions = [data];
+
+                    subListMap[self.questions[0].subList] = [self.questions[0]];
+
+                    if(callback !== undefined){
+                        callback();
+                    }
                 });
-        };
+            }else if(self.partId != null){
+                $http.get("/returnPart?partId=" + self.partId).success(function (data) {
+                    var json = data;
+                    self.part = json;
+                    self.questions = json.questions;
 
-        this.nextChunk = function(){
-            $("#chunkEnd").hide();
-            self.currentChunk = self.currentChunk + 1;
+                    if(self.shuffleQuestions){
+                        shuffleArray(self.part.questions);
+                    }
 
-            var scope = angular.element($("#angularApp")).scope();
-            $timeout(function () {
-                scope.$apply();
-                var newChunk = $(".chunk");
-                newChunk.show();
-                newChunk.find(".pictureSlide").first().show();
-            });
-        };
+                    for(var i = 0; i < self.questions.length; ++i){
+                        var q = self.questions[i];
+                        if (subListMap.hasOwnProperty(q.subList)){
+                            subListMap[q.subList].push(q);
+                        }else{
+                            subListMap[q.subList] = [q];
+                            self.subListsIds.push(q.subList);
+                        }
+                    }
+                    if(self.shuffleSublists){
+                        shuffleArray(self.subListsIds);
+                    }
+                    self.questions = self.subListMap[self.subListsIds[0]];
 
-        this.setAnswer = function (event,question,answer) {
-            if(answer > 0 && answer <= 5){
-                question.answer = answer;
+                    if(callback !== undefined){
+                        callback();
+                    }
+                });
+            }else{
+                $http.get("/getPart?expId=" + self.expId + "&workerId=" + self.workerId).success(function (data) {
+                    var json = data;
+                    self.part = json;
+                    self.partId = json.id;
+                    self.questions = json.questions;
 
-                var domE = $(event.target);
-                var panelBody = domE.closest(".panel-body");
-                var button = panelBody.find("button");
-                button.prop("disabled", false);
+                    if(self.shuffleQuestions){
+                        shuffleArray(self.part.questions);
+                    }
+
+                    for(var i = 0; i < self.questions.length; ++i){
+                        var q = self.questions[i];
+                        if (subListMap.hasOwnProperty(q.subList)){
+                            subListMap[q.subList].push(q);
+                        }else{
+                            subListMap[q.subList] = [q];
+                            self.subListsIds.push(q.subList);
+                        }
+                    }
+                    if(self.shuffleSublists){
+                        shuffleArray(self.subListsIds);
+                    }
+                    self.questions = self.subListMap[self.subListsIds[0]];
+
+                    if(callback !== undefined){
+                        callback();
+                    }
+                });
             }
-        };
-
-        /*
-         *	Taken from: http://stackoverflow.com/questions/20789373/shuffle-array-in-ng-repeat-angular
-         *	-> Fisher�Yates shuffle algorithm
-         */
-        this.shuffleArray = function (array) {
-            var m = array.length, t, i;
-
-            // While there remain elements to shuffle
-            while (m) {
-                // Pick a remaining element�
-                i = Math.floor(Math.random() * m--);
-
-                // And swap it with the current element.
-                t = array[m];
-                array[m] = array[i];
-                array[i] = t;
-            }
-
-            return array;
         };
 
         $(document).ready(function () {
-            self.origin = $("#origin").val();
+            self.questionId = ($("#questionId").length > 0) ? $("#questionId").val() : null;
+            self.partId = ($("#partId").length > 0) ? $("#partId").val() : null;
+            self.expId = ($("#expId").length > 0) ? $("#expId").val() : null;
+            self.hitId = ($("#hitId").length > 0) ? $("#hitId").val() : "NOT AVAILABLE";
+            self.workerId = ($("#workerId").length > 0) ? $("#workerId").val() : "";
+            self.assignmentId = ($("#assignmentId").length > 0) ? $("#assignmentId").val() : "NOT AVAILABLE";
+            self.origin = ($("#origin").length > 0) ? $("#origin").val() : "NOT AVAILABLE";
+            self.redirectUrl = ($("#redirectUrl").length > 0) ? $("#redirectUrl").val() : null;
 
-            var partId = $("#partId").val();
-            self.partId = partId;
-            if (partId != "") {
-                $http.get("/returnPart?partId=" + partId).success(function (data) {
-                    var json = data;
-                    self.part = json;
-                    self.shuffleArray(json.questions);
-                    self.questions = json.questions;
-
-                    for(var i = 0; i < self.questions.length; i++){
-                        self.questions[i].answer = 0;
-                    }
-
-                    var scope = angular.element($("#angularApp")).scope();
-                    $timeout(function () {
-                        scope.$apply();
-                    });
-
-                    $(document).on("input", ".textInput", function () {
-                        if ($(this).val() != "") {
-                            $(this).next().removeAttr("disabled");
-                        } else {
-                            $(this).next().attr("disabled", "disabled");
-                        }
-                    });
-
-                    $(document).on("click","#submitButton", function(){
-                        if(self.origin == "PROLIFIC"){
-                            window.location.href = "https://prolificacademic.co.uk/submissions/563a0647be9cac000faaa4c9/complete?cc=L2QAYPD9";
-                        }else if (self.origin == "mail"){
-                            $http.get("/submitMailAddress?mailAddress=" + encodeURIComponent(self.mail) + "&workerId=" + encodeURIComponent(self.workerId)).success(function () {
-                                $("#statistics").hide();
-                                $("#mailSuccess").show();
-                            });
-                        }
-                    });
-
-                    $("#workerIdButton").click(function () {
-                        $("#workerIdSlide").hide();
-
-                        $('.chunk').first().show();
-                    });
-
-                    $(document).on("keypress", ":input:not(textarea)", function(event) {
-                        if (event.keyCode == 13) {
-                            event.preventDefault();
-                        }
-                    });
-
-                });
+            if(self.questionId != null || self.partId != null){
+                self.load();
             }
-        });
 
+            self.allStates = ["instructionsSlide","workerIdSlide","statisticsSlide","questionSlide"];
+
+            if(!self.useStatistics){
+                var index = self.allStates.indexOf("statisticsSlide");
+                self.allStates.splice(index,1);
+            }
+
+            $scope.$apply(self.state = self.allStates[0]);
+
+            $(document).on("keypress", ":input:not(textarea)", function(event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                }
+            });
+        });
     }]);
 })();

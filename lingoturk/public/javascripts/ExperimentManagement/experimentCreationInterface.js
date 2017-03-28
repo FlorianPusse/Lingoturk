@@ -8,6 +8,7 @@
         this.experimentType = "REUSE";
         this.sourceTypeName = "";
         this.sourceGroupName = "FullGroup";
+        this.sourceListType = "MULTIPLE LISTS";
         this.types = [{name: "String (can also be an image path)", val: "String"}, {name: "Number (Integer)", val: "int"}, {
             name: "Number (Float)",
             val: "float"
@@ -55,7 +56,8 @@
                         experimentType: self.experimentType,
                         sourceTypeName: self.sourceTypeName,
                         sourceGroupName: self.sourceGroupName,
-                        questionFields: self.questionFields
+                        questionFields: self.questionFields,
+                        sourceListType: self.sourceListType
                     };
                     $http.post("/createNewExperimentType", result)
                         .success(function () {
