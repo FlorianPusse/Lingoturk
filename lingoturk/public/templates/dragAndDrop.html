@@ -1,15 +1,16 @@
 <div ng-if="!noneOfThese && !noConnectives" id="top">
-    <label ng-if="!categorySet">Please drag the best-suited connective into the green target box below.</label>
-    <label ng-if="categorySet">You can now drag one more connective into the box below.</label>
+    <label ng-if="!categorySet">{{instructions1}}</label>
+    <label ng-if="categorySet">{{instructions2}}</label>
+
     <div class="panel panel-warning">
-        <div class="panel-heading" style="color:#000000 ; padding-bottom: 6px ; padding-top: 6px">Candidate connectives</div>
+        <div class="panel-heading" style="color:#000000 ; padding-bottom: 6px ; padding-top: 6px">{{boxTitle}}</div>
         <div class="panel-body" id="sortableBody" style="padding-bottom: 10px ; padding-top: 10px">
             <ul ng-if="!categorySet" class="list-inline sortable" id="category" style="margin-bottom:0px">
-                <li class="ui-state-default draggable" ng-repeat="connective in connectives track by $index">{{connective}}</li>
+                <li class="ui-state-default draggable" ng-repeat="connective in processedConnectives track by $index">{{connective}}</li>
                 <li ng-if="!categorySet" ng-click="setNoneOfThese(true)" style="float:right ; color:#292929 ; cursor: pointer">none of these</li>
             </ul>
             <ul ng-if="categorySet" class="list-inline sortable" id="sortableConnectives" style="margin-bottom:0px">
-                <li ng-if="suitableCategories.indexOf(connective) == -1" class="ui-state-default draggable" ng-repeat="connective in connectives track by $index">{{connective}}</li>
+                <li ng-if="suitableCategories.indexOf(connective) == -1" class="ui-state-default draggable" ng-repeat="connective in processedConnectives track by $index">{{connective}}</li>
                 <li ng-click="setNoneOfThese2(true)" style="float:right ; color:#292929 ; cursor: pointer">none of these</li>
             </ul>
         </div>
@@ -17,7 +18,7 @@
 </div>
 
 <blockquote id="Sentence1" style="padding-bottom:7px ; padding-top:7px">
-    <span style="color:grey;margin-right:6px;">{{content.context1}}</span>{{content.sentence1}}
+    <span style="color:grey;margin-right:6px;">{{context1}}</span>{{sentence1}}
     <div ng-if="!categorySet" class="panel panel-warning" style="margin-bottom:0;display:inline-block" id="sortableDiv">
         <div class="panel-body" style="background-color: #DFFFBF ; padding-bottom: 0px ; padding-top: 0px">
             <!-- for Category Connective -->
@@ -40,7 +41,7 @@
             </div>
         </div>
     </div>
-    {{content.sentence2}}<span style="color:grey;margin-left:6px"> {{content.context2}}</span>
+    {{sentence2}}<span style="color:grey;margin-left:6px"> {{context2}}</span>
 </blockquote>
 
 <div style="text-align: center">

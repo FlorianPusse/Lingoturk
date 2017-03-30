@@ -554,9 +554,11 @@ public class ManageExperiments extends Controller {
             if (reusedGroupName != null) {
                 writer.write("groupType = models.Groups." + reusedGroupName + "\n");
             } else {
-                writer.write("groupType = models.Groups." + name + "Experiment." + name + "Group\n");
+                writer.write("groupType = models.Groups." + name + "Experiment." + name + "Group");
             }
-            writer.write("listType = " + listType);
+            if(listType != null){
+                writer.write("\nlistType = " + listType);
+            }
             writer.close();
         } catch (IOException e) {
             throw new IllegalStateException("Error occured while copying experiment files: " + e.getMessage());
@@ -608,7 +610,8 @@ public class ManageExperiments extends Controller {
             return internalServerError("Name \"template\" is reserved!");
         }
 
-        String sourceListType = json.get("sourceListType").asText();
+        JsonNode sourceTypeListNode = json.get("sourceListType");
+        String sourceListType = sourceTypeListNode != null ? sourceTypeListNode.asText() : null;
 
         // Test if type name already exists or relevant directories are corrupt
         try {

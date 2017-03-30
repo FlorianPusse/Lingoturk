@@ -1,3 +1,8 @@
+.container > .div-wrapper{
+    background-color: rgba(74, 74, 74, 0.6);
+    color: black;
+    font-size:15px
+}
 .settingsContainer {
     margin-top : 10px ;
     margin-bottom : 10px ;
@@ -6,10 +11,10 @@
 }
 
 .div-wrapper {
-    border-radius: 12px 12px 12px 12px;
-    -moz-border-radius: 12px 12px 12px 12px;
-    -webkit-border-radius: 12px 12px 12px 12px;
-    border: 1px solid #000000;
+    border-radius: 6px 6px 6px 6px;
+    -moz-border-radius: 6px 6px 6px 6px;
+    -webkit-border-radius: 6px 6px 6px 6px;
+    border: 2px solid #353535;
     box-shadow: 3px 3px 10px 0px rgba(122,122,122,1);
     overflow: auto;
     padding : 10px;

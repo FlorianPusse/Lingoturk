@@ -44,6 +44,9 @@ public class Settings extends Controller {
         Properties props_AMT = new Properties();
 
         if (!ipAddress.equals("")) {
+            if(ipAddress.charAt(ipAddress.length() - 1) == '/'){
+                ipAddress = ipAddress.substring(0,ipAddress.length() - 1);
+            }
             Application.setStaticIp(ipAddress);
         }
 

@@ -8,8 +8,15 @@
             display: inline-block;
             margin-left: 10px;
             margin-right: 10px;
+            font-size:15px;
+            line-height: 45px
         }
-
+        .experiment-selection {
+            background-color: rgba(74, 74, 74, 0.6);
+        }
+        html > body {
+            height: inherit;
+        }
         .navBox > b {
             line-height: initial;
         }
@@ -68,16 +75,16 @@
     </script>
 
     <div class="row" style="padding-bottom:30px">
-        <p style="font-size: 1.2em; text-align: center;">Which kind of experiment do you want to create?</p>
+        <p style="font-size: 16px; font-weight:600; margin-bottom:20px; text-align: center;">Which kind of experiment do you want to create?</p>
         <div style="display:inline-block; text-align:center">
             <a href="/experimentCreationInterface" class="noLinkColor">
-                <div class="experimentSelection navBox" style="background-color: rgba(177, 177, 177, 0.22) !important;">
+                <div class="experiment-selection navBox" style="background-color: rgba(255, 254, 254, 0.41) !important;">
                     <b>Create new experiment type</b><br/>
                 </div>
             </a>
             @for(experimentName <- experimentNames){
             <a href="/createExperiment?name=@experimentName" class="noLinkColor">
-                <div class="experimentSelection navBox">
+                <div class="experiment-selection navBox">
                     <b>@experimentName.substring(0,experimentName.length() - "Experiment".length())</b><br/>
                     <div style="position:relative">
                         <img src="/assets/images/Experiments/@experimentName/preview.png" style="max-width: 200px; max-height: 150px" onerror="$(this).parent().hide()">

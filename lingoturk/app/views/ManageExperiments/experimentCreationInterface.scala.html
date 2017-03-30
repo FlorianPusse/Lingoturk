@@ -2,11 +2,6 @@
     <script type="text/javascript" src="@routes.Assets.at("javascripts/ExperimentManagement/experimentCreationInterface.js")"></script>
     <style>
     .div-wrapper {
-        border-radius: 12px 12px 12px 12px;
-        -moz-border-radius: 12px 12px 12px 12px;
-        -webkit-border-radius: 12px 12px 12px 12px;
-        border: 1px solid #000000;
-        box-shadow: 3px 3px 10px 0px rgba(122,122,122,1);
         overflow: auto;
         padding : 10px;
     }
@@ -15,8 +10,24 @@
         margin-bottom : 10px ;
         padding : 0px;
     }
+    #container{
+        background-color: rgba(74, 74, 74, 0.6);
+        margin-top:15px;
+        color:black;
+        border-radius: 6px 6px 6px 6px;
+        -moz-border-radius: 6px 6px 6px 6px;
+        -webkit-border-radius: 6px 6px 6px 6px;
+        border: 2px solid #353535;
+        box-shadow: 3px 3px 10px 0px rgba(122,122,122,1);
+        font-size: 15px;
+        font-weight: 600;
+        color:black
+    }
+    html > body {
+        height: inherit;
+    }
     </style>
-    <div ng-app="ExperimentCreationInterface" ng-controller="InterfaceController as IC">
+    <div id="container" ng-app="ExperimentCreationInterface" ng-controller="InterfaceController as IC">
         <div class="div-wrapper">
             <div class="text-center">
                 <div id="type-selection" class="btn-group" role="group">
@@ -71,7 +82,11 @@
                     <button ng-click="IC.addField()" class="btn btn-primary">+</button>
                 </div>
 
-                <button ng-click="IC.submit()" ng-disabled="!IC.checkInput()" type="button" class="btn btn-default" style="float:right">Submit</button>
+                <hr/>
+                <div>
+                    <a href="/overviewPage" class="btn btn-primary" style="float:left">Back to overview</a>
+                    <button ng-click="IC.submit()" ng-disabled="!IC.checkInput()" type="button" class="btn btn-success" style="float:right">Create experiment type</button>
+                </div>
             </div>
 
             <div  ng-if="IC.experimentType == 'IMPORT'">
@@ -80,7 +95,7 @@
                         <label for="newTypeName">Load ZIP:</label>
                         <input name="experimentData" id="fileInput" type="file" class="form-control" onchange="if ($(this).val() != ''){$('#importSubmitButton').removeAttr('disabled');} else {$('#importSubmitButton').attr('disabled','disabled');}">
                     </div>
-                    <button id="importSubmitButton" type="submit" class="btn btn-default" disabled="disabled" style="float:right">Import</button>
+                    <button id="importSubmitButton" type="submit" class="btn btn-success" disabled="disabled" style="float:right">Import</button>
                 </form>
             </div>
         </div>

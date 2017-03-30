@@ -39,8 +39,14 @@
                 </div>
 
                 <drag-and-drop
-                    ng-init="question.answers = {questionId: self.questions[i].id, connective1 : '', connective2: '', manualAnswer1: '', manualAnswer2: ''}"
-                    click="RC.nextQuestion" content="question" answer="question.answers" >
+                    click="RC.nextQuestion"
+                    context1="question.context1"
+                    sentence1="question.sentence1"
+                    sentence2="question.sentence2"
+                    context2="question.context2"
+                    connectives="because, as a result, as an illustration, more specifically, in addition, even though, nevertheless, by contrast"
+                    randomize-connectives="true"
+                    answer="question.answer" >
                 </drag-and-drop>
             </div>
         </div>

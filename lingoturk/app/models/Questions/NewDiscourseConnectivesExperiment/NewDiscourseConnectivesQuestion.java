@@ -151,13 +151,14 @@ public class NewDiscourseConnectivesQuestion extends PartQuestion {
     public void writeResults(JsonNode resultNode) throws SQLException {
         String workerId = resultNode.get("workerId").asText();
         int partId = resultNode.get("partId").asInt();
-        for(Iterator<JsonNode> answerIterater = resultNode.get("answers").iterator(); answerIterater.hasNext();){
-            JsonNode answer = answerIterater.next();
-            int questionId = answer.get("questionId").asInt();
-            String connective1 = answer.get("connective1").asText();
-            String connective2 = answer.get("connective2").asText();
-            String manualAnswer1 =  answer.get("manualAnswer1").asText();
-            String manualAnswer2 = answer.get("manualAnswer2").asText();
+        for(Iterator<JsonNode> answerIterater = resultNode.get("results").iterator(); answerIterater.hasNext();){
+            JsonNode result = answerIterater.next();
+            int questionId = result.get("id").asInt();
+			JsonNode answerNode = result.get("answer");
+            String connective1 = answerNode.get("connective1").asText();
+            String connective2 = answerNode.get("connective2").asText();
+            String manualAnswer1 =  answerNode.get("manualAnswer1").asText();
+            String manualAnswer2 = answerNode.get("manualAnswer2").asText();
 
             PreparedStatement statement = DatabaseController.getConnection().prepareStatement("INSERT INTO NewDiscourseConnectivesResults(id,workerId,partId,questionId,connective1,connective2,manualAnswer1,manualAnswer2) VALUES (nextval('NewDiscourseConnectivesResults_seq'), ?,?,?,?,?,?,?)");
             statement.setString(1,workerId);
@@ -169,9 +170,6 @@ public class NewDiscourseConnectivesQuestion extends PartQuestion {
             statement.setString(7,manualAnswer2);
 
             statement.execute();
-
-            System.out.println("executed");
-
             statement.close();
         }
     }

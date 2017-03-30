@@ -214,9 +214,8 @@
                 self.questionFieldNames = self.questionType.fields;
                 self.usedNames = [];
 
-                // Create Tabs
-                $("#tabs").tabs({
-                    //heightStyle: "content"
+                $(".btn-group > button").click(function () {
+                    $(this).addClass("active").siblings().removeClass("active");
                 });
 
                 $("#allquestions").accordion({

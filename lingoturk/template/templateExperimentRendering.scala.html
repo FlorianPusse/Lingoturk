@@ -55,11 +55,13 @@
                     @** <this message is shown if a user successfully finished a sublist> **@
                     <div class="panel panel-primary">
                         @** <the message's heading> **@
-                        <div class="panel-heading" style="font-weight: bolder ;">Attention:</div>
+                        <div class="panel-heading" style="font-weight: bolder ;" id="nextSubList_title">Attention:</div>
                         @** </the message's heading> **@
                         <div class="panel-body">
                             @** <the message content> **@
+                            <div id="nextSubList_message">
                             You've successfully completed a sublist. You may either stop here or continue with another one.
+                            </div>
                             @** </the message content. please don't edit the buttons below (except their label)> **@
                             <hr/>
                             <button ng-click="RC.processFinish()" style="float:right; margin-left: 10px;" class="btn btn-default" type="button">Stop here</button>
@@ -75,9 +77,11 @@
             <div style="display: table-cell ; height: 100% ; vertical-align: middle ;">
                 <div style="width:90%; margin:auto">
                     <div class="panel panel-primary">
-                        <div class="panel-heading" style="font-weight: bolder ;">Attention:</div>
+                        <div id="goodBye_title" class="panel-heading" style="font-weight: bolder ;">Attention:</div>
                         <div class="panel-body">
-                            You've successfully completed the experiment. Thank you for your participation. To hand in your submission, click on the "Submit"-button below.
+                            <div id="goodBye_message">
+                                You've successfully completed the experiment. Thank you for your participation. To hand in your submission, click on the "Submit"-button below.
+                            </div>
                             <hr/>
                             <button ng-click="RC.finished()" style="float:right" class="btn btn-default" type="button">Submit</button>
                         </div>

@@ -11,11 +11,33 @@
     th {
         text-align:center
     }
+    #title{
+        font-size: 16px;
+    }
+    #tabs{
+        background-color: rgba(74, 74, 74, 0.6);
+        color: black;
+        font-size:15px;
+        padding: 10px;
+        border-radius: 6px 6px 6px 6px;
+        -moz-border-radius: 6px 6px 6px 6px;
+        -webkit-border-radius: 6px 6px 6px 6px;
+        border: 2px solid #353535;
+    }
+    ol{
+        list-style-type:none
+    }
+    li{
+        display: inline;
+    }
+        #allquestions{
+            font-size:14px;
+        }
     </style>
 
     @** used as anchor for angular.js **@
     <div id="angularApp" ng-app="CreateExperiment" ng-controller="CreationController as cc">
-        <p> Create new <strong>@experimentName</strong> experiment: </p>
+        <p id="title"> Create new <strong>@experimentName</strong> experiment: </p>
 
         <input type="hidden" id="experimentName" value="@experimentName">
 
@@ -27,11 +49,15 @@
 
             ********@
 
-            <ol>
-                <li><a href="#fragment-1">Main</a></li>
-                <li><a href="#fragment-2">Instructions</a></li>
-                <li><a href="#fragment-3">Experimental materials</a></li>
-            </ol>
+            <div style="text-align: center;margin-top:20px">
+                <div class="btn-group">
+                    <button onclick="$('.box').hide();$('#fragment-1').show()" class="btn btn-default active" href="#fragment-1">Main</button>
+                    <button onclick="$('.box').hide();$('#fragment-2').show()" class="btn btn-default" href="#fragment-2">Instructions</button>
+                    <button onclick="$('.box').hide();$('#fragment-3').show()" class="btn btn-default" href="#fragment-3">Experimental materials</button>
+                </div>
+            </div>
+
+            <hr/>
 
             @********
 
@@ -39,7 +65,7 @@
 
             ********@
 
-            <div id="fragment-1">
+            <div id="fragment-1" class="box">
                 <div class="form-group">
                     <label for="name">Name</label>
                     <input ng-model="cc.name" type="text" class="form-control" id="name" placeholder="Experiment Name">
@@ -57,7 +83,7 @@
 
             ********@
 
-            <div id="fragment-2">
+            <div id="fragment-2" class="box" style="display:none">
                 <div class="form-group">
                     <textarea ng-model="cc.additionalExplanations" rows="4" cols="50" class="form-control" name="additionalExplanations" placeholder="Enter the instructions here"></textarea>
                 </div>
@@ -69,7 +95,7 @@
 
             ********@
 
-            <div id="fragment-3">
+            <div id="fragment-3" class="box" style="display:none">
 
                 @********
 
@@ -130,7 +156,7 @@
             </div>
         </div>
         <div>
-            <button type="submit" ng-disabled="!(cc.groups.length > 0 && cc.name != '')" ng-click="cc.submit()" class="btn btn-primary" style="float : right ; margin-bottom : 100px">Save in Database</button>
+            <button type="submit" ng-disabled="!(cc.groups.length > 0 && cc.name != '')" ng-click="cc.submit()" class="btn btn-success" style="float : right ; margin-bottom : 100px">Save in Database</button>
         </div>
     </div>
 }

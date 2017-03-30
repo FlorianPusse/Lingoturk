@@ -161,6 +161,8 @@
                 scope.noneOfThese = false;
                 scope.suitableCategory = "";
 
+                scope.answer = {};
+
                 for(var attribute in attrs){
                     if (attrs.hasOwnProperty(attribute) && attribute.startsWith('category')){
                         var attributeName = attribute.replace('category','');
@@ -429,10 +431,35 @@
             scope: {
                 content: '=',
                 answer: '=',
-                click: '='
+                click: '=',
+                connectives : '@',
+                context1 : '=?',
+                context2 : '=?',
+                sentence1 : '=',
+                sentence2 : '=',
+                randomizeConnectives : '=?',
+                instructions1 : '@?',
+                instructions2 : '@?',
+                boxTitle : '@?'
             },
             link: function (scope, element, attrs) {
-                scope.connectives = ["because", "as a result", "as an illustration", "more specifically", "in addition", "even though", "nevertheless", "by contrast"];
+                var tmp = scope.connectives.split(",");
+                if(scope.hasOwnProperty('randomizeConnectives') && scope.randomizeConnectives == true){
+                    shuffleArray(tmp);
+                }
+                if(!scope.hasOwnProperty('instructions1')){
+                    scope.instructions1 = "Please drag the best-suited connective into the green target box below.";
+                }
+                if(!scope.hasOwnProperty('instructions2')){
+                    scope.instructions2 = "You can now drag one more connective into the box below.";
+                }
+                if(!scope.hasOwnProperty('boxTitle')){
+                    scope.boxTitle = "Candidate connectives";
+                }
+
+                scope.answer = {};
+
+                scope.processedConnectives = $.map(tmp, $.trim);
                 scope.chosenConnectives = [];
                 scope.suitableCategories = [];
                 scope.manualAnswer = "";
