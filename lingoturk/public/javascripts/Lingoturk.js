@@ -95,14 +95,12 @@
         };
     });
 
-    app.directive("textAnswerPanel", function () {
+    app.directive("textAnswer", function () {
         return {
             restrict: 'E',
             templateUrl: '/assets/templates/textAnswerPanel.html',
             scope: {
-                content: '=',
                 answer: '=',
-                click: '=',
                 restrictAnswer: '@?'
             },
             link: function (scope, element, attrs) {
@@ -113,14 +111,50 @@
         };
     });
 
-    app.directive("starAnswerPanel", function () {
+    app.directive("radioAnswer", function () {
+        return {
+            restrict: 'E',
+            templateUrl: '/assets/templates/radioAnswerPanel.html',
+            scope: {
+                answer: '=',
+                options : '=',
+                inline: '=?'
+            },
+            link: function (scope, element, attrs) {
+                scope.setAnswer = function(a){
+                    scope.answer = a;
+                }
+            }
+        };
+    });
+
+    app.directive("checkboxAnswer", function () {
+        return {
+            restrict: 'E',
+            templateUrl: '/assets/templates/checkboxAnswerPanel.html',
+            scope: {
+                answer: '=',
+                options : '='
+            },
+            link: function (scope, element, attrs) {
+                scope.answer = {};
+                for(var i = 0; i < scope.options.length; ++i){
+                    scope.answer[scope.options[i]] = false;
+                }
+
+                scope.setAnswer = function(a){
+                    scope.answer = a;
+                }
+            }
+        };
+    });
+
+    app.directive("starAnswer", function () {
         return {
             restrict: 'E',
             templateUrl: '/assets/templates/starAnswerPanel.html',
             scope: {
-                content: '=',
                 answer: '=',
-                click: '=',
                 maxStars: '=?'
             },
             link: function (scope, element, attrs) {
@@ -142,6 +176,42 @@
             }
         };
     });
+
+    app.directive("sliderAnswer", function () {
+        return {
+            restrict: 'E',
+            templateUrl: '/assets/templates/sliderAnswerPanel.html',
+            scope: {
+                answer: '='
+            },
+            link: function (scope, element, attrs) {
+                scope.activated = false;
+
+                var elem = $(element[0]).find(".slider");
+                elem.slider({
+                        min: 0,
+                        max: 100,
+                        change: function (event, ui) {
+                            scope.$apply(scope.answer = ui.value);
+                            scope.$apply(scope.activated = true);
+                            elem.find(".ui-slider-handle").show();
+                        }
+                    })
+                    .each(function () {
+                        /* http://stackoverflow.com/questions/10224856/jquery-ui-slider-labels-under-slider */
+                        var opt = elem.slider("option");
+                        var vals = opt.max - opt.min;
+
+                        for (var i = 0; i <= vals; i += 10) {
+                            var el = $('<label style="position: absolute; width: 20px; margin-top: 20px; margin-left: -10px;text-align: center;">' + (i + opt.min) + '%</label>').css('left', (i / vals * 100) + '%');
+                            elem.append(el);
+                        }
+                    });
+                elem.find(".ui-slider-handle").hide();
+            }
+        };
+    });
+
 
     app.directive("dragAndDropMultipleDecisions", ['$timeout', function ($timeout) {
         return {
@@ -671,46 +741,6 @@
             }
         };
     }]);
-
-    app.directive("sliderAnswerPanel", function () {
-        return {
-            restrict: 'E',
-            templateUrl: '/assets/templates/sliderAnswerPanel.html',
-            scope: {
-                content: '=',
-                answer: '=',
-                click: '='
-            },
-            link: function (scope, element, attrs) {
-                scope.activated = false;
-
-                var elem = $(element[0]).find(".slider");
-                elem.slider({
-                        min: 0,
-                        max: 100,
-                        change: function (event, ui) {
-                            scope.$apply(scope.answer = ui.value);
-                            scope.$apply(scope.activated = true);
-                            elem.find(".ui-slider-handle").show();
-                        }
-                    })
-                    .each(function () {
-                        /* http://stackoverflow.com/questions/10224856/jquery-ui-slider-labels-under-slider */
-                        var opt = elem.slider("option");
-                        var vals = opt.max - opt.min;
-
-                        for (var i = 0; i <= vals; i += 10) {
-                            var el = $('<label style="position: absolute; width: 20px; margin-top: 20px; margin-left: -10px;text-align: center;">' + (i + opt.min) + '%</label>').css('left', (i / vals * 100) + '%');
-                            elem.append(el);
-                        }
-                    });
-                if (scope.content.hideHandle) {
-                    elem.find(".ui-slider-handle").hide();
-                }
-            }
-        };
-    });
-
 
     app.directive("fileInput", function () {
         return {

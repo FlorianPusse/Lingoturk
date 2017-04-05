@@ -1,0 +1,8 @@
+<div>
+    <div class="checkbox" ng-repeat="opt in options track by $index">
+        <label>
+            <input type="checkbox" ng-model="answer[opt]" ng-true-value="true" ng-false-value="false" name="checkbox-answer-input">
+            {{opt}}
+        </label>
+    </div>
+</div>

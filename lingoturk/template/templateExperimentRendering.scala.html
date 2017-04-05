@@ -7,7 +7,7 @@
             <div ng-if="RC.state == 'instructionsSlide'" class="panel panel-primary" style="width:90%; margin:auto">
                 <div class="panel-heading" style="font-weight: bolder ;">Instructions</div>
                 <div class="panel-body">
-                    @exp.getAdditionalExplanations()
+                    @Html(exp.getAdditionalExplanations())
                     <button ng-click="RC.next()" type="button" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
                 </div>
             </div>
@@ -24,11 +24,11 @@
                 <statistics-slide statistics="RC.statistics" click="RC.next"></statistics-slide>
             </div>
 
-            <div ng-if="RC.state == 'questionSlide' && RC.questionIndex == $index" ng-repeat="question in RC.questions" style="width:90%; margin:auto">
-                @** <this part can also be replaced by a template or your own ideas> **@
-                <div class="panel panel-primary">
-                    <div class="panel-heading" style="font-weight: bolder ;">INSTRUCTIONS HERE</div>
-                    <div class="panel-body">
+            <div id="experiment_content" ng-if="RC.state == 'questionSlide' && RC.questionIndex == $index" ng-repeat="question in RC.questions" style="width:90%; margin:auto">
+                @** the main content of the experiment goes here **@
+                <div id="experiment_panel_1" class="panel panel-primary">
+                    <div id="experiment_heading_1" class="panel-heading" style="font-weight: bolder ;">INSTRUCTIONS HERE</div>
+                    <div id="experiment_body_1" class="panel-body">
                         @**
                         Question's content goes here
                         **@
@@ -45,7 +45,7 @@
                         **@
                     </div>
                 </div>
-                @** </this part can also be replaced by a template or your own ideas> **@
+                @** /the main content of the experiment goes here **@
             </div>
         </div>
 

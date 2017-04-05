@@ -1,0 +1,12 @@
+<div>
+    <div ng-if="!inline" class="radio" ng-repeat="opt in options track by $index">
+        <label>
+            <input type="radio" ng-click="setAnswer(opt)" name="radio-answer-input">
+            {{opt}}
+        </label>
+    </div>
+    <label ng-if="inline" class="radio-inline" ng-repeat="opt in options track by $index">
+        <input type="radio" ng-click="setAnswer(opt)" name="radio-answer-input">
+        {{opt}}
+    </label>
+</div>

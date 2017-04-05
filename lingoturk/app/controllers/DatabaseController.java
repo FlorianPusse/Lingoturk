@@ -10,10 +10,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.*;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import static java.nio.file.StandardCopyOption.*;
 
 public class DatabaseController extends Controller {
 
@@ -23,7 +26,7 @@ public class DatabaseController extends Controller {
 
     public static Connection getConnection() {
         try {
-            if (connection.isClosed()) {
+            if (connection == null || connection.isClosed()) {
                 connection = DB.getConnection();
             }
         } catch (SQLException e) {
@@ -164,16 +167,72 @@ public class DatabaseController extends Controller {
 
     public static Result backupDatabase() {
         Connection c = DatabaseController.getConnection();
+        return backupDatabase(c);
+    }
+
+    public static String[] getCurrentEvolutionHashes(Connection c) throws SQLException {
+        String[] result = new String[2];
+
+        Statement statement = c.createStatement();
+        ResultSet rs = statement.executeQuery("SELECT * FROM play_evolutions ORDER BY id ASC");
+        if (rs.next()) {
+            result[0] = rs.getString("hash");
+        } else {
+            return null;
+        }
+        if (rs.next()) {
+            result[1] = rs.getString("hash");
+        } else {
+            return null;
+        }
+        return result;
+    }
+
+    private static boolean evolutionInProgress(Connection c) {
+        if (!Application.properties.containsKey("evolutions_hash1") || !Application.properties.containsKey("evolutions_hash2")) {
+            return true;
+        }
+
+        try {
+            String[] hashes = getCurrentEvolutionHashes(c);
+            if (hashes == null) {
+                return true;
+            }
+
+            return !Application.properties.getProperty("evolutions_hash1").equals(hashes[0]) || !Application.properties.getProperty("evolutions_hash2").equals(hashes[1]);
+
+        } catch (SQLException e) {
+            return true;
+        }
+    }
+
+    public static Result backupDatabase(Connection c) {
+        Statement tableDataStatement;
+        ResultSet tableDataResult;
+        try {
+            tableDataStatement = c.createStatement();
+            tableDataResult = tableDataStatement.executeQuery("SELECT count(*) FROM LingoExpModels");
+            if (!tableDataResult.next() || tableDataResult.getInt(1) == 0) {
+                return ok("No entries yet. Nothing to back up");
+            }
+            tableDataResult.close();
+            tableDataStatement.close();
+        } catch (SQLException e) {
+            return ok("Tables do not exist yet. Nothing to do here.");
+        }
+        if (evolutionInProgress(c)) {
+            return ok("Don't back up. Evolution in progress.");
+        }
 
         try {
             File f = new File("backup/");
-            if(!f.exists()){
-                if(!f.mkdir()){
+            if (!f.exists()) {
+                if (!f.mkdir()) {
                     return internalServerError("Could not create directory 'backup/'");
                 }
             }
 
-            File backupFile = new File("backup/backup.sql");
+            File backupFile = new File("backup/backup.sql_tmp");
             BufferedWriter writer = new BufferedWriter(new FileWriter(backupFile));
 
             // Retrieve all tables
@@ -182,8 +241,12 @@ public class DatabaseController extends Controller {
                 // Ignore "play_evolutions"
                 if (!tableName.toLowerCase().equals("play_evolutions")) {
                     // retrieve table data
-                    Statement tableDataStatement = c.createStatement();
-                    ResultSet tableDataResult = tableDataStatement.executeQuery("SELECT * FROM " + tableName);
+                    tableDataStatement = c.createStatement();
+                    try {
+                        tableDataResult = tableDataStatement.executeQuery("SELECT * FROM " + tableName);
+                    } catch (SQLException e) {
+                        continue;
+                    }
 
                     // retrieve column names for this table
                     ResultSetMetaData tableMetaData = tableDataResult.getMetaData();
@@ -206,7 +269,7 @@ public class DatabaseController extends Controller {
                                     || tableDataResult.getString(i) == null) {
                                 row[i - 1] = tableDataResult.getString(i);
                             } else {
-                                row[i - 1] = "E\'" + tableDataResult.getString(i).replace("'", "''").replace("\\","\\\\").replaceAll("(\r\n|\n)", "\\\\n") + '\'';
+                                row[i - 1] = "E\'" + tableDataResult.getString(i).replace("'", "''").replace("\\", "\\\\").replaceAll("(\r\n|\n)", "\\\\n") + '\'';
                             }
                         }
                         writer.write("INSERT INTO " + tableName + " (" + String.join(", ", columnNames) + ") VALUES (" + String.join(", ", row) + ");\n");
@@ -232,6 +295,11 @@ public class DatabaseController extends Controller {
             }
             s.close();
             writer.close();
+
+            File backupFile_renamed = new File("backup/backup.sql");
+            Files.move(backupFile.toPath(), backupFile_renamed.toPath(), REPLACE_EXISTING);
+
+            System.out.println("[info] play - Backup successfully created.");
         } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
@@ -259,7 +327,7 @@ public class DatabaseController extends Controller {
             ++i;
         }
 
-        if(endBeforeStatements == -1){
+        if (endBeforeStatements == -1) {
             return;
         }
 
@@ -313,10 +381,10 @@ public class DatabaseController extends Controller {
         }
 
         // Execute part before question insert  s
-        for(String query : Arrays.copyOfRange(queries, 0, endBeforeStatements)){
-            try{
+        for (String query : Arrays.copyOfRange(queries, 0, endBeforeStatements)) {
+            try {
                 s.execute(query);
-            }catch (SQLException sqle){
+            } catch (SQLException sqle) {
                 System.out.println("[info] play - Couldn't execute action: \"" + sqle.getMessage() + "\" If you deleted an experiment type, this is completely normal.");
             }
         }
@@ -325,18 +393,18 @@ public class DatabaseController extends Controller {
         s.execute(constructedQuery);
 
         // Execute part after question inserts
-        for(String query : Arrays.copyOfRange(queries, startAfterStatements, queries.length)){
-            try{
+        for (String query : Arrays.copyOfRange(queries, startAfterStatements, queries.length)) {
+            try {
                 s.execute(query);
-            }catch (SQLException sqle){
+            } catch (SQLException sqle) {
                 System.out.println("[info] play - Couldn't execute action: \"" + sqle.getMessage() + "\" If you deleted an experiment type, this is completely normal.");
             }
         }
 
         // Delete experiments that became useless after deleting experiment types
         List<String> availableExperimentTypes = ManageExperiments.getExperimentNames();
-        for(LingoExpModel exp : LingoExpModel.getAllExperiments()){
-            if(!availableExperimentTypes.contains(exp.getExperimentType())){
+        for (LingoExpModel exp : LingoExpModel.getAllExperiments()) {
+            if (!availableExperimentTypes.contains(exp.getExperimentType())) {
                 System.out.println("[info] play - Delete experiment \"" + exp.getName() + "\" because type \"" + exp.getExperimentType() + "\" got deleted.");
                 // We can't use exp.delete() here, because the experiment type doesn't exist anymore.
                 // We have to delete all that stuff individually
