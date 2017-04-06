@@ -104,8 +104,19 @@
                 restrictAnswer: '@?'
             },
             link: function (scope, element, attrs) {
+                scope.answer_tmp = "";
+
                 $(element).find("input").on("input", function () {
-                    scope.matches = new RegExp(attrs.restrictAnswer).test(scope.answer);
+                    if(scope.hasOwnProperty('restrictAnswer')){
+                        scope.matches = new RegExp(attrs.restrictAnswer).test(scope.answer_tmp);
+                        if(scope.matches){
+                            scope.$apply(scope.answer = scope.answer_tmp);
+                        }else{
+                            scope.$apply(scope.answer = '');
+                        }
+                    }else{
+                        scope.answer = scope.answer_tmp;
+                    }
                 })
             }
         };
