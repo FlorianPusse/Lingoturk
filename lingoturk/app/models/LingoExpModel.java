@@ -261,10 +261,13 @@ public class LingoExpModel extends Model {
     public static int countExperiments() throws SQLException {
         Statement s = DatabaseController.getConnection().createStatement();
         ResultSet resultSet = s.executeQuery("SELECT count(*) FROM LingoExpModels");
+        int result = -1;
         if (resultSet.next()) {
-            return resultSet.getInt(1);
+            result =  resultSet.getInt(1);
         }
-        return -1;
+        resultSet.close();
+        s.close();
+        return result;
     }
 
     public int getMinParticipants(){

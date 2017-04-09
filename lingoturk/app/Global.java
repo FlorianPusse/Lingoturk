@@ -5,6 +5,8 @@ import controllers.AsynchronousJob;
 import controllers.DatabaseController;
 import models.LingoExpModel;
 import org.apache.commons.io.FileUtils;
+import org.h2.engine.Database;
+import org.h2.store.Data;
 import play.Configuration;
 import play.GlobalSettings;
 import play.api.db.DB;
@@ -40,28 +42,6 @@ public class Global extends GlobalSettings {
         } catch (IOException e) {
             System.out.println("[info] play - Couldn't load properties: " + e.getMessage());
         }
-
-        Configuration config = app.configuration();
-        String dbConfigLine = config.getString("db.default.url");
-        dbConfigLine = dbConfigLine.replace("postgres://","")
-                .replace("?characterEncoding=utf8","");
-        String name = dbConfigLine.substring(0,dbConfigLine.indexOf(':'));
-        String password = dbConfigLine.substring(dbConfigLine.indexOf(':') + 1,dbConfigLine.indexOf('@'));
-        String dbUrl = dbConfigLine.substring(dbConfigLine.indexOf('@') + 1,dbConfigLine.indexOf('/'));
-        String database = dbConfigLine.substring(dbConfigLine.indexOf('/') + 1,dbConfigLine.length());
-
-        String url = "jdbc:postgresql://" + dbUrl
-                + '/' + database
-                + "?user=" + name
-                + "&password=" +  password;
-        Connection connection;
-        try {
-            connection = DriverManager.getConnection(url);
-            DatabaseController.backupDatabase(connection);
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
 
@@ -88,7 +68,7 @@ public class Global extends GlobalSettings {
                     String[] hashes = DatabaseController.getCurrentEvolutionHashes(DatabaseController.getConnection());
                     String storedHash1 = Application.properties.getProperty("evolutions_hash1");
                     String storedHash2 = Application.properties.getProperty("evolutions_hash2");
-                    if(hashes != null && (!storedHash1.equals(hashes[0]) || !storedHash2.equals(hashes[1]))) {
+                    if(hashes != null && (!hashes[0].equals(storedHash1) || !hashes[1].equals(storedHash2))) {
                         Application.properties.setProperty("evolutions_hash1", hashes[0]);
                         Application.properties.setProperty("evolutions_hash2", hashes[1]);
                         Application.properties.store(new FileWriter(Application.propertiesLocation),null);
@@ -124,5 +104,6 @@ public class Global extends GlobalSettings {
             e.printStackTrace();
             System.out.println("[error] play - Application shutdown... Could not create Database backup.");
         }
+        DatabaseController.closeConnection();
     }
 }

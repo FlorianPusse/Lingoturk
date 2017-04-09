@@ -31,6 +31,7 @@ public class AsynchronousJob extends UntypedActor {
                 ps.setInt(3, availability);
                 ps.setInt(4, partId);
                 ps.execute();
+                ps.close();
             }
         }
     }
@@ -77,6 +78,7 @@ public class AsynchronousJob extends UntypedActor {
                 }
             }
         }
+        rs.close();
 
         // Free space if part hasn't been touched lately
         rs = s.executeQuery("SELECT * FROM (SELECT partId, max(timestamp) as maxTime FROM Workers_participateIn_Parts GROUP BY (partId)) as tmp JOIN LingoExpModels_contain_Parts USING (PartId) JOIN Groups USING (PartId)");
@@ -92,6 +94,7 @@ public class AsynchronousJob extends UntypedActor {
                 }
             }
         }
+        rs.close();
 
         // Also check parts that aren't in the list at all (possibly because all entries have been deleted)
         rs = s.executeQuery("SELECT PartId FROM Groups WHERE partId NOT IN (SELECT DISTINCT partId FROM Workers_participateIn_Parts WHERE partId IS NOT NULL)");
@@ -111,6 +114,8 @@ public class AsynchronousJob extends UntypedActor {
                 }
             }
         }
+        rs.close();
 
+        s.close();
     }
 }

@@ -5,39 +5,45 @@
     <input type="hidden" id="experimentName" value="@experimentName">
 
     <div id="angularApp" ng-app="CreateExperiment" ng-controller="CreationController as cc">
-        <p>Change <strong>@experimentName</strong> Experiment fields:</p>
 
+        @**
         <div class="text-center">
             <ul class="nav nav-pills" style="display:inline-block">
                 <li ng-repeat="(className,class) in cc.types track by $index" role="presentation" ng-class="{active : $index == 0}"><a data-toggle="tab" ng-click="cc.activeClass = className" href="#">{{className}}</a></li>
                 <li role="presentation"><a href="#" ng-click="cc.addClass()">add class</a></li>
             </ul>
         </div>
+        **@
 
-        <div ng-if="cc.activeClass == className" ng-repeat="(className,class) in cc.types" class="panel panel-primary" style="width:90% ; margin:auto">
-            <div class="panel-heading" style="font-weight: bolder ;">
-                {{className}}
-            </div>
-            <div class="panel-body">
-                <div ng-repeat="field in class.fields" class="form-group">
-                    <div style="float:left; width: 8%">
-                        <button ng-click="cc.removeField(class,field)" style="margin-top: 25%;" class="btn btn-default">-</button>
-                    </div>
-                    <div style="float:right; width: 92%">
-                        <label for="{{field + $index}}"><input placeholder="field {{$index}} name" style="font-weight: bold;" type="text" class="form-control" ng-model="field.name"></label>
-                        <input id="{{field + $index}}" style="width:90%" ng-model="field.type" type="text" class="form-control">
-                    </div>
-                    <div style="clear:both"></div>
+        <div style="width:90% ; margin:auto">
+            <p style="font-size:16px;font-weight: 600;">You can endit the experiment fields of the <strong>@experimentName</strong> here.</p>
+
+            <div ng-if="cc.activeClass == className" ng-repeat="(className,class) in cc.types" class="panel panel-primary">
+                <div class="panel-heading" style="font-weight: bolder ;">
+                    {{className}}
                 </div>
+                <div class="panel-body">
+                    <div ng-repeat="field in class.fields" class="form-group">
+                        <div style="float:left; width: 8%">
+                            <button ng-click="cc.removeField(class,field)" style="margin-top: 25%;" class="btn btn-default">-</button>
+                        </div>
+                        <div style="float:right; width: 92%">
+                            <label for="{{field + $index}}"><input placeholder="field {{$index}} name" style="font-weight: bold;" type="text" class="form-control" ng-model="field.name"></label>
+                            <input id="{{field + $index}}" style="width:90%" ng-model="field.type" type="text" class="form-control">
+                        </div>
+                        <div style="clear:both"></div>
+                    </div>
 
-                <div style="text-align:center">
-                    <button ng-click="cc.addField(class)" class="btn btn-primary">+</button>
+                    <div style="text-align:center">
+                        <button ng-click="cc.addField(class)" class="btn btn-primary">+</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div style="margin-bottom: 100px;">
-            <button class="btn btn-default" ng-click="cc.submit()" style="float:right">Submit</button>
+            <div style="margin-bottom: 100px;">
+                <a class="btn btn-primary" href="/" style="float:left">I don't want to edit anything.</a>
+                <button class="btn btn-success" ng-click="cc.submit()" style="float:right">Submit</button>
+            </div>
         </div>
     </div>
 }

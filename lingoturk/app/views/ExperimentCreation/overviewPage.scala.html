@@ -53,8 +53,8 @@
                             data : stringData,
                             contentType: "application/json"
                         }).done(function() {
-                            bootbox.alert("Experiment type created. You will be redirected to the index page!", function() {
-                                window.location.href = "/";
+                            bootbox.alert("Experiment type created. You will now be able to edit the fields associated to items!", function() {
+                                window.location.href = "/changeExperimentFields?experimentName=" + result;
                             });
                         }).fail(function(data) {
                             bootbox.alert("Could not create experiment: " + data.responseText);

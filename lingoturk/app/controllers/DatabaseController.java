@@ -2,6 +2,9 @@ package controllers;
 
 import models.Groups.AbstractGroup;
 import models.LingoExpModel;
+import org.apache.commons.dbcp.DriverManagerConnectionFactory;
+import play.Configuration;
+import play.Play;
 import play.db.DB;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -24,10 +27,40 @@ public class DatabaseController extends Controller {
 
     private static Connection connection = DB.getConnection();
 
+    public static void closeConnection(){
+        if(connection != null){
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                try {
+                    connection.close();
+                } catch (SQLException e1) {}
+            }
+        }
+    }
+
     public static Connection getConnection() {
         try {
-            if (connection == null || connection.isClosed()) {
-                connection = DB.getConnection();
+            if(connection == null){
+                Configuration config = Play.application().configuration();
+                String dbConfigLine = config.getString("db.default.url");
+                dbConfigLine = dbConfigLine.replace("postgres://","")
+                        .replace("?characterEncoding=utf8","");
+                String name = dbConfigLine.substring(0,dbConfigLine.indexOf(':'));
+                String password = dbConfigLine.substring(dbConfigLine.indexOf(':') + 1,dbConfigLine.indexOf('@'));
+                String dbUrl = dbConfigLine.substring(dbConfigLine.indexOf('@') + 1,dbConfigLine.indexOf('/'));
+                String database = dbConfigLine.substring(dbConfigLine.indexOf('/') + 1,dbConfigLine.length());
+
+                String url = "jdbc:postgresql://" + dbUrl
+                        + '/' + database
+                        + "?user=" + name
+                        + "&password=" +  password;
+                return DriverManager.getConnection(url);
+            }else{
+                if(connection.isClosed()){
+                    connection = DB.getConnection();
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -185,6 +218,9 @@ public class DatabaseController extends Controller {
         } else {
             return null;
         }
+        rs.close();
+        statement.close();
+
         return result;
     }
 
@@ -195,11 +231,7 @@ public class DatabaseController extends Controller {
 
         try {
             String[] hashes = getCurrentEvolutionHashes(c);
-            if (hashes == null) {
-                return true;
-            }
-
-            return !Application.properties.getProperty("evolutions_hash1").equals(hashes[0]) || !Application.properties.getProperty("evolutions_hash2").equals(hashes[1]);
+            return hashes == null || !Application.properties.getProperty("evolutions_hash1").equals(hashes[0]) || !Application.properties.getProperty("evolutions_hash2").equals(hashes[1]);
 
         } catch (SQLException e) {
             return true;
@@ -207,18 +239,32 @@ public class DatabaseController extends Controller {
     }
 
     public static Result backupDatabase(Connection c) {
-        Statement tableDataStatement;
-        ResultSet tableDataResult;
+        Statement tableDataStatement = null;
+        ResultSet tableDataResult = null;
         try {
             tableDataStatement = c.createStatement();
             tableDataResult = tableDataStatement.executeQuery("SELECT count(*) FROM LingoExpModels");
             if (!tableDataResult.next() || tableDataResult.getInt(1) == 0) {
+                tableDataResult.close();
+                tableDataStatement.close();
                 return ok("No entries yet. Nothing to back up");
             }
             tableDataResult.close();
             tableDataStatement.close();
         } catch (SQLException e) {
+            e.printStackTrace();
             return ok("Tables do not exist yet. Nothing to do here.");
+        }finally {
+            if(tableDataResult != null) try {
+                tableDataResult.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            if(tableDataStatement != null) try {
+                tableDataStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         if (evolutionInProgress(c)) {
             return ok("Don't back up. Evolution in progress.");
@@ -275,6 +321,7 @@ public class DatabaseController extends Controller {
                         writer.write("INSERT INTO " + tableName + " (" + String.join(", ", columnNames) + ") VALUES (" + String.join(", ", row) + ");\n");
                     }
 
+                    tableDataResult.close();
                     tableDataStatement.close();
                 }
             }
@@ -291,8 +338,10 @@ public class DatabaseController extends Controller {
                     int sequenceValue = sequenceValueResult.getInt(1);
                     writer.write("SELECT pg_catalog.setval('" + sequenceName + "', " + sequenceValue + ", true);\n");
                 }
+                sequenceValueResult.close();
                 sequenceStatement.close();
             }
+            sequenceResult.close();
             s.close();
             writer.close();
 
@@ -302,6 +351,12 @@ public class DatabaseController extends Controller {
             System.out.println("[info] play - Backup successfully created.");
         } catch (SQLException | IOException e) {
             e.printStackTrace();
+        }finally{
+            if(tableDataStatement != null) try {
+                tableDataStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         return ok();
@@ -414,10 +469,11 @@ public class DatabaseController extends Controller {
                 }
                 deleteStatement.execute("DELETE FROM Questions WHERE dtype LIKE '" + exp.getExperimentType() + ".%'");
                 deleteStatement.execute("DELETE FROM LingoExpModels WHERE LingoExpModelId = " + exp.getId());
-
                 deleteStatement.close();
             }
         }
+
+        s.close();
     }
 
 }

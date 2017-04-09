@@ -23,6 +23,9 @@
                     }
                     return false;
                 };
+                function randomElement (array) {
+                    return array[Math.floor(Math.random() * array.length)]
+                }
                 /*
                  *	Taken from: http://stackoverflow.com/questions/20789373/shuffle-array-in-ng-repeat-angular
                  *	-> Fisher Yates shuffle algorithm

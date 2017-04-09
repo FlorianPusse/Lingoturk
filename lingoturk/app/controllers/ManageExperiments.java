@@ -285,6 +285,10 @@ public class ManageExperiments extends Controller {
                 setJsonFunction += "\t\tif (" + field[0] + "Node != null){\n";
                 setJsonFunction += "\t\t\tthis." + experimentName + "_" + field[0] + " = " + field[0] + "Node.asBoolean();\n";
                 setJsonFunction += "\t\t}\n\n";
+            } else if (fieldType.equals("java.util.Date") || fieldType.equals("Date")){
+                createdFields += "\t@Basic\n";
+                createdFields += "\t@Column(name = \"" + experimentName + "_" + field[0] + "\", columnDefinition = \"timestamp default now()\")\n";
+                createdFields += "\tpublic" + fieldType + " " + experimentName + "_" + field[0];
             } else if (fieldType.startsWith("java.util.List")) {
                 createdFields += "\t@OneToMany(cascade = CascadeType.ALL)\n";
                 createdFields += "\tpublic " + field[1] + " " + experimentName + "_" + field[0] + " = new LinkedList<>();\n\n";
