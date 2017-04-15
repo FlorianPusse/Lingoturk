@@ -1,8 +1,14 @@
 <div>
     <div class="checkbox" ng-repeat="opt in options track by $index">
         <label>
-            <input type="checkbox" ng-model="answer[opt]" ng-true-value="true" ng-false-value="false" name="checkbox-answer-input">
+            <input ng-disabled="answer['none']" type="checkbox" ng-model="answer[opt]" ng-true-value="true" ng-false-value="false" name="checkbox-answer-input">
             {{opt}}
+        </label>
+    </div>
+    <div ng-if="addNone" class="checkbox" style="margin-top:20px">
+        <label>
+            <input type="checkbox" ng-model="answer['none']" ng-true-value="true" ng-false-value="false" name="checkbox-answer-input">
+            none of these
         </label>
     </div>
 </div>

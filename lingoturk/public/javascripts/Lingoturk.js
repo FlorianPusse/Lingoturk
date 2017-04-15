@@ -107,14 +107,14 @@
                 scope.answer_tmp = "";
 
                 $(element).find("input").on("input", function () {
-                    if(scope.hasOwnProperty('restrictAnswer')){
+                    if (scope.hasOwnProperty('restrictAnswer')) {
                         scope.matches = new RegExp(attrs.restrictAnswer).test(scope.answer_tmp);
-                        if(scope.matches){
+                        if (scope.matches) {
                             scope.$apply(scope.answer = scope.answer_tmp);
-                        }else{
+                        } else {
                             scope.$apply(scope.answer = '');
                         }
-                    }else{
+                    } else {
                         scope.answer = scope.answer_tmp;
                     }
                 })
@@ -128,11 +128,11 @@
             templateUrl: '/assets/templates/radioAnswerPanel.html',
             scope: {
                 answer: '=',
-                options : '=',
+                options: '=',
                 inline: '=?'
             },
             link: function (scope, element, attrs) {
-                scope.setAnswer = function(a){
+                scope.setAnswer = function (a) {
                     scope.answer = a;
                 }
             }
@@ -145,15 +145,19 @@
             templateUrl: '/assets/templates/checkboxAnswerPanel.html',
             scope: {
                 answer: '=',
-                options : '='
+                options: '=',
+                addNone: '@?'
             },
             link: function (scope, element, attrs) {
                 scope.answer = {};
-                for(var i = 0; i < scope.options.length; ++i){
+                scope.addNone = scope.hasOwnProperty("addNone") && scope.addNone == "true";
+                for (var i = 0; i < scope.options.length; ++i) {
                     scope.answer[scope.options[i]] = false;
                 }
-
-                scope.setAnswer = function(a){
+                if(scope.addNone) {
+                    scope.answer['none'] = false;
+                }
+                scope.setAnswer = function (a) {
                     scope.answer = a;
                 }
             }
@@ -244,10 +248,10 @@
 
                 scope.answer = {};
 
-                for(var attribute in attrs){
-                    if (attrs.hasOwnProperty(attribute) && attribute.startsWith('category')){
-                        var attributeName = attribute.replace('category','');
-                        var cat = {category : attributeName};
+                for (var attribute in attrs) {
+                    if (attrs.hasOwnProperty(attribute) && attribute.startsWith('category')) {
+                        var attributeName = attribute.replace('category', '');
+                        var cat = {category: attributeName};
                         var connectives = attrs[attribute].split(",");
                         $.map(connectives, $.trim);
                         cat['connectives'] = connectives;
@@ -255,7 +259,7 @@
                     }
                 }
 
-                scope.getAnswers = function(name){
+                scope.getAnswers = function (name) {
                     var answer = [];
                     $(name).find("li").each(function (index, element) {
                         answer.push($(this).text().trim());
@@ -263,16 +267,16 @@
                     return answer;
                 };
 
-                scope.finished = function(){
+                scope.finished = function () {
                     scope.answer.chosenCategories = scope.chosenCategories;
                     scope.answer.notRelevant = scope.getAnswers("#sortableNotRelevant");
                     scope.answer.cantDecide = scope.getAnswers("#sortableCantDecide");
 
-                    for(var i = 1; ;++i){
+                    for (var i = 1; ; ++i) {
                         var name = "#sortableValidConnectives_" + i;
-                        if($(name).length > 0){
+                        if ($(name).length > 0) {
                             scope.answer["validConnectives_" + i] = scope.getAnswers(name);
-                        }else{
+                        } else {
                             break;
                         }
                     }
@@ -513,28 +517,28 @@
                 content: '=',
                 answer: '=',
                 click: '=',
-                connectives : '@',
-                context1 : '=?',
-                context2 : '=?',
-                sentence1 : '=',
-                sentence2 : '=',
-                randomizeConnectives : '=?',
-                instructions1 : '@?',
-                instructions2 : '@?',
-                boxTitle : '@?'
+                connectives: '@',
+                context1: '=?',
+                context2: '=?',
+                sentence1: '=',
+                sentence2: '=',
+                randomizeConnectives: '=?',
+                instructions1: '@?',
+                instructions2: '@?',
+                boxTitle: '@?'
             },
             link: function (scope, element, attrs) {
                 var tmp = scope.connectives.split(",");
-                if(scope.hasOwnProperty('randomizeConnectives') && scope.randomizeConnectives == true){
+                if (scope.hasOwnProperty('randomizeConnectives') && scope.randomizeConnectives == true) {
                     shuffleArray(tmp);
                 }
-                if(!scope.hasOwnProperty('instructions1')){
+                if (!scope.hasOwnProperty('instructions1')) {
                     scope.instructions1 = "Please drag the best-suited connective into the green target box below.";
                 }
-                if(!scope.hasOwnProperty('instructions2')){
+                if (!scope.hasOwnProperty('instructions2')) {
                     scope.instructions2 = "You can now drag one more connective into the box below.";
                 }
-                if(!scope.hasOwnProperty('boxTitle')){
+                if (!scope.hasOwnProperty('boxTitle')) {
                     scope.boxTitle = "Candidate connectives";
                 }
 
