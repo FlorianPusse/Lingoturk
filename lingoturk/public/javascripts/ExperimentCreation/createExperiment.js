@@ -122,8 +122,9 @@
         };
 
         this.delimiterChanged = function(){
-            self.groups = [];
+            self.usedNames = [];
             self.questionColumnNames = null;
+            self.groups = [];
             for(var i = 0; i < self.files.length; ++i){
                 self.processFile(self.files[i]);
             }
