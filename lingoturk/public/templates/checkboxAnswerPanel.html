@@ -1,8 +1,18 @@
+<style>
+    .add-margin {
+        margin-top:10px !important;
+    }
+</style>
 <div>
-    <div class="checkbox" ng-repeat="opt in options track by $index">
-        <label>
-            <input ng-disabled="answer['none']" type="checkbox" ng-model="answer[opt]" ng-true-value="true" ng-false-value="false" name="checkbox-answer-input">
-            {{opt}}
+    <div ng-class="{'add-margin': descriptionsAvailable}" class="checkbox" ng-repeat="opt in options track by $index">
+        <label style="width:100%;">
+            <div style="width:55%;display:inline-block">
+                <input ng-disabled="answer['none']" type="checkbox" ng-model="answer[opt]" ng-true-value="true" ng-false-value="false" name="checkbox-answer-input">
+                {{opt}}
+            </div>
+            <div style="width:42%;float:right">
+                <span ng-if="descriptionsAvailable">{{descriptions[$index]}}</span>
+            </div>
         </label>
     </div>
     <div ng-if="addNone" class="checkbox" style="margin-top:20px">

@@ -146,6 +146,7 @@
             scope: {
                 answer: '=',
                 options: '=',
+                descriptions: '=?',
                 addNone: '@?'
             },
             link: function (scope, element, attrs) {
@@ -157,6 +158,7 @@
                 if(scope.addNone) {
                     scope.answer['none'] = false;
                 }
+                scope.descriptionsAvailable = scope.hasOwnProperty("descriptions");
                 scope.setAnswer = function (a) {
                     scope.answer = a;
                 }
