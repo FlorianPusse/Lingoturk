@@ -1,62 +1,58 @@
 @(experiment : LingoExpModel)
 
-@views.html.ExperimentRendering.experiment_main(null){
-    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/Experiments/DragNDrop.css")" />
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
+        <link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/jquery-ui.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/Experiments/DragNDrop.css")" />
 
-    <script>
-            $(document).ready(function(){
-                $("#tabs").tabs();
-            })
-    </script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-2.1.1.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-ui.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/bootbox.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/angular.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/CSV_Parser.js")"> </script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/Lingoturk.js")"> </script>
 
-    <style>
-    body {
-    background : #eeeeee url("/assets/images/jQueryUI/images/ui-bg_highlight-soft_100_eeeeee_1x100.png") 50% top repeat-x;
-    }
-    </style>
+        <script>
+                $(document).ready(function(){
+                    $("#tabs").tabs();
+                })
+        </script>
+        <style>
+            body {
+                background : #eeeeee url("/dynamicAssets/images/jQueryUI/images/ui-bg_highlight-soft_100_eeeeee_1x100.png") 50% top repeat-x;
+            }
+        </style>
+    </head>
 
-    <div style="margin-top:1%; margin-left: 3%; margin-right: 3%; margin-bottom: 2.5%; position: absolute; top: 0; left: 0; bottom: 0; right: 0;">
-        <div class="ui-state-highlight ui-corner-all ui-widget" style="margin-bottom: 20px ; padding: 0 .7em;">
-            <strong style="text-align:center;display:block;margin-top:5px;margin-bottom:10px">NOTICE</strong>
-            <ul style="padding-right:20px;padding-left:20px">
-                <li>
-                    It may happen that you are prevented from accessing our task after accepting it. This could be the case because you already participated in similar tasks. However, this cannot be determined before you accept it due to technical issues. If this happens to you, please just return the HIT.
-                </li>
-                <li>
-                    In order for the HIT to work, JavaScript <strong>must not</strong> be deactivated!
-                </li>
-                <li>
-                    Checking "Automatically accept the next HIT" after accepting this HIT may improve your workflow, since it might be that we are redirecting you between several smaller HITs.
-                </li>
-                <li>
-                    See below for more HIT details.
-                </li>
-            </ul>
-            <strong align="center">Hint: </strong> Being prevented from accessing this HIT will <strong>not</strong> have any negative influences on your reputation on Amazon Mechanical Turk!
-        </div>
-
-        <div class="form-group">
-            <label for="explanations">Explanations</label>
-            <blockquote id="explanations">
-                <p>@Html(experiment.getAdditionalExplanations())</p>
-            </blockquote>
-        </div>
-
-        <div class="form-group">
-            <label for="tabs">Examples </label>
-            <div id="tabs">
-                <ul>
-                @for((exampleQuestion,index) <- experiment.getExampleQuestions().zipWithIndex){
-                    <li><a href="#example@index">Example @(index + 1)</a></li>
-                }
+    <body>
+        <div style="margin-top:1%; margin-left: 3%; margin-right: 3%; margin-bottom: 2.5%; position: absolute; top: 0; left: 0; bottom: 0; right: 0;">
+            <div class="ui-state-highlight ui-corner-all ui-widget" style="margin-bottom: 20px ; padding: 0 .7em;">
+                <strong style="text-align:center;display:block;margin-top:5px;margin-bottom:10px">NOTICE</strong>
+                <ul style="padding-right:20px;padding-left:20px">
+                    <li>
+                        It may happen that you are prevented from accessing our task after accepting it. This could be the case because you already participated in similar tasks. However, this cannot be determined before you accept it due to technical issues. If this happens to you, please just return the HIT.
+                    </li>
+                    <li>
+                        In order for the HIT to work, JavaScript <strong>must not</strong> be deactivated!
+                    </li>
+                    <li>
+                        Checking "Automatically accept the next HIT" after accepting this HIT may improve your workflow, since it might be that we are redirecting you between several smaller HITs.
+                    </li>
+                    <li>
+                        See below for more HIT details.
+                    </li>
                 </ul>
+                <strong align="center">Hint: </strong> Being prevented from accessing this HIT will <strong>not</strong> have any negative influences on your reputation on Amazon Mechanical Turk!
+            </div>
 
-                @for((exampleQuestion,index) <- experiment.getExampleQuestions().zipWithIndex){
-                    <div id="example@index">
-                        <iframe style="width: 100%; height: 100%" src="/renderExampleQuestion/@exampleQuestion.getId()" frameborder="0" scrolling="yes"></iframe>
-                    </div>
-                }
+            <div class="form-group">
+                <label for="explanations">Explanations</label>
+                <blockquote id="explanations">
+                    <p>@Html(experiment.getAdditionalExplanations())</p>
+                </blockquote>
             </div>
         </div>
-    </div>
-}
+    </body>

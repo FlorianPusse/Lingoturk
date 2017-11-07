@@ -1,48 +1,54 @@
 @main("Login") {
     <style type="text/css">
-    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#414141+-1,333333+0,414141+0,414141+0,2b2b2b+0,404040+1,333333+9,414141+23,6a6a6a+100,292929+100,5e5e5e+100,595959+100,757575+100 */
-    body{
-        /*background: linear-gradient(141deg, #11cec3 0%, #1fc8db 51%, #2cb5e8 75%);*/
-        background-image: url('/assets/images/background.jpeg') !important;
-        background-size: cover;
-        width: 100%;
-        height: 100vh;
-    }
-    h1{
-        font-family: 'Roboto Slab', serif;
-        color: white;
-        font-size:45px;
-        text-align:center;
-    }
-    .login-field {
-        width : 60%;
-        height : 300px;
-        padding : 20px;
+            /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#414141+-1,333333+0,414141+0,414141+0,2b2b2b+0,404040+1,333333+9,414141+23,6a6a6a+100,292929+100,5e5e5e+100,595959+100,757575+100 */
+            body {
+                /*background: linear-gradient(141deg, #11cec3 0%, #1fc8db 51%, #2cb5e8 75%);*/
+                background-image: url('/assets/images/background.jpeg') !important;
+                background-size: cover;
+                width: 100%;
+                height: 100vh;
+            }
 
-        position:absolute;
-        left:0; right:0;
-        top:0; bottom:0;
-        margin:auto;
+            h1 {
+                font-family: 'Roboto Slab', serif;
+                color: white;
+                font-size: 45px;
+                text-align: center;
+            }
 
-        background: linear-gradient(141deg, rgba(93, 87, 90, 0.59) 0%, #456a76 51%, rgba(78, 72, 75, 0.9) 75%);
-        border-radius: 13px 13px 13px 13px;
-        -moz-border-radius: 13px 13px 13px 13px;
-        -webkit-border-radius: 13px 13px 13px 13px;
-        -webkit-box-shadow: 5px 5px 10px 0px rgba(0,0,0,0.75);
-        -moz-box-shadow: 5px 5px 10px 0px rgba(0,0,0,0.75);
-        box-shadow: 5px 5px 10px 0px rgba(0,0,0,0.75);
-    }
-    .login-field > form > strong {
-        color: white ;
-        font-size: 30px;
-    }
-    #submit-button {
-        margin: 20px auto;
-        display:block;
-        padding-left:20px;
-        padding-right:20px;
-        border-radius: 15px 15px 15px 15px;
-    }
+            .login-field {
+                width: 60%;
+                height: 330px;
+                padding: 20px;
+
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                margin: auto;
+
+                background: linear-gradient(141deg, rgba(93, 87, 90, 0.59) 0%, #456a76 51%, rgba(78, 72, 75, 0.9) 75%);
+                border-radius: 13px 13px 13px 13px;
+                -moz-border-radius: 13px 13px 13px 13px;
+                -webkit-border-radius: 13px 13px 13px 13px;
+                -webkit-box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.75);
+                -moz-box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.75);
+                box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.75);
+            }
+
+            .login-field > form > strong {
+                color: white ;
+                font-size: 30px;
+            }
+
+            #submit-button {
+                margin: 20px auto;
+                display: inline-block;
+                padding-left: 20px;
+                padding-right: 20px;
+                border-radius: 15px 15px 15px 15px;
+            }
     </style>
 
     <h1 style="color: white ;"><b>LINGO</b><i>turk</i></h1>
@@ -51,12 +57,29 @@
         <form action="/authenticate" method="POST">
             <strong>Login</strong>
             <hr/>
-            <div style="width:80%; margin: 30px auto">
+            <div style="width: 80%;
+                margin: 30px auto">
                 <div class="form-group">
-                    <input class="form-control" type="password" name="password" placeholder="Password">
-                    <button class="btn btn-default" id="submit-button" type="submit">
-                        <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span><strong style="margin-left:5px">Let me in</strong>
-                    </button>
+                    <label for="username">Username:</label>
+                    <input class="form-control" type="text" id="username" name="username" placeholder="Username">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input class="form-control" type="password" id="password" name="password" placeholder="Password">
+                </div>
+
+                <div style="text-align:center">
+                    <div style="display: inline-block;">
+                        <button class="btn btn-default" id="submit-button" type="submit">
+                            <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+                            <strong style="margin-left: 5px">Let me in</strong>
+                        </button>
+                        <button class="btn btn-default" id="submit-button" disabled="disabled" type="button">
+                            <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+                            <strong style="margin-left: 5px">Register</strong>
+                        </button>
+                    </div>
                 </div>
             </div>
         </form>

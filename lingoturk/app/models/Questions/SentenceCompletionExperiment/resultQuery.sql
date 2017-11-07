@@ -1,12 +1,7 @@
-SELECT *
-FROM   (SELECT Cast(SentenceCompletion_itemNr AS INT),
-               Cast(SentenceCompletion_list AS INT),
-               SentenceCompletion_itemLength,
-               SentenceCompletion_itemType,
-               workerid,
-               SentenceCompletionResults.answer
-        FROM   SentenceCompletionResults
-               JOIN questions using (questionid)
-        ORDER  BY SentenceCompletion_list,
-                  SentenceCompletion_itemNr,
-                  workerid) AS tmp
+SELECT fileName, listNumber, SentenceCompletion_story, SentenceCompletion_list, SentenceCompletion_itemNr, SentenceCompletion_itemLength, SentenceCompletion_itemType, assignmentId, hitId, workerId, origin, timestamp, partId, questionId, answer FROM (
+	SELECT * FROM SentenceCompletionResults
+	LEFT OUTER JOIN Questions USING (QuestionId)
+	LEFT OUTER JOIN Groups USING (PartId)
+) as tmp
+WHERE LingoExpModelId = 761
+ORDER BY partId, questionId, workerId

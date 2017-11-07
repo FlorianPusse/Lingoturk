@@ -1,6 +1,6 @@
 @(accKey: String, secKey: String, staticIP: String)
 
-@main("Settings") {
+@main("SettingsController") {
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/Settings/settings.css")">
     <script type="text/javascript" src="@routes.Assets.at("javascripts/Settings/settings.js")"></script>
 
@@ -45,17 +45,17 @@
 
             <div class="form-group">
                 <label for="oldPassword">Old password</label>
-                <input id="oldPassword" type="text" class="form-control" ng-model="SC.oldPassword" placeholder="Old password">
+                <input id="oldPassword" type="password" class="form-control" ng-model="SC.oldPassword" placeholder="Old password">
             </div>
 
             <div class="form-group">
                 <label for="newPassword1">New password</label>
-                <input id="newPassword1" type="text" class="form-control" ng-model="SC.newPassword1" placeholder="New password">
+                <input id="newPassword1" type="password" class="form-control" ng-model="SC.newPassword1" placeholder="New password">
             </div>
 
             <div class="form-group">
                 <label for="newPassword2">New password again</label>
-                <input id="newPassword2" type="text" class="form-control" ng-model="SC.newPassword2" placeholder="New password again">
+                <input id="newPassword2" type="password" class="form-control" ng-model="SC.newPassword2" placeholder="New password again">
             </div>
         </div>
 

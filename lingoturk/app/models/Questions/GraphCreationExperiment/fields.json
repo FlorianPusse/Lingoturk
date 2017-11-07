@@ -1,0 +1,1 @@
+[{"type":"Integer","simpleTypeName":"Integer","name":"number"},{"type":"String","simpleTypeName":"String","name":"label"},{"type":"String","simpleTypeName":"String","name":"text"},{"type":"String","simpleTypeName":"String","name":"options"},{"type":"String","simpleTypeName":"String","name":"descriptions"},{"type":"Integer","simpleTypeName":"Integer","name":"optionList"}]

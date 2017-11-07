@@ -1,0 +1,66 @@
+<div style="height: 100% ; width: 100%; display: table">
+            <style>
+                .no-select{
+                    -webkit-user-select: none;
+                    -khtml-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    -o-user-select: none;
+                    user-select: none;
+                }
+            </style>
+
+            <div style="height: 100%; margin-top: 20px;">
+                <div id="workerIdSlide" class="panel panel-primary" style="width:90% ; margin:auto;">
+                    <div class="panel-heading" style="font-weight: bolder ;">
+                        Please enter your Participant ID into the box below:
+                    </div>
+                    <div class="panel-body">
+                        <input id="workerId" ng-model="RC.workerId" name="workerId" type="text" class="form-control textInput" placeholder="enter here">
+                        <button type="button" onclick="$('#instructionsSlide').show();$('#workerIdSlide').hide();" ng-disabled="RC.workerId == ''" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
+                    </div>
+                </div>
+
+                <div id="instructionsSlide" class="panel panel-primary" style="width:90% ; margin:auto; display:none">
+                    <div class="panel-heading" style="font-weight: bolder ;">
+                        Instructions
+                    </div>
+                    <div class="panel-body">
+                        @_SHOW_INSTRUCTIONS_@
+                        <button id="instructions" ng-click="RC.startExperiment()" type="button" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
+                    </div>
+                </div>
+
+                <div id="feedbackSlide" class="panel panel-primary" style="width:90% ; margin:auto; display:none">
+                    <div class="panel-heading" style="font-weight: bolder ;">
+                        Feedback
+                    </div>
+                    <div class="panel-body">
+                        <p>Thank you for your participation! Do you have any feedback for our experiment?</p>
+                        <hr/>
+                        <textarea ng-model="RC.feedback" class="form-control" placeholder="You may enter your feedback here."></textarea>
+
+                        <button type="button" ng-click="RC.submitFeedback()" style="float:right; margin-top:20px" class="btn btn-default">Submit</button>
+                    </div>
+                </div>
+
+                <div ng-if="RC.index == $index" ng-repeat="question in RC.questions track by $index" style="height: 100%;">
+                    <div class="panel panel-primary" style="width : 90% ; margin : auto ;">
+                        <div class="panel-heading" style="font-weight : bolder ;">
+                            <div><strong style="">{{$index + 1}} / {{RC.questions.length}}</strong></div>
+                        </div>
+                        <div class="panel-body" style="width : 100%">
+                            <span class="no-select" style="display : block ; margin-top : 15px">{{question.text}}</span>
+
+                            <hr style="margin-bottom : 15px ; margin-top : 15px"/>
+                            <label>Please re-write the original text in your own words. Make sure you include all the same information as the original.</label>
+                            <textarea type="text" ng-model="question.answer" class="form-control textInput"></textarea>
+                            <hr style="margin-bottom : 15px ; margin-top : 15px"/>
+
+                            <button ng-click="RC.next($index)" type="button" style="float : right ;" ng-disabled="question.answer === undefined || question.answer == '' || RC.checkAnswer(question)" class="btn btn-default">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @internalError()
+</div>

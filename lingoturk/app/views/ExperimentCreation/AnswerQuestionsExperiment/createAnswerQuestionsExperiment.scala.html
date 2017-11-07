@@ -1,0 +1,160 @@
+@main("LINGOturk") {
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/ExperimentCreation/AnswerQuestionsExperiment/createAnswerQuestionsExperiment.js")"> </script>
+
+    <style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    th {
+        text-align:center
+    }
+    #title{
+        font-size: 16px;
+    }
+    #tabs{
+        background-color: rgba(74, 74, 74, 0.6);
+        color: black;
+        font-size:15px;
+        padding: 10px;
+        border-radius: 6px 6px 6px 6px;
+        -moz-border-radius: 6px 6px 6px 6px;
+        -webkit-border-radius: 6px 6px 6px 6px;
+        border: 2px solid #353535;
+    }
+    ol{
+        list-style-type:none
+    }
+    li{
+        display: inline;
+    }
+        #allquestions{
+            font-size:14px;
+        }
+    </style>
+
+    @** used as anchor for angular.js **@
+    <div id="angularApp" ng-app="CreateExperiment" ng-controller="CreationController as cc">
+        <p id="title"> Create new <strong>AnswerQuestions</strong> experiment: </p>
+
+        <input type="hidden" id="experimentName" value="AnswerQuestions">
+
+        <div style="margin-top : 10px ; margin-bottom : 30px ; padding : 5px" id="tabs">
+
+            @********
+
+            List all tabs
+
+            ********@
+
+            <div style="text-align: center;margin-top:20px">
+                <div class="btn-group">
+                    <button onclick="$('.box').hide();$('#fragment-1').show()" class="btn btn-default active" href="#fragment-1">Main</button>
+                    <button onclick="$('.box').hide();$('#fragment-2').show()" class="btn btn-default" href="#fragment-2">Instructions</button>
+                    <button onclick="$('.box').hide();$('#fragment-3').show()" class="btn btn-default" href="#fragment-3">Experimental materials</button>
+                </div>
+            </div>
+
+            <hr/>
+
+            @********
+
+            Name, Name for MTurk, Description
+
+            ********@
+
+            <div id="fragment-1" class="box">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input ng-model="cc.name" type="text" class="form-control" id="name" placeholder="Experiment Name">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea ng-model="cc.description" type="text" class="form-control" id="description" placeholder="Experiment Description" cols="50" rows="5"></textarea>
+                </div>
+            </div>
+
+            @********
+
+            Example Sentences
+
+            ********@
+
+            <div id="fragment-2" class="box" style="display:none">
+                <div class="form-group">
+                    <textarea ng-model="cc.additionalExplanations" rows="4" cols="50" class="form-control" name="additionalExplanations" placeholder="Enter the instructions here"></textarea>
+                </div>
+            </div>
+
+            @********
+
+            Questions
+
+            ********@
+
+            <div id="fragment-3" class="box" style="display:none">
+
+                @********
+
+                Manual Input
+
+                ********@
+
+                <p><strong>Please upload your experimental lists here:</strong></p>
+
+                <button type="submit" ng-if="cc.groups.length > 0 && cc.name != ''" ng-click="cc.submit()" class="btn btn-default" style="float : right ; margin-bottom : 30px">Save in Database</button>
+                <div style="clear:both"></div>
+
+                <div id="allquestions">
+                    <h3 ng-repeat-start="group in cc.groups track by $index">List {{$index + 1}}</h3>
+                    <div class="repeatBody" ng-repeat-end>
+                        <div ng-if="field != 'questions' && field != '_type' && field != 'questionFieldNames' && field != 'parsedContent' && field != 'questionColumnNames'" ng-repeat="(field,value) in group" class="form-group">
+                            <label for="{{field}}">{{field}}</label>
+                            <input type="text" class="form-control" id="{{field}}" ng-model="group[field]">
+                        </div>
+
+                        <p>Questions:</p>
+                        <table class="table table-over" width="100%">
+                            <thead>
+                                <tr>
+                                    <th ng-repeat="i in range(cc.questionColumnNames.length)">
+                                        <select ng-model="cc.questionColumnNames[i]" ng-change="cc.newFieldSelected(cc.questionColumnNames[i],'{{cc.questionColumnNames[i]}}')">
+                                            <option selected value> -- select field -- </option>
+                                            <option  ng-if="cc.usedNames.indexOf(field.name) == -1 || field.name == cc.questionColumnNames[i]" ng-repeat="field in cc.questionFieldNames track by $index">{{field.name}}</option>
+                                        </select>
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr class="question" ng-repeat="row in group.parsedContent track by $index">
+                                    <td ng-repeat="cell in row track by $index">
+                                        {{cell}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                @********
+
+                CSV Input
+
+                ********@
+
+                <div style="margin-top: 20px">
+                    <file-input content="cc.fileLoaded(data)" style="display:inline-block">Load .csv</file-input>
+                    <select ng-model="cc.delimiter" ng-change="cc.delimiterChanged()" ng-trim="false" ng-options="del.val as del.name for del in cc.delimiters" style="width:80px;display:inline-block" class="form-control">
+                    </select>
+                    <button type="button" class="btn btn-default" ng-click="cc.resetGroups()" ng-if="cc.groups.length > 0" style="display:inline-block;float:right;">Reset Lists</button>
+                    <div style="clear: both;"></div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <button type="submit" ng-disabled="!(cc.groups.length > 0 && cc.name != '')" ng-click="cc.submit()" class="btn btn-success" style="float : right ; margin-bottom : 100px">Save in Database</button>
+        </div>
+    </div>
+}

@@ -23,7 +23,7 @@
 
             self.usedFields = usedFields;
 
-            self.query = "SELECT " + (usedFields.length > 0 ? usedFields.join(", ") : "*") + " FROM (\n\t" + "SELECT * FROM " + self.experimentType + "Results\n\tLEFT OUTER JOIN Questions USING (QuestionId)\n\tLEFT OUTER JOIN Groups USING (PartId)\n) as tmp\nWHERE LingoExpModelId = " + self.expId;
+            self.query = "SELECT " + (usedFields.length > 0 ? usedFields.join(", ") : "*") + " FROM (\n\t" + "(SELECT * FROM Results WHERE experimentType='" + self.experimentType + "Experiment') as tmp1\n\tLEFT OUTER JOIN Questions USING (QuestionId)\n\tLEFT OUTER JOIN Groups USING (PartId)\n) as tmp\nWHERE LingoExpModelId = " + self.expId;
             if(self.orderBy.length > 0){
                 self.query += "\nORDER BY " + self.orderBy.join(", ");
             }
@@ -36,7 +36,7 @@
         };
 
         self.executeQuery = function(){
-            if(self.query == ""){
+            if(self.query.length > 0){
                 self.buildQuery();
             }
             var d = {
@@ -69,6 +69,8 @@
                         }
                     }
                 }
+                self.allFields.push("id");
+
                 self.useField = new Array(self.allFields.length).fill(true);
 
                 self.buildQuery();

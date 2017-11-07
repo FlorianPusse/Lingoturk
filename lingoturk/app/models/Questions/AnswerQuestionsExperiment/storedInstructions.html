@@ -1,0 +1,83 @@
+Please carefully read the following text about a restaurant visit:
+
+<div style="
+    padding: 9.5px;
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.42857143;
+    color: #333;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;">
+    Last night, I went to Vapiano with my friend. It is an Italian restaurant with nice ambience and tasty food.
+    We had reserved our tables in advance. We arrived at Vapiano around 8pm. We entered the restaurant.
+    The waiter showed us our table. We sat down at our table and started looking through the menu.
+    After a while, we decided on our meal. First, we ordered drinks.
+    I didn't want to drink alcohol as I had to drive, so we ordered non-alcoholic drinks.
+    Along with drinks we ordered a salad as an appetizer. I decided to have a thin crust pizza and my friend wanted to have Spaghetti Aglio e Olio.
+    We placed our order with the waiter. After a few minutes, he brought our drinks and the appetizer.
+    We started talking while having drinks and the salad. Finally, after 20 minutes, the waiter brought our order. We started eating our meal.
+    The food was good and we enjoyed it. After finishing our meal, we asked the waiter to bring our bill.
+    After a few minutes, he came with the bill. I paid the bill and included a tip for the waiter.
+    Finally, we left the restaurant. We liked the restaurant.
+</div>
+
+In this experiment, we collect data for a multiple choice reading comprehension task for children: We'll present a set of 15 questions and ask you to provide plausible answers to those questions. We ask you to provide both a correct and <strong>plausible</strong> incorrect answer, if possible (see comment below). Note that your answer should be formulated as short as possible and as long as necessary. If you cannot find an answer, we ask you to formulate a plausible alternative question related to the story, that can be answered. Each question you write should be unique, so don't write the same question twice.
+
+Consider the following examples:
+
+<p/>
+<ol>
+    <li> What did they order?
+        <br/>
+        <strong><font color="green">Correct: Pizza and pasta</font></strong>
+        <br/>
+        <strong><font color="red">Incorrect: A steak</font></strong>
+    </li>
+    <li> When did they leave?
+        <br/>
+        <strong><font color="green">Correct: After paying</font></strong>
+        <br/>
+        <strong><font color="red">Incorrect: Before they ordered</font></strong>
+    </li>
+    <li> Why didn't they order a glass of wine?
+        <br/>
+        <strong><font color="green">Correct: One of them had to drive</font></strong>
+        <br/>
+        <strong><font color="red">Incorrect: They didn't like the taste of wine</font></strong>
+    </li>
+    <li> Who prepared their food?
+        <br/>
+        <strong><font color="green">Correct: The chef</font></strong>
+        <br/>
+        <strong><font color="red">Incorrect: The waiter</font></strong>
+    </li>
+    <li> Where is the restaurant?
+        <br/>
+        <strong>Cannot be answered: There are many possible, plausible answers.</strong>
+        <br/>
+        <strong>Alternative question: Who brought the bill?</strong>
+    </li>
+    <li> Why did they order a steak?
+        <br/>
+        <strong>Cannot be answered: They did not order steak!</strong>
+        <br/>
+        <strong>Alternative question: What was the name of the restaurant?</strong>
+    </li>
+</ol>
+
+<br/>
+As you can see in the examples, there will also be questions for which you cannot find an answer in the text, but that can easily be answered by using commonsense knowledge (question 3). We explicitly ask you to make use of this knowledge and answer such questions. For other questions, it will not be possible to find an answer at all, for different reasons.<!--: There might be multiple possible answers (question 4) or the question might not make sense given the text (question 5).
+<br/>-->
+We ask you to explicitly identify such different cases by assigning one of 4 classes to every question before answering it:
+<ul>
+    <li> <i>Class 1:</i> You can read the answer off the text, as in questions 1, 2 and 3.</li>
+    <li> <i>Class 2:</i> You can come up with a plausible answer that is not given in the text, using your commonsense knowledge, as in question 4.</li>
+    <li> <i>Class 3:</i> The question makes sense, but neither does the text provide sufficient information, nor does your commonsense knowledge help to find the correct answer, as in question 5.</li>
+    <li> <i>Class 4:</i> You cannot understand the question or it does not make sense given the text and/or situation, as in question 6.</li>
+</ul>
+<br/>
+<strong> A final remark:</strong> Since these questions and answers will be used to test children's ability to understand a text, it is important that the incorrect answers are plausible, too: Please don't give an incorrect answer such as "a foot massage" for question 1 ("What did they order?"), since it is very obvious that this answer is wrong.
+<!--For questions that can be answered (i.e. cases 1 and 2), you afterwards have to provide the correct answer and a <strong>plausible</strong> incorrect answer. <strong>Note that your answer should be formulated as short as possible and as long as necessary.</strong>
+<br/>
+For questions that cannot be answered (i.e. cases 3 and 4), we ask you to provide an alternative question.-->

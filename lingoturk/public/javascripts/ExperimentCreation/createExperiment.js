@@ -196,11 +196,20 @@
                     }
 
                     var tmp = [];
-                    for (var i = 0; i < fields.length; ++i) {
-                        var f = fields[i];
-                        tmp.push(f.name);
+                    if(!(fields instanceof Array)){
+                        for (var key in fields) {
+                            if (fields.hasOwnProperty(key)) {
+                                tmp.push(key);
+                            }
+                        }
+                    }else{
+                        for (var i = 0; i < fields.length; ++i) {
+                            var f = fields[i];
+                            tmp.push(f.name);
+                        }
                     }
-                    var func = "self[typeName] = function(" + tmp.join(",") + "){\nvar self = this;\nself._type=\"" + typeName + "\";\n"
+
+                    var func = "self[typeName] = function(" + tmp.join(",") + "){\nvar self = this;\nself._type=\"" + typeName + "\";\n";
                     if(obj.isGroupType){
                         func + "self.questions=null;\n";
                     }

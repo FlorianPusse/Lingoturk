@@ -20,14 +20,12 @@
   - (*almost*) no need to use the Mechanical Turk API.
   - can easily be modified and extended
   
+## Update on 07/11/2017
+There is a big update coming out today. It includes many bug fixes, improvements, and foundations for upcoming features. However, these come at a cost: If you already have an installation running, your existing experiments will be broken and your database scheme needs to be modified. If you need help with the update, please let us know. For a more detailed explanation of what has changed, take a look at the wiki.
+
+## Coming (soon)
+  - Multi user management: LingoTurk was once designed to be managed by a single administrator. In reality, there are often many people that want to design and run new experiments. We want to give experimenters this option without being afraid that they could interfere with each other. Foundations for this feature have been laid. More is coming soon. 
+  - GUI for designing experiments: Designing new experiments using a graphical user interface without having to code is one of the most appealing features to have. However, it is also one of the hardest to implement in a maintainable and sustainable way.
+  
 ## Help
 You can find more information and how to get started in the Lingoturk [Wiki](https://github.com/FlorianPusse/Lingoturk/wiki).
-
-## Update on 03/11/2016
-
-After pulling the newest updates, you should run `activator clean` in order to delete unnecessary files.
-
-If you have created new experiment types, you will be faced a compile error after pulling the latest changes. To resolve them, go to your `app/models/Questions/<ExperimentName>/<ExperimentName>Question.java` file and replace the following occurences:
-- `import models.Repository;` -> `import controllers.DatabaseController;`
-- `Repository.getConnection()` -> `DatabaseController.getConnection()`
-We'll probably implement an update tool for these things in the future.

@@ -226,6 +226,11 @@
                 self.allStates.splice(index,1);
             }
 
+            if(self.workerId.trim() != ""){
+                var index = self.allStates.indexOf("workerIdSlide");
+                self.allStates.splice(index,1);
+            }
+
             $scope.$apply(self.state = self.allStates[0]);
 
             $(document).on("keypress", ":input:not(textarea)", function(event) {

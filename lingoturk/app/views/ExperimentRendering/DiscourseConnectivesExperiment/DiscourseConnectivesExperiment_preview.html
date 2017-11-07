@@ -1,0 +1,66 @@
+@(experiment : LingoExpModel)
+
+@views.html.ExperimentRendering.experiment_main(null){
+    <link rel="stylesheet" media="screen" href="@routes.AssetController.at("stylesheets/Experiments/DragNDrop.css")" />
+
+    <script>
+            $(document).ready(function(){
+                $("#tabs").tabs();
+            })
+    </script>
+
+    <style>
+    body {
+    background : #eeeeee url("/dynamicAssets/images/jQueryUI/images/ui-bg_highlight-soft_100_eeeeee_1x100.png") 50% top repeat-x;
+    }
+    </style>
+
+    <div style="margin-top:1%; margin-left: 3%; margin-right: 3%; margin-bottom: 2.5%; position: absolute; top: 0; left: 0; bottom: 0; right: 0;">
+        <div class="ui-state-highlight ui-corner-all ui-widget" style="margin-bottom: 20px ; padding: 0 .7em;">
+            <strong style="text-align:center;display:block;margin-top:5px;margin-bottom:10px">NOTICE</strong>
+            <ul style="padding-right:20px;padding-left:20px">
+                <li>
+                    It may happen that you are prevented from accessing our task after accepting it. This could be the case because you already participated in similar tasks. However, this cannot be determined before you accept it due to technical issues. If this happens to you, please just return the HIT.
+                </li>
+                <li>
+                    In order for the HIT to work, JavaScript <strong>must not</strong> be deactivated!
+                </li>
+                <li>
+                    Checking "Automatically accept the next HIT" after accepting this HIT may improve your workflow, since it might be that we are redirecting you between several smaller HITs.
+                </li>
+                <li>
+                    See below for more HIT details.
+                </li>
+            </ul>
+            <strong align="center">Hint: </strong> Being prevented from accessing this HIT will <strong>not</strong> have any negative influences on your reputation on Amazon Mechanical Turk!
+        </div>
+
+        <div class="form-group">
+            <label for="explanations">Explanations</label>
+            <blockquote id="explanations">
+                <p>@Html(experiment.getAdditionalExplanations())</p>
+            </blockquote>
+        </div>
+
+        <div class="form-group">
+            <label for="tabs">Examples </label>
+            <div id="tabs">
+                <ul>
+                    <li><a href="#example0">Example 1)</a></li>
+                    <li><a href="#example1">Example 2</a></li>
+                    <li><a href="#example2">Example 3</a></li>
+                </ul>
+
+                <div id="example0">
+                    <iframe style="width: 100%; height: 100%" src="https://www.youtube.com/embed/0FFiXDrAhFM" frameborder="0" scrolling="yes"></iframe>
+                </div>
+                <div id="example1">
+                    <iframe style="width: 100%; height: 100%" src="https://www.youtube.com/embed/GAjEWHAiJkU" frameborder="0" scrolling="yes"></iframe>
+                </div>
+                <div id="example2">
+                    <iframe style="width: 100%; height: 100%" src="https://www.youtube.com/embed/NnRXt08Tdyo" frameborder="0" scrolling="yes"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+}

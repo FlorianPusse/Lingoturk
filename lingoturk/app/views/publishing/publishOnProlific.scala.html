@@ -1,7 +1,7 @@
-@(expModel: LingoExpModel)
+@(expModel: LingoExpModel, staticIp: String)
 
 @main("Preview") {
-    <script type="text/javascript" src="@routes.Assets.at("javascripts/ExperimentPublishing/publishOnProlific.js")"></script>
+    <script type="text/javascript" src="@routes.AssetController.at("javascripts/ExperimentPublishing/publishOnProlific.js")"></script>
 
     <style>
         td {
@@ -19,7 +19,7 @@
                 <h3 class="panel-title">Set publishing options</h3>
             </div>
 
-            <form ng-init="PC.expId = @expModel.getId()" action="@routes.Application.publishProlific()" method="POST" role="form" enctype="multipart/form-data" align="center">
+            <form ng-init="PC.expId = @expModel.getId()" action="@routes.PublishController.publishProlific()" method="POST" role="form" enctype="multipart/form-data" align="center">
                 <div class="panel-body" style="width: 100%;overflow:auto;">
                     <div id="inputOptions">
                         @if(expModel.getListType == "DISJOINT LISTS"){
@@ -33,7 +33,7 @@
 
                             <div class="form-group">
                                 <label>Enter the following URL as study URL:</label><br/>
-                                <pre>@Application.getStaticIp/renderProlific?expId=@expModel.getId()&redirectUrl=<span id="experimentUrl"></span></pre>
+                                <pre>@staticIp/renderProlific?expId=@expModel.getId()&redirectUrl=<span id="experimentUrl"></span></pre>
                             </div>
 
                             <div class="form-group">
@@ -94,7 +94,7 @@
 
                                         <div class="form-group">
                                             <label>Enter the following URL as study URL:</label><br/>
-                                            <pre>@Application.getStaticIp/renderProlific?expId=@expModel.getId()&partId=@part.getId()&redirectUrl=<span id="experimentUrl@part.getId()"></span></pre>
+                                            <pre>@staticIp/renderProlific?expId=@expModel.getId()&partId=@part.getId()&redirectUrl=<span id="experimentUrl@part.getId()"></span></pre>
                                         </div>
                                     </div>
                                 </div>

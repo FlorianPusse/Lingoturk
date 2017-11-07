@@ -1,0 +1,82 @@
+<div style="height: 100% ; width: 100%; display: table">
+        <div ng-if="RC.showMessage == 'none'" style="display: table-cell ; height: 100% ; vertical-align: middle ;">
+            <div ng-if="RC.state == 'instructionsSlide'" class="panel panel-primary" style="width:90%; margin:auto">
+                <div class="panel-heading" style="font-weight: bolder ;">Instructions</div>
+                <div class="panel-body">
+                    @_SHOW_INSTRUCTIONS_@
+                    <button ng-click="RC.next()" type="button" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
+                </div>
+            </div>
+
+            <div ng-if="RC.state == 'workerIdSlide'" class="panel panel-primary" style="width:90%; margin:auto">
+                <div class="panel-heading" style="font-weight: bolder ;">Please enter your workerId into the box below:</div>
+                <div class="panel-body">
+                    <input id="workerId" ng-model="RC.workerId" name="workerId" type="text" class="form-control" placeholder="enter here">
+                    <button ng-click="RC.next()" type="button" ng-disabled="RC.workerId == ''" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
+                </div>
+            </div>
+
+            <div ng-if="RC.state == 'statisticsSlide'">
+                <statistics-slide statistics="RC.statistics" click="RC.next"></statistics-slide>
+            </div>
+
+            <div ng-if="RC.state == 'questionSlide' && RC.questionIndex == $index" ng-repeat="question in RC.questions" style="width:90%; margin:auto">
+                <!-- <this part can also be replaced by a template or your own ideas> -->
+                <div class="panel panel-primary">
+                    <div class="panel-heading" style="font-weight: bolder ;">Please fill in the blank below.<span style="float:right">{{$index + 1}}/{{RC.questions.length}}</span></div>
+                    <div class="panel-body">
+                        <!--
+                        Question's content goes here
+                        -->
+                            <span ng-repeat="word in question.story.split(' ') track by $index">
+                                <span ng-if="!word.startsWith('__')">{{word}}</span>
+                                <input ng-if="word.startsWith('__')" type="input" ng-model="question.answer" size="30" class="form-control" style="width: inherit; display:inline-block">
+                            </span>
+                            <hr/>
+                        <!--
+                        End of question
+                        -->
+                        <button ng-click="RC.nextQuestion()" ng-disabled="question.answer === undefined || question.answer == ''" type="button" ng-disabled="RC.workerId == ''" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
+                    </div>
+                </div>
+                <!-- </this part can also be replaced by a template or your own ideas> -->
+            </div>
+        </div>
+
+        <div ng-if="RC.showMessage == 'nextSubList'" style="height : 100% ; width : 100% ; display : table ; position: absolute; top: 0; left: 0">
+            <div style="display: table-cell ; height: 100% ; vertical-align: middle ;">
+                <div style="width:90%; margin:auto">
+                    <!-- <this message is shown if a user successfully finished a sublist> -->
+                    <div class="panel panel-primary">
+                        <!-- <the message's heading> -->
+                        <div class="panel-heading" style="font-weight: bolder ;">Attention:</div>
+                        <!-- </the message's heading> -->
+                        <div class="panel-body">
+                            <!-- <the message content> -->
+                                You've successfully completed a sublist. You may either stop here or continue with another one.
+                            <!-- </the message content. please don't edit the buttons below (except their label)> -->
+                            <hr/>
+                            <button ng-click="RC.processFinish()" style="float:right; margin-left: 10px;" class="btn btn-default" type="button">Stop here</button>
+                            <button ng-click="RC.nextSublist()" style="float:right" class="btn btn-default" type="button">Continue</button>
+                        </div>
+                    </div>
+                    <!-- </this message is shown if a user successfully finished a sublist> -->
+                </div>
+            </div>
+        </div>
+
+        <div ng-if="RC.showMessage == 'goodBye'" style="height : 100% ; width : 100% ; display : table ; position: absolute; top: 0; left: 0">
+            <div style="display: table-cell ; height: 100% ; vertical-align: middle ;">
+                <div style="width:90%; margin:auto">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading" style="font-weight: bolder ;">Attention:</div>
+                        <div class="panel-body">
+                            You've successfully completed the experiment. Thank you for your participation. To hand in your submission, click on the "Submit"-button below.
+                            <hr/>
+                            <button ng-click="RC.finished()" style="float:right" class="btn btn-default" type="button">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>

@@ -1,0 +1,342 @@
+<div style="height: 100% ; width: 100%; display: table">
+    <style>
+            .table th {
+                font-size: 15px
+            }
+    </style>
+
+    <div ng-if="RC.showMessage == 'none'" style="display: table-cell ;
+        height: 100% ;
+        vertical-align: middle ;">
+        <div ng-if="RC.state == 'instructionsSlide'" class="panel panel-primary" style="width: 90%;
+            margin: auto">
+            <div class="panel-heading" style="font-weight: bolder ;">Instructions</div>
+            <div class="panel-body">
+                @_SHOW_INSTRUCTIONS_@
+            <button ng-disabled="RC.origin == 'MTURK' && RC.assignmentId == 'ASSIGNMENT_ID_NOT_AVAILABLE'" ng-click="RC.next()" type="button" class="btn btn-default" style="float: right ;
+                margin-top: 20px">Next</button>
+            </div>
+        </div>
+
+        <div ng-if="RC.state == 'workerIdSlide'" class="panel panel-primary" style="width: 90%;
+            margin: auto">
+            <div class="panel-heading" style="font-weight: bolder ;">Please enter your workerId into the box below:</div>
+            <div class="panel-body">
+                <input id="workerId" ng-model="RC.workerId" name="workerId" type="text" class="form-control" placeholder="enter here">
+                <button ng-click="RC.next()" type="button" ng-disabled="RC.workerId == ''" class="btn btn-default" style="float: right ;
+                    margin-top: 20px">Next</button>
+            </div>
+        </div>
+
+        <div ng-if="RC.state == 'statisticsSlide'">
+            <statistics-slide statistics="RC.statistics" click="RC.next"></statistics-slide>
+        </div>
+
+        <div ng-init="question.answer = {}" id="experiment_content" ng-if="RC.state == 'questionSlide' && RC.questionIndex == $index" ng-repeat="question in RC.questions" style="width: 90%;
+            margin: auto">
+            <!-- the main content of the experiment goes here -->
+        <div id="experiment_panel_1" class="panel panel-primary">
+            <div id="experiment_heading_1" class="panel-heading" style="font-weight: bolder ;">Question Experiment</div>
+            <div id="experiment_body_1" class="panel-body">
+                <div class="hiddenInstructions" style="text-align: center;
+                    margin: 15px">
+                    <button onclick="$('.hiddenInstructions').toggle()" type="button" class="btn btn-success">Show Example</button>
+                </div>
+
+                <div class="hiddenInstructions" style="display: none;
+                    margin: 15px">
+                    <div style="text-align: center;
+                        margin: 15px">
+                        <button onclick="$('.hiddenInstructions').toggle()" type="button" class="btn btn-success">Hide instructions</button>
+                    </div>
+
+                    <div style="background: rgb(206, 206, 206);
+                        border-style: solid;
+                        padding: 10px">
+                        <strong>Please look at the following text:</strong>
+
+                        <div style="
+                            padding: 9.5px;
+                            margin: 0 0 10px;
+                            font-size: 13px;
+                            line-height: 1.42857143;
+                            color: #333;
+                            background-color: #f5f5f5;
+                            border: 1px solid #ccc;
+                            border-radius: 4px;
+                        ">
+                                        Last night, I went to Vapiano with my friend. It is an Italian restaurant with nice ambience and tasty food.
+                            We had reserved our tables in advance. We arrived at Vapiano around 8pm. We entered the restaurant.
+                            The waiter showed us our table. We sat down at our table and started looking through the menu.
+                            After a while, we decided on our meal. First, we ordered drinks.
+                            I didn't want to drink alcohol as I had to drive, so we ordered non-alcoholic drinks.
+                            Along with drinks we ordered a salad as an appetizer. I decided to have a thin crust pizza and my friend wanted to have Aglio Olio.
+                            We placed our order with the waiter. After a few minutes, he brought our drinks and the appetizer.
+                            We started talking while having drinks and the salad. Finally, after 20 minutes, the waiter brought our order. We started eating our meal.
+                            The food was good and we enjoyed it. After finishing our meal, we asked the waiter to bring our bill.
+                            After a few minutes, he came with the bill. I paid the bill and included a tip for the waiter.
+                            Finally, we left the restaurant. We liked the restaurant.
+                        </div>
+
+                        <strong>Now please look at the following questions. Decide for each question to which of 4 categories it belongs and then give a correct and an incorrect answer, if possible. If you cannot find an answer, give an alternative question. Each question you write should be unique, so don't write the same question twice.</strong>
+                        <ol>
+                            <li>The answer is in the text.</li>
+                            <li>The answer is not in the text, but I can guess the correct answer using my commonsense knowledge.</li>
+                            <li>The answer is not in the text and even my commonsense knowledge doesn't allow me to guess the correct answer.</li>
+                            <li>The question doesn't make sense for the text.</li>
+                        </ol>
+
+                        <style>
+                                            #example-table td {
+                                                border-left: 1px solid;
+                                                border-right: 1px solid;
+                                                border-top: 1px solid
+                                            }
+                                    </style>
+                        <table id="example-table" style="border-left: 1px solid;
+                            border-right: 1px solid;
+                            border-bottom: 1px solid;
+                            border-top: 1px solid" class="table">
+                            <tr>
+                                <th></th>
+                                <th style="border-left: 1px solid;
+                                    text-align: center" colspan="2">answerable</th>
+                                <th style="border-left: 1px solid;
+                                    text-align: center" colspan="2">not answerable</th>
+                                <th style="border-left: 1px solid;"></th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th style="border-left: 1px solid;
+                                    border-right: 1px solid;
+                                    border-top: 1px solid">answer in text</th>
+                                <th style="border-left: 1px solid;
+                                    border-right: 1px solid;
+                                    border-top: 1px solid">commonsense knowledge allows to guess correct answer</th>
+                                <th style="border-left: 1px solid;
+                                    border-right: 1px solid;
+                                    border-top: 1px solid">commonsense knowledge doesn't allow to guess correct answer</th>
+                                <th style="border-left: 1px solid;
+                                    border-right: 1px solid;
+                                    border-top: 1px solid">doesn't make sense</th>
+                                <th style="border-left: 1px solid;
+                                    border-right: 1px solid;
+                                    border-top: 1px solid">correct answer</th>
+                                <th style="border-left: 1px solid;
+                                    border-right: 1px solid;
+                                    border-top: 1px solid">wrong answer</th>
+                                <th style="border-left: 1px solid;
+                                    border-right: 1px solid;
+                                    border-top: 1px solid">alternative question</th>
+                            </tr>
+                            <tr>
+                                <td>What did they order?</td>
+                                <td style="font-size: 25px;
+                                    text-align: center;">&bull;</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>pizza and pasta</td>
+                                <td>a steak</td>
+                                <td bgcolor="#ddd"></td>
+                            </tr>
+                            <tr>
+                                <td>When did they leave?</td>
+                                <td style="font-size: 25px;
+                                    text-align: center;">&bull;</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>after paying</td>
+                                <td>before they ordered</td>
+                                <td bgcolor="#ddd"></td>
+                            </tr>
+                            <tr>
+                                <td>Why didn't they order a glass of wine?</td>
+                                <td style="font-size: 25px;
+                                    text-align: center;">&bull;</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>one of them had to drive</td>
+                                <td>they didn't like the taste of wine</td>
+                                <td bgcolor="#ddd"></td>
+                            </tr>
+                            <tr>
+                                <td>Who prepared their food?</td>
+                                <td></td>
+                                <td style="font-size: 25px;
+                                    text-align: center;">&bull;</td>
+                                <td></td>
+                                <td></td>
+                                <td>the chef</td>
+                                <td>the waiter</td>
+                                <td bgcolor="#ddd"></td>
+                            </tr>
+                            <tr>
+                                <td>Where is the restaurant?</td>
+                                <td></td>
+                                <td></td>
+                                <td style="font-size: 25px;
+                                    text-align: center;">&bull;</td>
+                                <td></td>
+                                <td bgcolor="#ddd"></td>
+                                <td bgcolor="#ddd"></td>
+                                <td>Who brought the bill?</td>
+                            </tr>
+                            <tr>
+                                <td>Why did they order a steak?</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td style="font-size: 25px;
+                                    text-align: center;">&bull;</td>
+                                <td bgcolor="#ddd"></td>
+                                <td bgcolor="#ddd"></td>
+                                <td>What was the name of the restaurant?</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <hr/>
+                </div>
+                <!--
+                Question's content goes here
+                -->
+                <p><strong>Please read the following text:</strong></p>
+
+
+                <div style="
+                    padding: 9.5px;
+                    margin: 0 0 10px;
+                    font-size: 13px;
+                    line-height: 1.42857143;
+                    color: #333;
+                    background-color: #f5f5f5;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                ">
+                                {{question.story}}
+                </div>
+
+                <p style="margin-top: 20px"><strong>Now please look at the following questions. Decide for each question to which of 4 categories it belongs and then give a correct and an incorrect answer, if possible. If you cannot find an answer, give an alternative question. Each question you write should be unique, so don't write the same question twice.</strong></p>
+
+                <ol>
+                    <li>The answer is in the text.</li>
+                    <li>The answer is not in the text, but I can guess the correct answer using my commonsense knowledge.</li>
+                    <li>The answer is not in the text and even my commonsense knowledge doesn't allow me to guess the correct answer.</li>
+                    <li>The question doesn't make sense for the text.</li>
+                </ol>
+
+                <table style="margin-top: 20px" class="table">
+                    <tr>
+                        <th style="border-left: inherit;
+                            border-top: inherit;
+                            border-right: 1px solid #ddd;"></th>
+                        <th style="text-align: center;" colspan="2">answerable</th>
+                        <th style="border-left: 1px solid #ddd;
+                            text-align: center" colspan="2">not answerable</th>
+                        <th style="border-left: 1px solid #ddd;
+                            border-top: inherit"></th>
+                        <th style="border-top: inherit"></th>
+                    </tr>
+                    <tr>
+                        <th style="border-left: inherit;
+                            border-right: 1px solid #ddd;"></th>
+                        <th>answer in text</th>
+                        <th>commonsense knowledge allows to guess correct answer</th>
+                        <th style="border-left: 1px solid #ddd;">commonsense knowledge doesn't allow to guess correct answer</th>
+                        <th>doesn't make sense</th>
+                        <th style="border-left: 1px solid #ddd;">correct answer</th>
+                        <th>wrong answer</th>
+                        <th>alternative question</th>
+                    </tr>
+                    <tr ng-init="question.answer[$index] = {};question.answer[$index].question = q; question.answer[$index].answer = '';question.answer[$index].correctAnswer = '';question.answer[$index].wrongAnswer = '';" ng-repeat="q in question.questions track by $index">
+                        <td style="border-left: inherit;
+                            border-right: 1px solid #ddd;">{{q}}</td>
+                        <td><input value="in text" name="question{{$index}}" ng-model="question.answer[$index].answer" type="radio"></td>
+                        <td><input value="not in text" name="question{{$index}}" ng-model="question.answer[$index].answer" type="radio"></td>
+                        <td style="border-left: 1px solid #ddd;"><input value="multiple answers" name="question{{$index}}" ng-model="question.answer[$index].answer" type="radio"></td>
+                        <td><input value="makes no sense" name="question{{$index}}" ng-model="question.answer[$index].answer" type="radio"></td>
+
+                        <td style="border-left: 1px solid #ddd;"><input ng-disabled="!RC.allowInput(question, $index)" ng-model="question.answer[$index].correctAnswer" style="width: 120px" type="text"></td>
+                        <td><input ng-disabled="!RC.allowInput(question, $index)" ng-model="question.answer[$index].wrongAnswer" style="width: 120px" type="text"></td>
+
+                        <td style="border-left: 1px solid #ddd;"><input ng-disabled="!RC.allowAlternativeQuestion(question, $index)" ng-model="question.answer[$index].alternativeQuestion" style="width: 150px" type="text"></td>
+                    </tr>
+                </table>
+                <!--
+                End of question
+                -->
+                <button ng-disabled="!RC.done()" ng-click="RC.nextQuestion()" type="button" class="btn btn-default" style="float: right ;
+                    margin-top: 20px">Next</button>
+                <!--
+                If you don't want to skip participants through your items, you should prevent them by checking if the input is empty. In that case the
+                button will be disabled. We use the "ng-disabled" attribute to achieve that. Below you find an example how that might look like:
+
+                <button ng-disabled="question.answer === undefined || question.answer == '' || question.answer == {}" ng-click="RC.nextQuestion()" type="button" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
+                -->
+            </div>
+        </div>
+            <!-- /the main content of the experiment goes here -->
+        </div>
+    </div>
+
+    <div ng-if="RC.showMessage == 'nextSubList'" style="height: 100% ;
+        width: 100% ;
+        display: table ;
+        position: absolute;
+        top: 0;
+        left: 0">
+        <div style="display: table-cell ;
+            height: 100% ;
+            vertical-align: middle ;">
+            <div style="width: 90%;
+                margin: auto">
+                <!-- <this message is shown if a user successfully finished a sublist> -->
+            <div class="panel panel-primary">
+                <!-- <the message's heading> -->
+            <div class="panel-heading" style="font-weight: bolder ;" id="nextSubList_title">Attention:</div>
+                <!-- </the message's heading> -->
+            <div class="panel-body">
+                <!-- <the message content> -->
+            <div id="nextSubList_message">
+                                    You've successfully completed a sublist. You may either stop here or continue with another one.
+            </div>
+                <!-- </the message content. please don't edit the buttons below (except their label)> -->
+            <hr/>
+            <button ng-click="RC.processFinish()" style="float: right;
+                margin-left: 10px;" class="btn btn-default" type="button">Stop here</button>
+            <button ng-click="RC.nextSublist()" style="float: right" class="btn btn-default" type="button">Continue</button>
+            </div>
+            </div>
+                <!-- </this message is shown if a user successfully finished a sublist> -->
+            </div>
+        </div>
+    </div>
+
+    <div ng-if="RC.showMessage == 'goodBye'" style="height: 100% ;
+        width: 100% ;
+        display: table ;
+        position: absolute;
+        top: 0;
+        left: 0">
+        <div style="display: table-cell ;
+            height: 100% ;
+            vertical-align: middle ;">
+            <div style="width: 90%;
+                margin: auto">
+                <div class="panel panel-primary">
+                    <div id="goodBye_title" class="panel-heading" style="font-weight: bolder ;">Attention:</div>
+                    <div class="panel-body">
+                        <div id="goodBye_message">
+                                    You've successfully completed the experiment. Thank you for your participation. To hand in your submission, click on the "Submit"-button below.
+                        </div>
+                        <hr/>
+                        <button ng-click="RC.finished()" style="float: right" class="btn btn-default" type="button">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

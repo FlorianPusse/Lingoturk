@@ -55,7 +55,7 @@
                         continue;
                     }
                     var obj = data[typeName];
-                    if (obj.isGroupType) {
+                    if (!obj.isQuestionType) {
                         delete data[typeName];
                         continue;
                     }

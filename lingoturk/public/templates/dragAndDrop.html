@@ -1,4 +1,4 @@
-<div ng-if="!noneOfThese && !noConnectives" id="top">
+<div ng-if="(!noneOfThese || noneStyle == 'inline') && !noConnectives" id="top">
     <label ng-if="!categorySet">{{instructions1}}</label>
     <label ng-if="categorySet">{{instructions2}}</label>
 
@@ -6,8 +6,15 @@
         <div class="panel-heading" style="color:#000000 ; padding-bottom: 6px ; padding-top: 6px">{{boxTitle}}</div>
         <div class="panel-body" id="sortableBody" style="padding-bottom: 10px ; padding-top: 10px">
             <ul ng-if="!categorySet" class="list-inline sortable" id="category" style="margin-bottom:0px">
-                <li class="ui-state-default draggable" ng-repeat="connective in processedConnectives track by $index">{{connective}}</li>
-                <li ng-if="!categorySet" ng-click="setNoneOfThese(true)" style="float:right ; color:#292929 ; cursor: pointer">none of these</li>
+                <li ng-if="!noneOfThese" class="ui-state-default draggable" ng-repeat="connective in processedConnectives track by $index">{{connective}}</li>
+                <li ng-if="noneOfThese" class="ui-state-default" style="background: #e0dddd" ng-repeat="connective in processedConnectives track by $index">{{connective}}</li>
+
+                <li ng-if="!categorySet && noneStyle == 'block'" ng-click="setNoneOfThese(true)" style="float:right ; color:#292929 ; cursor: pointer">none of these</li>
+                <li ng-if="!categorySet && noneStyle == 'inline' && !noneOfThese" ng-click="setNoneOfThese(true)" style="cursor: pointer">none of these</li>
+                <span ng-if="noneOfThese && noneStyle == 'inline'" class="form-group" >
+                	<input placeholder="enter connective here" class="form-control" style="width: 170px; display: inline" type="text" ng-model="answer.manualAnswer1"/>
+                	<button type="button" ng-click="setNoneOfThese(false)" class="btn btn-default" style="display: inline-block">{{goBackText}}</button>
+            	</span>
             </ul>
             <ul ng-if="categorySet" class="list-inline sortable" id="sortableConnectives" style="margin-bottom:0px">
                 <li ng-if="suitableCategories.indexOf(connective) == -1" class="ui-state-default draggable" ng-repeat="connective in processedConnectives track by $index">{{connective}}</li>
@@ -18,15 +25,18 @@
 </div>
 
 <blockquote id="Sentence1" style="padding-bottom:7px ; padding-top:7px">
-    <span style="color:grey;margin-right:6px;">{{context1}}</span>{{sentence1}}
+    <span ng-if="context1.length > 0" style="color:grey;margin-right:6px;">{{context1}}</span>{{sentence1}}
     <div ng-if="!categorySet" class="panel panel-warning" style="margin-bottom:0;display:inline-block" id="sortableDiv">
         <div class="panel-body" style="background-color: #DFFFBF ; padding-bottom: 0px ; padding-top: 0px">
             <!-- for Category Connective -->
             <ul ng-if="!noneOfThese" class="list-inline sortable" id="suitableCategory"></ul>
             <!-- no suiting connective in first phase -> manual input -->
-            <div ng-if="noneOfThese" class="form-group" >
+
+            <ul ng-if="noneOfThese && noneStyle == 'inline'" class="list-inline"></ul>
+
+            <div ng-if="noneOfThese && noneStyle == 'block'" class="form-group" >
                 <input placeholder="enter connective here" class="form-control" style="width: 70% ; display: inline" type="text" ng-model="answer.manualAnswer1"/>
-                <button type="button" ng-click="setNoneOfThese(false)" class="btn btn-default" style="float:right ; display: inline">I changed my mind</button>
+                <button type="button" ng-click="setNoneOfThese(false)" class="btn btn-default" style="float:right ; display: inline">{{goBackText}}</button>
             </div>
         </div>
     </div>
@@ -46,5 +56,5 @@
 
 <div style="text-align: center">
     <button type="button" ng-click="setAnswers();click()" style="display:inline-block" class="btn btn-default continue-button" id="submitButton" disabled="disabled">Submit</button>
-    <button ng-if="!categorySet" style="display: inline-block" ng-click="categoriesChosen()" type="button" class="btn btn-default continue-button" disabled="disabled">Add another connective</button>
+    <button ng-if="!categorySet && allowMultiple === 'true'" style="display: inline-block" ng-click="categoriesChosen()" type="button" class="btn btn-default continue-button" disabled="disabled">Add another connective</button>
 </div>

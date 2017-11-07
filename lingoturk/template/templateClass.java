@@ -1,6 +1,6 @@
 package models.Questions._EXPERIMENT_Experiment;
 
-import play.db.ebean.Model;
+import io.ebean.*;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;

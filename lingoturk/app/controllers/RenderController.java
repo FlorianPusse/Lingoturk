@@ -1,90 +1,94 @@
 package controllers;
 
+import be.objectify.deadbolt.java.actions.SubjectPresent;
 import models.Groups.AbstractGroup;
 import models.LingoExpModel;
-import models.Questions.ExampleQuestion;
 import models.Questions.Question;
 import models.Worker;
 import play.data.DynamicForm;
+import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import play.mvc.Security;
 import play.twirl.api.Html;
+import views.html.ExperimentRendering.experiment_main;
 
+import javax.inject.Inject;
+import java.sql.SQLException;
+import java.util.concurrent.ConcurrentHashMap;
+
+/***
+ * Controller handling handling requests related to experiment rendering
+ */
 public class RenderController extends Controller {
 
-    private static LeastUsedChunksAnswer getLeastUsedChunk(int expId) throws SQLException {
-        PreparedStatement statement = DatabaseController.getConnection().prepareStatement("SELECT * FROM (SELECT partId,chunkId,floor(count(*)/31) AS occurences FROM (SELECT * FROM PictureNamingResult JOIN LingoExpModels_contain_Parts USING (PartId) WHERE LingoExpModelId = ? ) AS tmp GROUP BY partId, chunkId) AS tmp2 ORDER BY occurences ASC LIMIT 1;");
-        statement.setInt(1, expId);
+    private final FormFactory formFactory;
+    public static ConcurrentHashMap<String, String> experimentContent = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, String> previewContent = new ConcurrentHashMap<>();
 
-        ResultSet rs = statement.executeQuery();
-
-        LeastUsedChunksAnswer answer = null;
-        if (rs.next()) {
-            answer = new LeastUsedChunksAnswer(rs.getInt("chunkId"), rs.getInt("partId"));
-        }
-        return answer;
-    }
-
-    private static class LeastUsedChunksAnswer {
-        int chunkId;
-        int partId;
-
-        public LeastUsedChunksAnswer(int chunkId, int partId) {
-            this.chunkId = chunkId;
-            this.partId = partId;
-        }
+    @Inject
+    public RenderController(final FormFactory formFactory) {
+        this.formFactory = formFactory;
     }
 
     /**
-     * Renders an experiment for the given origin.
+     * Loads the contents of an experiment type. Instructions will be injected at the position
+     * marked with @_SHOW_INSTRUCTIONS_@
+     *
+     * @param expModel The experiment that should be rendered
+     * @return Returns the content of the experiment. If the content can't be loaded, an error is returend instead
+     */
+    public static Html getExperimentContent(LingoExpModel expModel) {
+        String type = expModel.getExperimentType();
+        String content = experimentContent.get(type);
+        if (content != null) {
+            content = content.replace("@_SHOW_INSTRUCTIONS_@", expModel.getAdditionalExplanations());
+            return Html.apply(content);
+        }
+        return Html.apply("Could not load experiment content. Please try again in a few seconds.");
+    }
+
+    /**
+     * Loads the preview of an experiment type. Instructions will be injected at the position
+     * marked with @_SHOW_INSTRUCTIONS_@
+     *
+     * @param expModel The experiment that should be rendered
+     * @return Returns the previw of the experiment. If the content can't be loaded, null is returned instead
+     */
+    public static Html getPreviewContent(LingoExpModel expModel) {
+        String type = expModel.getExperimentType();
+        String content = previewContent.get(type);
+        if (content != null) {
+            content = content.replace("@_SHOW_INSTRUCTIONS_@", expModel.getAdditionalExplanations());
+            return Html.apply(content);
+        }
+        return null;
+    }
+
+    /**
+     * Renders an experiment for the given origin. This method is mostly invoked by participants
+     * coming from Prolific Academic
      *
      * @param expId The experiment to display
      * @return Result object containing the page.
      */
-    public static Result render(Integer expId, Integer partId, Integer questionId, String workerId, String origin) {
-        DynamicForm df = new DynamicForm().bindFromRequest();
+    public Result render(Integer expId, Integer partId, Integer questionId, String workerId, String origin) {
+        DynamicForm df = formFactory.form().bindFromRequest();
         LingoExpModel lingoExpModel = LingoExpModel.byId(expId);
         if (lingoExpModel == null) {
             return internalServerError("Unknown experiment Id");
         }
 
         Worker w = null;
-        if(workerId != null){
+        if (workerId != null) {
             w = Worker.getWorkerById(workerId);
         }
 
-        try {
-            Method m = getRenderMethod(lingoExpModel.getExperimentType());
-            Html webpage = (Html) m.invoke(null, (questionId == null ? null : Question.byId(questionId)), (partId == null ? null : AbstractGroup.byId(partId)), w, null, null, null, lingoExpModel, df, origin);
-            return ok(webpage);
-        } catch (ClassNotFoundException e) {
-            return internalServerError("Unknown experiment name: " + lingoExpModel.getExperimentType());
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassCastException e) {
-            e.printStackTrace();
-            return internalServerError("Wrong type for name: " + lingoExpModel.getExperimentType());
-        }
-    }
-
-    public static Method getRenderMethod(String experimentType) throws NoSuchMethodException, ClassNotFoundException {
-        Class<?> c = Class.forName("views.html.ExperimentRendering." + experimentType + "." + experimentType + "_render");
-        return c.getMethod("render", Question.class, AbstractGroup.class, Worker.class, String.class, String.class, String.class, LingoExpModel.class, DynamicForm.class, String.class);
-    }
-
-    public static Method getPreviewMethod(String experimentType) throws NoSuchMethodException, ClassNotFoundException {
-        Class<?> c = Class.forName("views.html.ExperimentRendering." + experimentType + "." + experimentType + "_preview");
-        return c.getMethod("render",LingoExpModel.class);
+        Html html = getExperimentContent(lingoExpModel);
+        return ok(experiment_main.render(lingoExpModel.getExperimentType(), (questionId == null ? null : Question.byId(questionId)), (partId == null ? null : AbstractGroup.byId(partId)), w, null, null, null, lingoExpModel, df, origin, html));
     }
 
     /**
-     * Renders an experiment's worker-view of any type.
+     * Renders an experiment's worker-view.
      *
      * @param id           The id in the database
      * @param assignmentId The assignment ID submitted by AMT
@@ -92,11 +96,11 @@ public class RenderController extends Controller {
      * @param workerId     The worker ID submitted by AMT or "null" if none submitted
      * @return The rendered page
      */
-    public static Result renderAMT(String Type, int id, String assignmentId, String hitId, String workerId, String turkSubmitTo) {
+    public Result renderAMT(String Type, int id, String assignmentId, String hitId, String workerId, String turkSubmitTo) {
         try {
-            DynamicForm df = new DynamicForm().bindFromRequest();
+            DynamicForm df = formFactory.form().bindFromRequest();
 
-            if(!(Type.equals("question") || Type.equals("part"))){
+            if (!(Type.equals("question") || Type.equals("part"))) {
                 return internalServerError("Unknown Type specifier: " + Type);
             }
 
@@ -107,12 +111,11 @@ public class RenderController extends Controller {
 
             // if worker id is not available (null) the site just shows an preview
             if (assignmentId.equals("ASSIGNMENT_ID_NOT_AVAILABLE") || workerId == null) {
-                try {
-                    return ok((Html) getPreviewMethod(exp.getExperimentType()).invoke(null,exp));
-                }catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
-                    // No preview available, try to continue
-                    workerId = (workerId != null) ? workerId : "NA";
+                Html content = getPreviewContent(exp);
+                if (content != null) {
+                    return ok(content);
                 }
+                workerId = (workerId != null) ? workerId : "NA";
             }
 
             // Retrieve worker from DB
@@ -155,10 +158,16 @@ public class RenderController extends Controller {
         }
     }
 
-    @Security.Authenticated(Secured.class)
-    public static Result previewLists(int expId){
+    /**
+     * Previews the lists for a given experiment, represented by the {@code expId}
+     *
+     * @param expId The experiment that should be previewed
+     * @return The preview of the experiment
+     */
+    @SubjectPresent
+    public Result previewLists(int expId) {
         LingoExpModel exp = LingoExpModel.byId(expId);
-        if(exp == null){
+        if (exp == null) {
             return internalServerError("Experiment Id: " + expId + " does not exist");
         }
 

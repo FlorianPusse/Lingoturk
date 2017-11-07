@@ -1,14 +1,19 @@
 package models;
 
-import play.db.ebean.Model;
+import io.ebean.Model;
 
 import javax.persistence.*;
 
+/**
+ * Represents statistics that might be collected about a worker.
+ * (Statistics collection is turned off by default)
+ */
 @Entity
-@Table(name="ParticipantStatistics")
+@Table(name = "ParticipantStatistics")
 public class ParticipantStatistics extends Model {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "participantstatistics_seq")
     int id;
 
     @Basic

@@ -1,1 +1,0 @@
-SELECT * FROM LinkingV2Results;

@@ -1,0 +1,55 @@
+<div style="font-size:15px">
+    Welcome to our experiment. By participating in this experiment you will contribute to a research about how people conduct everyday activities, for example, <strong>baking a cake </strong>. You will be asked at most 20 checkbox questions like
+
+    <style>
+        #example{
+            cursor: not-allowed;
+        }
+    </style>
+    <script>
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+
+    <div id="example" class="panel panel-primary" style="margin-top:15px">
+        <div class="panel-heading" style="font-weight: bolder ;"></div>
+        <div class="panel-body ng-binding">
+            We are considering the situation that people <b>bake a cake</b>.
+
+            Which of the following events does <i>buying flour</i> <b>directly</b> make easier or possible?
+            <hr />
+
+            <div class="checkbox disabled">
+                <label><input type="checkbox" value="" disabled>measure ingredients<br/><i>I measured the amount of flour that was given in the instructions.</i></label>
+            </div>
+            <div class="checkbox disabled">
+                <label><input type="checkbox" value="" disabled>make the dough<br/><i>I mixed everything well to make a smooth and yummy batter.</i></label>
+            </div>
+            <div class="checkbox disabled">
+                <label><input type="checkbox" value="" disabled>put cake into oven<br/><i>I put the cake into the oven and set the cooking alarm for 30 minutes.</i></label>
+            </div>
+            <div class="checkbox disabled">
+                <label><input type="checkbox" value="" disabled>choose a receipe<br/><i>I looked up the recipe online and went to the store to buy all the ingredients.</i></label>
+            </div>
+            <div class="checkbox disabled" style="margin-top:15px">
+                <label><input type="checkbox" value="" disabled>none of these</label>
+            </div>
+
+
+            <button type="button" class="btn btn-default" style="float:right ; margin-top:20px" disabled="disabled">Next</button>
+        </div>
+    </div>
+
+    <ul>
+        <li>As the options we see a number of actions involved in <b>baking a cake</b>. Right below each option is an example of how people may narrate it. Please make sure to go through these examples before you decide on each option.</li>
+        <li>You are supposed to choose as many options as you consider <strong>directly</strong> made easier to accomplish by the action in question (here: buying flour). In case you consider none of the options appropriate, please choose "<b>none of these</b>". </li>
+        <li>In this example, "<b>make the dough</b>" should be chosen, because we need, among others, <strong>flour</strong>, to make a dough. "<b>buying flour</b>" will have the flour prepared for us, hence leading us one step closer to "<b>make the dough</b>".</li>
+        <li>For a similar reason, "<b>measure ingredients</b>" should be chosen: we need to have the flour bought before all ingredients could be measured.  </li>
+        <li>"<b>put cake into oven</b>" should <strong>not</strong> be chosen: "<b>buying flour</b>" does not <strong>directly</strong> help us to "<b>put cake into oven</b>", as what is relevant is the cake instead of the flour. </li>
+        <li>Finally, "<b>choose a recipe</b>" should not be chosen, since "<b>buying flour</b>" does not help us to "<b>choose a recipe</b>".</li>
+    </ul>
+
+
+
+</div>

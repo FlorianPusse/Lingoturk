@@ -1,15 +1,99 @@
-@(exp: LingoExpModel, balance : Double)
+@(exp: LingoExpModel, balance : Double, staticIp: String)
 
 @main("Preview") {
 
+    <style>
+            #usedLocale, #notUsedLocale {
+                list-style-type: none;
+                padding: 0px 0 0 0;
+                margin: 0 10px 0 0;
+                height: 100%;
+            }
+            .sortable-wrapper {
+                height: 300px;
+                width: 47%;
+                border: 1px solid #eee;
+                display: inline-block;
+                margin: 0 10px 0 0;
+                overflow:hidden;
+            }
+            .connectedSortable {
+                overflow: auto;
+                display:block;
+                width: 100%;
+            }
+            .connectedSortable {
+                cursor: pointer;
+            }
+            .connectedSortable .locale {
+                cursor: grab;
+                cursor: -webkit-grab;
+            }
+    </style>
+
     <script>
     $(document).ready (function(){
+        // base64 encoded list of ISO 3166-1 country codes
+        var countryCodes = "QUYsQWZnaGFuaXN0YW4NCkFYLCLDhWxhbmQgSXNsYW5kcyINCkFMLEFsYmFuaWENCkRaLEFsZ2VyaWENCkFTLCJBbWVyaWNhbiBTYW1vYSINCkFELEFuZG9ycmENCkFPLEFuZ29sYQ0KQUksQW5ndWlsbGENCkFRLEFudGFyY3RpY2ENCkFHLCJBbnRpZ3VhICYgQmFyYnVkYSINCkFSLEFyZ2VudGluYQ0KQU0sQXJtZW5pYQ0KQVcsQXJ1YmENCkFDLCJBc2NlbnNpb24gSXNsYW5kIg0KQVUsQXVzdHJhbGlhDQpBVCxBdXN0cmlhDQpBWixBemVyYmFpamFuDQpCUyxCYWhhbWFzDQpCSCxCYWhyYWluDQpCRCxCYW5nbGFkZXNoDQpCQixCYXJiYWRvcw0KQlksQmVsYXJ1cw0KQkUsQmVsZ2l1bQ0KQlosQmVsaXplDQpCSixCZW5pbg0KQk0sQmVybXVkYQ0KQlQsQmh1dGFuDQpCTyxCb2xpdmlhDQpCQSwiQm9zbmlhICYgSGVyemVnb3ZpbmEiDQpCVyxCb3Rzd2FuYQ0KQlIsQnJhemlsDQpJTywiQnJpdGlzaCBJbmRpYW4gT2NlYW4gVGVycml0b3J5Ig0KVkcsIkJyaXRpc2ggVmlyZ2luIElzbGFuZHMiDQpCTixCcnVuZWkNCkJHLEJ1bGdhcmlhDQpCRiwiQnVya2luYSBGYXNvIg0KQkksQnVydW5kaQ0KS0gsQ2FtYm9kaWENCkNNLENhbWVyb29uDQpDQSxDYW5hZGENCklDLCJDYW5hcnkgSXNsYW5kcyINCkNWLCJDYXBlIFZlcmRlIg0KQlEsIkNhcmliYmVhbiBOZXRoZXJsYW5kcyINCktZLCJDYXltYW4gSXNsYW5kcyINCkNGLCJDZW50cmFsIEFmcmljYW4gUmVwdWJsaWMiDQpFQSwiQ2V1dGEgJiBNZWxpbGxhIg0KVEQsQ2hhZA0KQ0wsQ2hpbGUNCkNOLENoaW5hDQpDWCwiQ2hyaXN0bWFzIElzbGFuZCINCkNDLCJDb2NvcyAoS2VlbGluZykgSXNsYW5kcyINCkNPLENvbG9tYmlhDQpLTSxDb21vcm9zDQpDRywiQ29uZ28gLSBCcmF6emF2aWxsZSINCkNELCJDb25nbyAtIEtpbnNoYXNhIg0KQ0ssIkNvb2sgSXNsYW5kcyINCkNSLCJDb3N0YSBSaWNhIg0KQ0ksIkPDtHRlIGTigJlJdm9pcmUiDQpIUixDcm9hdGlhDQpDVSxDdWJhDQpDVyxDdXJhw6dhbw0KQ1ksQ3lwcnVzDQpDWiwiQ3plY2ggUmVwdWJsaWMiDQpESyxEZW5tYXJrDQpERywiRGllZ28gR2FyY2lhIg0KREosRGppYm91dGkNCkRNLERvbWluaWNhDQpETywiRG9taW5pY2FuIFJlcHVibGljIg0KRUMsRWN1YWRvcg0KRUcsRWd5cHQNClNWLCJFbCBTYWx2YWRvciINCkdRLCJFcXVhdG9yaWFsIEd1aW5lYSINCkVSLEVyaXRyZWENCkVFLEVzdG9uaWENCkVULEV0aGlvcGlhDQpGSywiRmFsa2xhbmQgSXNsYW5kcyINCkZPLCJGYXJvZSBJc2xhbmRzIg0KRkosRmlqaQ0KRkksRmlubGFuZA0KRlIsRnJhbmNlDQpHRiwiRnJlbmNoIEd1aWFuYSINClBGLCJGcmVuY2ggUG9seW5lc2lhIg0KVEYsIkZyZW5jaCBTb3V0aGVybiBUZXJyaXRvcmllcyINCkdBLEdhYm9uDQpHTSxHYW1iaWENCkdFLEdlb3JnaWENCkRFLEdlcm1hbnkNCkdILEdoYW5hDQpHSSxHaWJyYWx0YXINCkdSLEdyZWVjZQ0KR0wsR3JlZW5sYW5kDQpHRCxHcmVuYWRhDQpHUCxHdWFkZWxvdXBlDQpHVSxHdWFtDQpHVCxHdWF0ZW1hbGENCkdHLEd1ZXJuc2V5DQpHTixHdWluZWENCkdXLEd1aW5lYS1CaXNzYXUNCkdZLEd1eWFuYQ0KSFQsSGFpdGkNCkhOLEhvbmR1cmFzDQpISywiSG9uZyBLb25nIFNBUiBDaGluYSINCkhVLEh1bmdhcnkNCklTLEljZWxhbmQNCklOLEluZGlhDQpJRCxJbmRvbmVzaWENCklSLElyYW4NCklRLElyYXENCklFLElyZWxhbmQNCklNLCJJc2xlIG9mIE1hbiINCklMLElzcmFlbA0KSVQsSXRhbHkNCkpNLEphbWFpY2ENCkpQLEphcGFuDQpKRSxKZXJzZXkNCkpPLEpvcmRhbg0KS1osS2F6YWtoc3Rhbg0KS0UsS2VueWENCktJLEtpcmliYXRpDQpYSyxLb3Nvdm8NCktXLEt1d2FpdA0KS0csS3lyZ3l6c3Rhbg0KTEEsTGFvcw0KTFYsTGF0dmlhDQpMQixMZWJhbm9uDQpMUyxMZXNvdGhvDQpMUixMaWJlcmlhDQpMWSxMaWJ5YQ0KTEksTGllY2h0ZW5zdGVpbg0KTFQsTGl0aHVhbmlhDQpMVSxMdXhlbWJvdXJnDQpNTywiTWFjYXUgU0FSIENoaW5hIg0KTUssTWFjZWRvbmlhDQpNRyxNYWRhZ2FzY2FyDQpNVyxNYWxhd2kNCk1ZLE1hbGF5c2lhDQpNVixNYWxkaXZlcw0KTUwsTWFsaQ0KTVQsTWFsdGENCk1ILCJNYXJzaGFsbCBJc2xhbmRzIg0KTVEsTWFydGluaXF1ZQ0KTVIsTWF1cml0YW5pYQ0KTVUsTWF1cml0aXVzDQpZVCxNYXlvdHRlDQpNWCxNZXhpY28NCkZNLE1pY3JvbmVzaWENCk1ELE1vbGRvdmENCk1DLE1vbmFjbw0KTU4sTW9uZ29saWENCk1FLE1vbnRlbmVncm8NCk1TLE1vbnRzZXJyYXQNCk1BLE1vcm9jY28NCk1aLE1vemFtYmlxdWUNCk1NLCJNeWFubWFyIChCdXJtYSkiDQpOQSxOYW1pYmlhDQpOUixOYXVydQ0KTlAsTmVwYWwNCk5MLE5ldGhlcmxhbmRzDQpOQywiTmV3IENhbGVkb25pYSINCk5aLCJOZXcgWmVhbGFuZCINCk5JLE5pY2FyYWd1YQ0KTkUsTmlnZXINCk5HLE5pZ2VyaWENCk5VLE5pdWUNCk5GLCJOb3Jmb2xrIElzbGFuZCINCktQLCJOb3J0aCBLb3JlYSINCk1QLCJOb3J0aGVybiBNYXJpYW5hIElzbGFuZHMiDQpOTyxOb3J3YXkNCk9NLE9tYW4NClBLLFBha2lzdGFuDQpQVyxQYWxhdQ0KUFMsIlBhbGVzdGluaWFuIFRlcnJpdG9yaWVzIg0KUEEsUGFuYW1hDQpQRywiUGFwdWEgTmV3IEd1aW5lYSINClBZLFBhcmFndWF5DQpQRSxQZXJ1DQpQSCxQaGlsaXBwaW5lcw0KUE4sIlBpdGNhaXJuIElzbGFuZHMiDQpQTCxQb2xhbmQNClBULFBvcnR1Z2FsDQpQUiwiUHVlcnRvIFJpY28iDQpRQSxRYXRhcg0KUkUsUsOpdW5pb24NClJPLFJvbWFuaWENClJVLFJ1c3NpYQ0KUlcsUndhbmRhDQpXUyxTYW1vYQ0KU00sIlNhbiBNYXJpbm8iDQpTVCwiU8OjbyBUb23DqSAmIFByw61uY2lwZSINClNBLCJTYXVkaSBBcmFiaWEiDQpTTixTZW5lZ2FsDQpSUyxTZXJiaWENClNDLFNleWNoZWxsZXMNClNMLCJTaWVycmEgTGVvbmUiDQpTRyxTaW5nYXBvcmUNClNYLCJTaW50IE1hYXJ0ZW4iDQpTSyxTbG92YWtpYQ0KU0ksU2xvdmVuaWENClNCLCJTb2xvbW9uIElzbGFuZHMiDQpTTyxTb21hbGlhDQpaQSwiU291dGggQWZyaWNhIg0KR1MsIlNvdXRoIEdlb3JnaWEgJiBTb3V0aCBTYW5kd2ljaCBJc2xhbmRzIg0KS1IsIlNvdXRoIEtvcmVhIg0KU1MsIlNvdXRoIFN1ZGFuIg0KRVMsU3BhaW4NCkxLLCJTcmkgTGFua2EiDQpCTCwiU3QuIEJhcnRow6lsZW15Ig0KU0gsIlN0LiBIZWxlbmEiDQpLTiwiU3QuIEtpdHRzICYgTmV2aXMiDQpMQywiU3QuIEx1Y2lhIg0KTUYsIlN0LiBNYXJ0aW4iDQpQTSwiU3QuIFBpZXJyZSAmIE1pcXVlbG9uIg0KVkMsIlN0LiBWaW5jZW50ICYgR3JlbmFkaW5lcyINClNELFN1ZGFuDQpTUixTdXJpbmFtZQ0KU0osIlN2YWxiYXJkICYgSmFuIE1heWVuIg0KU1osU3dhemlsYW5kDQpTRSxTd2VkZW4NCkNILFN3aXR6ZXJsYW5kDQpTWSxTeXJpYQ0KVFcsVGFpd2FuDQpUSixUYWppa2lzdGFuDQpUWixUYW56YW5pYQ0KVEgsVGhhaWxhbmQNClRMLFRpbW9yLUxlc3RlDQpURyxUb2dvDQpUSyxUb2tlbGF1DQpUTyxUb25nYQ0KVFQsIlRyaW5pZGFkICYgVG9iYWdvIg0KVEEsIlRyaXN0YW4gZGEgQ3VuaGEiDQpUTixUdW5pc2lhDQpUUixUdXJrZXkNClRNLFR1cmttZW5pc3Rhbg0KVEMsIlR1cmtzICYgQ2FpY29zIElzbGFuZHMiDQpUVixUdXZhbHUNClVNLCJVLlMuIE91dGx5aW5nIElzbGFuZHMiDQpWSSwiVS5TLiBWaXJnaW4gSXNsYW5kcyINClVHLFVnYW5kYQ0KVUEsVWtyYWluZQ0KQUUsIlVuaXRlZCBBcmFiIEVtaXJhdGVzIg0KR0IsIlVuaXRlZCBLaW5nZG9tIg0KVVMsIlVuaXRlZCBTdGF0ZXMgLyBVU0EiDQpVWSxVcnVndWF5DQpVWixVemJla2lzdGFuDQpWVSxWYW51YXR1DQpWQSwiVmF0aWNhbiBDaXR5Ig0KVkUsVmVuZXp1ZWxhDQpWTixWaWV0bmFtDQpXRiwiV2FsbGlzICYgRnV0dW5hIg0KRUgsIldlc3Rlcm4gU2FoYXJhIg0KWUUsWWVtZW4NClpNLFphbWJpYQ0KWlcsWmltYmFid2U=";
+        var parsedContent = CSVToArray(atob(countryCodes), ',');
+        for(var i = 0; i < parsedContent.length; ++i){
+            var row = parsedContent[i];
+            var code = row[0];
+            var name = row[1];
+
+            $("#notUsedLocale").append("<li data-id=\"" + code + "\"class=\"ui-state-default locale\">" + name + "</li>");
+        }
+
+        function sortItem(a,b){
+            return ($(b).text().toLowerCase()) < ($(a).text().toLowerCase()) ? 1 : -1;
+        }
+
+        $("#notUsedLocale").find(".locale").sort(sortItem).appendTo($("#notUsedLocale"));
+
+        function updateLocales(){
+            var allowedLocales = [];
+            $("#usedLocale .locale").each(function(i,e) {
+                var elem = $(e);
+                allowedLocales.push(elem.data("id"));
+            });
+            $("#allowedLocales").val(allowedLocales.join(","));
+        }
+
+        $(document).on("click", "#notUsedLocale .locale", function(e){
+            var domNode = $(e.target).detach();
+            var target = $("#usedLocale");
+            target.append(domNode);
+            target.find(".locale").sort(sortItem).appendTo(target);
+            updateLocales();
+        });
+
+        $(document).on("click", "#usedLocale .locale", function(e){
+            var domNode = $(e.target).detach();
+            var target = $("#notUsedLocale");
+            target.append(domNode);
+            target.find(".locale").sort(sortItem).appendTo(target);
+            updateLocales();
+        });
+
+        $("#localeFilter").on("input",function(){
+            var filter = $(this).val();
+            $("#notUsedLocale .locale").each(function(i,e){
+                var elem = $(e);
+                // element doesnt suit filter
+                if(elem.text().toLowerCase().indexOf(filter.toLowerCase()) === -1){
+                    elem.hide();
+                }else{
+                    elem.show();
+                }
+            });
+        });
+
         $("#tabs").tabs({});
         $("#fileButton").click(function(){
             $("#fileInput").click();
         });
         $("#fileInput").change(function(){
-            if ($("#fileInput").val() != "") {
+            if ($("#fileInput").val().trim().length > 0) {
                 var files = document.getElementById('fileInput').files;
                 for(var i = 0; i < files.length; i++){
                     var file = files[i];
@@ -23,7 +107,7 @@
                                 var columns = rows[rowCounter].split(",");
                                 for(var columnCounter = 0; columnCounter < columns.length; columnCounter++){
                                     var workerId = columns[columnCounter].trim();
-                                    if(workerId != ""){
+                                    if(workerId.length > 0){
                                         workerIds.push(workerId);
                                     }
                                 }
@@ -48,7 +132,7 @@
         $('form').submit(function(e) {
             var currentForm = this;
             e.preventDefault();
-            bootbox.confirm("Are you sure you want to publish this experiment on Mechanical Turk?", function(result) {
+            bootbox.confirm("Are you sure you want to publish this experiment on " + $("#destination").val() + "?", function(result) {
                 if (result) {
                     currentForm.submit();
                 }
@@ -56,22 +140,30 @@
         });
 
         $('input[type=text]').on("input",function(){
-            if($("#nameOnAmt").val().trim() != "" && $("#descriptionOnAmt").val().trim() != ""){
+            if($("#nameOnAmt").val().trim().length > 0 && $("#descriptionOnAmt").val().trim().length > 0){
                 $("#submitButton").removeAttr("disabled");
             }else{
                 $("#submitButton").attr("disabled","disabled");
             }
         });
+
+        $('#useRequirements').change(function() {
+            $("#requirements").toggle();
+        });
+
+        $("#useLocationRequirements").change(function(){
+            $("#localeRequirement").toggle();
+        });
     });
     </script>
 
-    <div class="panel panel-success" style="margin-bottom : 70px; width : 100%">
+    <div class="panel panel-success" style="border: 2px solid #353535; margin-bottom : 70px; width : 100%">
         <div class="panel-heading">
             <h3 class="panel-title">Set publishing options <strong style="float:right">account balance: @if(balance != -1){$@balance}else{temporarily not available}</strong></h3>
         </div>
 
-        <form action="@routes.Application.publishMturk()" method="POST" role="form" enctype="multipart/form-data" align="center">
-            <div class="panel-body" style="width: 100%;overflow:auto;">
+        <form action="@routes.PublishController.publishMturk()" method="POST" role="form" enctype="multipart/form-data" align="center">
+            <div class="panel-body" style="width: 100%;overflow:auto; background-color: rgba(74, 74, 74, 0.6);">
 
                 <div style="float:left; width:49.5%" id="inputOptions">
                     <input type="hidden" value="@exp.getId()" name="eId">
@@ -88,17 +180,27 @@
 
                     <div class="form-group">
                         <label for="costsPerAssignment"> Reward per Question: (in $) </label>
-                        <input value="0" class="form-control" id="costsPerAssignment" name="costsPerAssignment">
+                        <input value="0" type="number" step="0.01" min="0" class="form-control" id="costsPerAssignment" name="costsPerAssignment">
                     </div>
 
                     <div class="form-group">
-                        <label for="duration"> Time Activated (days): </label>
+                        <label for="duration"> Time Activated (in days): </label>
                         <input value="3" class="form-control" id="duration" name="duration">
                     </div>
 
                     <div class="form-group">
                         <label id="maxAssign"> Maximum Assignments: </label>
-                        <input value="1" class="form-control" id="maxAssign" name="maxAssign">
+                        <input value="1" min="1" type="number" class="form-control" id="maxAssign" name="maxAssign">
+                    </div>
+
+                    <div class="form-group">
+                        <label id="maxAssign"> Maximum working time (in minutes): </label>
+                        <input value="10" type="number" class="form-control" id="maxWorkingTime" name="maxWorkingTime">
+                    </div>
+
+                    <div class="form-group">
+                        <label id="maxAssign"> Auto approval delay (in days): </label>
+                        <input value="7" class="form-control" id="autoApprovalDelay" name="autoApprovalDelay">
                     </div>
 
                     <div class="form-group">
@@ -123,7 +225,40 @@
                         </div>
                     </div>
 
-                    <input type="submit" id="submitButton" disabled="disabled" name="sub" class="btn btn-default" style="float : center; margin-top: 10%" value="Submit" formaction="@routes.Application.publishMturk()" formmethod="post">
+                    <div style="padding-bottom: 5px; background-color: #d6d6d6; border-radius: 10px 10px 10px 10px; -moz-border-radius: 10px 10px 10px 10px; -webkit-border-radius: 10px 10px 10px 10px; border: 0px solid #000000;">
+                        <label for="requirements"> Use Requirements: <input type="checkbox" value="true" id="useRequirements" name="useRequirements"></label>
+                        <div id="requirements" style="display:none">
+                            <div class="form-group">
+                                <label for="hitsApprovedRequirement" style="width:70%"># of approved HITs (>): </label>
+                                <input id="hitsApprovedRequirement" name="hitsApprovedRequirement" value="0" min="0" class="form-control" type="number">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="approvalRateRequirement" style="width:70%">% of HITs approved (>): </label>
+                                <input id="approvalRateRequirement" name="approvalRateRequirement" value="0" min="0" max="100" class="form-control" type="number">
+                            </div>
+
+                            <div class="form-group" style="margin-bottom:0px">
+                                <label for="localeRequirement" style="width:70%"> Location requirement:  <input type="checkbox" value="true" name="useLocationRequirements" id="useLocationRequirements"></label>
+                                <div id="localeRequirement" style="height:300px;display:none">
+                                    <div style="width:90%;margin: 0 auto">
+                                        <div class="sortable-wrapper">
+                                            <strong>Not allowed</strong>
+                                            <input type="text" id="localeFilter" style="width:100%" placeholder="Filter countries by name">
+                                            <ul id="notUsedLocale" class="connectedSortable"></ul>
+                                        </div>
+                                        <div class="sortable-wrapper">
+                                            <strong>Allowed</strong>
+                                            <ul id="usedLocale" class="connectedSortable"></ul>
+                                        </div>
+                                        <input type="hidden" value="" id="allowedLocales" name="allowedLocales">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="submit" id="submitButton" disabled="disabled" name="sub" class="btn btn-default" style="float : center; margin-top: 10%" value="Submit" formaction="@routes.PublishController.publishMturk()" formmethod="post">
                 </div>
 
                 <div style="float:right; width:49.5%;">
@@ -135,7 +270,7 @@
                         </ul>
                         <div id="preview" style="height:450px">
                             @if(!exp.getParts.isEmpty) {
-                                <iframe src="@Application.getStaticIp()/renderAMT?id=@exp.getParts.get(0).getId()&assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE&hitId=2DDOX7H57DZKRJGLCO4HGM25YA70AL&Type=part" style="margin:0 ; padding:0 ; border : none ; width : 100% ; height : 100%" name="seite"></iframe>
+                                <iframe src="@staticIp/renderAMT?id=@exp.getParts.get(0).getId()&assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE&hitId=2DDOX7H57DZKRJGLCO4HGM25YA70AL&Type=part" style="margin:0 ; padding:0 ; border : none ; width : 100% ; height : 100%" name="seite"></iframe>
                             }else{
                                 <p>Preview not available, since there are no parts used in this experiment.</p>
                             }

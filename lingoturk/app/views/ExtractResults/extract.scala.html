@@ -1,6 +1,6 @@
-@(hits_mTurk : java.util.List[Extract.PublishedExperiment], hits_sandbox : java.util.List[Extract.PublishedExperiment])
+@(hits_mTurk : java.util.List[ExtractionController.PublishedExperiment], hits_sandbox : java.util.List[ExtractionController.PublishedExperiment])
 
-@main("Extract") {
+@main("ExtractionController") {
 
     <script>
     $(document).ready(function() {
@@ -42,7 +42,7 @@
                         <th>Publishing timestamp</th>
                         <th>lifetime</th>
                         <th style="text-align: center">URL</th>
-                        <th style="text-align: center">Extract</th>
+                        <th style="text-align: center">ExtractionController</th>
                         <th style="text-align: center">Details</th>
                     </thead>
                     <tbody>
@@ -53,7 +53,7 @@
                             <td>@hit.getTimestamp().toString()</td>
                             <td>@hit.getLifetime().toString()</td>
                             <td style="text-align: center"><a class="btn btn-default extract-btn" href="@hit.getURL()">Mturk</a></td>
-                            <td style="text-align: center"><a class="btn btn-default extract-btn" href="/extractResult?id=@hit.getLingoExpModel().getId()">Extract</a></td>
+                            <td style="text-align: center"><a class="btn btn-default extract-btn" href="/extractResult?id=@hit.getLingoExpModel().getId()">ExtractionController</a></td>
                             <td style="text-align: center"><a class="btn btn-default extract-btn" href="/getHITDetails?id=@hit.getPublishID&service=MTURK">Details</a></td>
                         </tr>
                     }
@@ -77,7 +77,7 @@
                         <th>Publishing timestamp</th>
                         <th>lifetime</th>
                         <th style="text-align: center">URL</th>
-                        <th style="text-align: center">Extract</th>
+                        <th style="text-align: center">ExtractionController</th>
                         <th style="text-align: center">Details</th>
                     </thead>
                     <tbody>
@@ -88,7 +88,7 @@
                             <td>@hit.getTimestamp().toString()</td>
                             <td>@hit.getLifetime().toString()</td>
                             <td style="text-align: center"><a class="btn btn-default extract-btn" href="@hit.getURL()">Sandbox</a></td>
-                            <td style="text-align: center"><a class="btn btn-default extract-btn" href="/extractResult?id=@hit.getLingoExpModel().getId()">Extract</a></td>
+                            <td style="text-align: center"><a class="btn btn-default extract-btn" href="/extractResult?id=@hit.getLingoExpModel().getId()">ExtractionController</a></td>
                             <td style="text-align: center"><a class="btn btn-default extract-btn" href="/getHITDetails?id=@hit.getPublishID&service=SANDBOX">Details</a></td>
                         </tr>
                     }

@@ -1,0 +1,171 @@
+<div style="height: 100% ; width: 100%; display: table">
+    <style>
+            .question-text{
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+    </style>
+
+        <div ng-if="RC.showMessage == 'none'" style="display: table-cell ; height: 100% ; vertical-align: middle ;">
+            <div ng-if="RC.state == 'instructionsSlide'" class="panel panel-primary" style="width:90%; margin:auto">
+                <div class="panel-heading" style="font-weight: bolder ;">Instructions</div>
+                <div class="panel-body">
+                    @_SHOW_INSTRUCTIONS_@
+                    <button ng-click="RC.next()" type="button" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
+                </div>
+            </div>
+
+            <div ng-if="RC.state == 'workerIdSlide'" class="panel panel-primary" style="width:90%; margin:auto">
+                <div class="panel-heading" style="font-weight: bolder ;">Please enter your workerId into the box below:</div>
+                <div class="panel-body">
+                    <input id="workerId" ng-model="RC.workerId" name="workerId" type="text" class="form-control" placeholder="enter here">
+                    <button ng-click="RC.next()" type="button" ng-disabled="RC.workerId == ''" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
+                </div>
+            </div>
+
+            <div ng-if="RC.state == 'statisticsSlide'">
+                <statistics-slide statistics="RC.statistics" click="RC.next"></statistics-slide>
+            </div>
+
+            <div ng-init="RC.preMeasureReset()" ng-if="RC.state == 'preSlide' && RC.preIndex == $index" class="panel panel-primary" style="width:90%; margin:auto" ng-repeat="pre in RC.allPreItems">
+                <div class="panel-heading" style="font-weight: bolder ;">Pre slide:</div>
+                <div class="panel-body">
+                    <blockquote style="display: inline">{{pre}}</blockquote>
+                    <div class="btn-group" style="float:right">
+                        <button ng-click="RC.setPreDecision(true)" type="button" class="btn btn-default accetability-choice" disabled="disabled">acceptable</button>
+                        <button ng-click="RC.setPreDecision(false)" type="button" class="btn btn-default accetability-choice" disabled="disabled">unacceptable</button>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-if="RC.state == 'intermediateSlide'" class="panel panel-primary" style="width:90%; margin:auto">
+                <div class="panel-heading" style="font-weight: bolder ;">Instructions</div>
+                <div class="panel-body">
+                    Great. Now we will add another aspect to the task; you have to remember the last word etc.
+                    <button ng-click="RC.next()" type="button" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
+                </div>
+            </div>
+
+            <div ng-init="RC.preMeasure2Init()" ng-if="RC.state == 'preSlide2' && RC.preIndex == $index" class="panel panel-primary" style="width:90%; margin:auto" ng-repeat="pre in RC.allPreItems2">
+                <div class="panel-heading" style="font-weight: bolder ;">Pre slide:</div>
+                <div class="panel-body">
+                    <blockquote style="display: inline">{{pre}}</blockquote>
+                    <div class="btn-group" style="float:right">
+                        <button ng-click="RC.setPreDecision(true)" type="button" class="btn btn-default accetability-choice" disabled="disabled">acceptable</button>
+                        <button ng-click="RC.setPreDecision(false)" type="button" class="btn btn-default accetability-choice" disabled="disabled">unacceptable</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="experiment_content" ng-if="RC.state == 'preSlide2_2'" style="width:90%; margin:auto">
+                <!-- the main content of the experiment goes here -->
+                <div id="experiment_panel_2" class="panel panel-primary">
+                    <div id="experiment_heading_2" class="panel-heading" style="font-weight: bolder ;">Please answer the last word of each sentence you have seen before</div>
+                    <div id="experiment_body_2" class="panel-body">
+                        <!--
+                        Question's content goes here
+                        -->
+                        <div class="form-group" ng-repeat="question in RC.allPreItems2 track by $index">
+                            <label style="margin-top:10px">{{$index + 1}}</label>
+                            <input ng-if="$index == 0" ng-change="RC.activateNextInput($index)" ng-model="RC.pretmp[$index]" ng-trim="false" id="input_{{$index}}" class="form-control" type="text"/>
+                            <input ng-if="$index > 0" ng-change="RC.activateNextInput($index)" ng-model="RC.pretmp[$index]" ng-trim="false" id="input_{{$index}}" class="form-control" type="text" disabled="disabled" />
+                            <hr>
+                        </div>
+                        <button ng-disabled="!RC.allPreDone()" ng-click="RC.next()" type="button" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
+                    </div>
+                </div>
+                <!-- /the main content of the experiment goes here -->
+            </div>
+
+            <div ng-init="RC.resetTimers()" ng-if="RC.state == 'intermediateSlide2'" class="panel panel-primary" style="width:90%; margin:auto">
+                <div class="panel-heading" style="font-weight: bolder ;">Instructions</div>
+                <div class="panel-body">
+                    Great. We will now start with the actual task.
+                    <button ng-click="RC.next()" type="button" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
+                </div>
+            </div>
+
+            <div ng-init="RC.startDecisionTimeout()" id="experiment_content" ng-if="RC.state == 'questionSlide' && RC.questionIndex == $index" ng-repeat="question in RC.questions" style="width:90%; margin:auto">
+                <!-- the main content of the experiment goes here -->
+                <div id="experiment_panel_1" class="panel panel-primary">
+                    <div id="experiment_heading_1" class="panel-heading" style="font-weight: bolder ;">Please decide if the given sentence is acceptable or not.</div>
+                    <div id="experiment_body_1" class="panel-body">
+                        <!--
+                        Question's content goes here
+                        -->
+                        <blockquote class="question-text" style="display: inline">{{question.sentence}}</blockquote>
+                        <div class="btn-group" style="float:right">
+                            <button ng-click="RC.setDecision(question,true)" type="button" class="btn btn-default accetability-choice" disabled="disabled">acceptable</button>
+                            <button ng-click="RC.setDecision(question,false)" type="button" class="btn btn-default accetability-choice" disabled="disabled">unacceptable</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- /the main content of the experiment goes here -->
+            </div>
+
+            <div ng-init="RC.startRephrasingTimeout()" id="experiment_content" ng-if="RC.state == 'questionSlide2'" style="width:90%; margin:auto">
+                <!-- the main content of the experiment goes here -->
+                <div id="experiment_panel_2" class="panel panel-primary">
+                    <div id="experiment_heading_2" class="panel-heading" style="font-weight: bolder ;">Please answer the last word of each sentence you have seen before</div>
+                    <div id="experiment_body_2" class="panel-body">
+                        <!--
+                        Question's content goes here
+                        -->
+                        <div ng-if="RC.showRephraseQuestion($index)" class="form-group" ng-repeat="question in RC.questions track by $index">
+                            <label style="margin-top:10px">{{$index + 1}}</label>
+                            <input ng-if="$index == 0 || $index == RC.divisions[RC.divisionIndex-1]" ng-change="RC.activateNextInput($index)" ng-trim="false" id="input_{{$index}}" class="form-control" ng-model="question.answer.lastWord" type="text"/>
+                            <input ng-if="$index > 0 && (RC.divisionIndex == 0 || $index != RC.divisions[RC.divisionIndex-1])" ng-change="RC.activateNextInput($index)" ng-trim="false" id="input_{{$index}}" class="form-control" ng-model="question.answer.lastWord" type="text" disabled="disabled" />
+                            <hr>
+                        </div>
+                        <button ng-disabled="!RC.allQuestionsAnswered()" ng-click="RC.nextQuestion()" type="button" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
+                    </div>
+                </div>
+                <!-- /the main content of the experiment goes here -->
+            </div>
+        </div>
+
+        <div ng-if="RC.showMessage == 'nextSubList'" style="height : 100% ; width : 100% ; display : table ; position: absolute; top: 0; left: 0">
+            <div style="display: table-cell ; height: 100% ; vertical-align: middle ;">
+                <div style="width:90%; margin:auto">
+                    <!-- <this message is shown if a user successfully finished a sublist> -->
+                    <div class="panel panel-primary">
+                        <!-- <the message's heading> -->
+                        <div class="panel-heading" style="font-weight: bolder ;" id="nextSubList_title">Attention:</div>
+                        <!-- </the message's heading> -->
+                        <div class="panel-body">
+                            <!-- <the message content> -->
+                            <div id="nextSubList_message">
+                                You've successfully completed a sublist. You may either stop here or continue with another one.
+                            </div>
+                            <!-- </the message content. please don't edit the buttons below (except their label)> -->
+                            <hr/>
+                            <button ng-click="RC.processFinish()" style="float:right; margin-left: 10px;" class="btn btn-default" type="button">Stop here</button>
+                            <button ng-click="RC.nextSublist()" style="float:right" class="btn btn-default" type="button">Continue</button>
+                        </div>
+                    </div>
+                    <!-- </this message is shown if a user successfully finished a sublist> -->
+                </div>
+            </div>
+        </div>
+
+        <div ng-if="RC.showMessage == 'goodBye'" style="height : 100% ; width : 100% ; display : table ; position: absolute; top: 0; left: 0">
+            <div style="display: table-cell ; height: 100% ; vertical-align: middle ;">
+                <div style="width:90%; margin:auto">
+                    <div class="panel panel-primary">
+                        <div id="goodBye_title" class="panel-heading" style="font-weight: bolder ;">Attention:</div>
+                        <div class="panel-body">
+                            <div id="goodBye_message">
+                                You've successfully completed the experiment. Thank you for your participation. To hand in your submission, click on the "Submit"-button below.
+                            </div>
+                            <hr/>
+                            <button ng-click="RC.finished()" style="float:right" class="btn btn-default" type="button">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>

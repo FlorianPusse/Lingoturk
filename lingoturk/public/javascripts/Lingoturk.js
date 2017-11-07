@@ -150,17 +150,22 @@
                 addNone: '@?'
             },
             link: function (scope, element, attrs) {
-                scope.answer = {};
+                if (!scope.hasOwnProperty("answer") || typeof(scope.answer) === "undefined") {
+                    scope.answer = {};
+                }
                 scope.addNone = scope.hasOwnProperty("addNone") && scope.addNone == "true";
                 for (var i = 0; i < scope.options.length; ++i) {
                     scope.answer[scope.options[i]] = false;
                 }
-                if(scope.addNone) {
+                if (scope.addNone) {
                     scope.answer['none'] = false;
                 }
                 scope.descriptionsAvailable = scope.hasOwnProperty("descriptions");
                 scope.setAnswer = function (a) {
                     scope.answer = a;
+                };
+                scope.loaded = function () {
+                    $('[data-toggle="tooltip"]').tooltip({delay: 0});
                 }
             }
         };
@@ -199,29 +204,43 @@
             restrict: 'E',
             templateUrl: '/assets/templates/sliderAnswerPanel.html',
             scope: {
-                answer: '='
+                answer: '=',
+                useScale: '@?'
             },
             link: function (scope, element, attrs) {
                 scope.activated = false;
+                if (!scope.hasOwnProperty("useScale")) {
+                    scope.useScale = "scale";
+                }
 
                 var elem = $(element[0]).find(".slider");
                 elem.slider({
-                        min: 0,
-                        max: 100,
-                        change: function (event, ui) {
-                            scope.$apply(scope.answer = ui.value);
-                            scope.$apply(scope.activated = true);
-                            elem.find(".ui-slider-handle").show();
-                        }
-                    })
+                    min: 0,
+                    max: 100,
+                    change: function (event, ui) {
+                        scope.$apply(scope.answer = ui.value);
+                        scope.$apply(scope.activated = true);
+                        elem.find(".ui-slider-handle").show();
+                    }
+                })
                     .each(function () {
-                        /* http://stackoverflow.com/questions/10224856/jquery-ui-slider-labels-under-slider */
-                        var opt = elem.slider("option");
-                        var vals = opt.max - opt.min;
+                        if (scope.useScale === "scale") {
+                            /* http://stackoverflow.com/questions/10224856/jquery-ui-slider-labels-under-slider */
+                            var opt = elem.slider("option");
+                            var vals = opt.max - opt.min;
 
-                        for (var i = 0; i <= vals; i += 10) {
-                            var el = $('<label style="position: absolute; width: 20px; margin-top: 20px; margin-left: -10px;text-align: center;">' + (i + opt.min) + '%</label>').css('left', (i / vals * 100) + '%');
-                            elem.append(el);
+                            for (var i = 0; i <= vals; i += 10) {
+                                var el = $('<label style="position: absolute; width: 20px; margin-top: 20px; margin-left: -10px;text-align: center;">' + (i + opt.min) + '%</label>').css('left', (i / vals * 100) + '%');
+                                elem.append(el);
+                            }
+                        } else {
+                            var leftLabel = $("<label style=\"position: absolute;width: 20px;margin-top: 20px;margin-left: -10px;text-align: center;\">extremely unlikely</label>");
+                            var middleLabel = $("<label style=\"width: 100%;margin-top: 20px;text-align: center;\">moderately likely</label>");
+                            var rightLabel = $("<label style=\"position: absolute; width: 20px; margin-top: 20px; margin-left: -60px; text-align: center; left: 100%;\">extremely likely</label>");
+
+                            elem.append(leftLabel);
+                            elem.append(middleLabel);
+                            elem.append(rightLabel);
                         }
                     });
                 elem.find(".ui-slider-handle").hide();
@@ -527,7 +546,10 @@
                 randomizeConnectives: '=?',
                 instructions1: '@?',
                 instructions2: '@?',
-                boxTitle: '@?'
+                boxTitle: '@?',
+                allowMultiple: '@?',
+                goBackText: '@?',
+                noneStyle: '@?'
             },
             link: function (scope, element, attrs) {
                 var tmp = scope.connectives.split(",");
@@ -542,6 +564,21 @@
                 }
                 if (!scope.hasOwnProperty('boxTitle')) {
                     scope.boxTitle = "Candidate connectives";
+                }
+                if (!scope.hasOwnProperty("allowMultiple")) {
+                    scope.allowMultiple = "true";
+                }
+                if (!scope.hasOwnProperty("goBackText")) {
+                    scope.goBackText = "I changed my mind";
+                }
+                if (!scope.hasOwnProperty("noneStyle")) {
+                    scope.goBackText = "block";
+                }
+                if (!scope.hasOwnProperty("context1")) {
+                    scope.context1 = "";
+                }
+                if (!scope.hasOwnProperty("context2")) {
+                    scope.context2 = "";
                 }
 
                 scope.answer = {};

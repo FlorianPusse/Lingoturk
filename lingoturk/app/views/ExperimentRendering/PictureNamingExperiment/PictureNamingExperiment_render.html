@@ -1,0 +1,92 @@
+<div style="height: 100% ; width: 100%; display: table">
+        <div ng-if="RC.showMessage == 'none'" style="display: table-cell ; height: 100% ; vertical-align: middle ;">
+            <div ng-if="RC.state == 'instructionsSlide'" class="panel panel-primary" style="width:90%; margin:auto">
+                <div class="panel-heading" style="font-weight: bolder ;">Instruktionen</div>
+                <div class="panel-body">
+                    @_SHOW_INSTRUCTIONS_@
+                    <strong>Herzlich Willkommen!</strong>
+                    <br/><br/>
+                    <p>Vielen Dank, dass Sie bereit sind, an unserer Fragebogenstudie teilzunehmen! Sie unterstützen uns damit in unserem Forschungsprojekt im Sonderforschungsbereich <i>
+                        Information Density and Linguistic Encoding</i> an der Universität des Saarlandes. Bitte nehmen Sie nur teil, wenn Sie <b>
+                        deutsche/r Muttersprachler/in</b> sind.<br/>
+                        Im Folgenden sehen Sie eine Reihe von Sätzen, zusammen mit Bildern. Die Sätze geben Ihnen einen Kontext für die Bilder. Bitte benennen Sie die Bilder jeweils möglichst intuitiv durch ein gut passendes Substantiv. Es geht nicht darum, dass Sie so kreativ wie möglich werden, schreiben Sie einfach auf, was Ihnen als erstes in den Sinn kommt.
+                        Die Bearbeitung wird etwa 10 Minuten in Anspruch nehmen.</p>
+                    Die Daten werden anonym erfasst und nur für wissenschaftliche Forschungszwecke ausgewertet.
+                    <br/>
+                    <label style="margin-top:20px ;">Beispiel:</label>
+                    <hr style="margin-top:10px ;"/>
+                    Anton wollte umziehen, um näher bei seiner Freundin zu wohnen. Weil er ohnehin von zuhause aus arbeitete, entschloss er sich, nach Wien zu ziehen.
+                    <img src="/dynamicAssets/images/Experiments/PictureNamingExperiment/example.jpg" style="max-width: 320px ; max-height: 320px ; display: block ; margin: 0 auto ;">
+                    <input class="form-control textInput" disabled="disabled" value="Umzugswagen">
+                    <hr/>
+                    <button ng-click="RC.next()" type="button" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
+                </div>
+            </div>
+
+            <div ng-if="RC.state == 'workerIdSlide'" class="panel panel-primary" style="width:90%; margin:auto">
+                <div class="panel-heading" style="font-weight: bolder ;">Bitte geben sie hier ihre AccountID ein:</div>
+                <div class="panel-body">
+                    <input id="workerId" ng-model="RC.workerId" name="workerId" type="text" class="form-control" placeholder="enter here">
+                    <button ng-click="RC.next()" type="button" ng-disabled="RC.workerId == ''" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
+                </div>
+            </div>
+
+            <div ng-if="RC.state == 'statisticsSlide'">
+                <statistics-slide statistics="RC.statistics" click="RC.next"></statistics-slide>
+            </div>
+
+            <div ng-if="RC.state == 'questionSlide' && RC.questionIndex == $index" ng-repeat="question in RC.questions" style="width:90%; margin:auto">
+                <!-- <this part can also be replaced by a template or your own ideas> -->
+                <div class="panel panel-primary">
+                    <div class="panel-heading" style="font-weight: bolder ;">{{$index + 1}} / {{RC.questions.length}}</div>
+                    <div class="panel-body">
+                        <span style="display: block ; margin-top:15px">{{question.text}}</span>
+                        <img ng-src="/dynamicAssets/images/Experiments/PictureNamingExperiment/{{question.picturePath}}_{{RC.part.fileName.replace('chunk','').replace('.csv','')}}.png.jpg" style="max-width: 350px ; max-height: 350px ; display: block ; margin: 0 auto ; margin-top:15px">
+
+                        <label style="margin-top:20px">Antwort hier eingeben:</label>
+                        <input class="form-control textInput" ng-model="question.answer">
+
+                        <button ng-disabled="question.answer === undefined || question.answer == '' || question.answer == {}" ng-click="RC.nextQuestion()" type="button" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
+                    </div>
+                </div>
+                <!-- </this part can also be replaced by a template or your own ideas> -->
+            </div>
+        </div>
+
+        <div ng-if="RC.showMessage == 'nextSubList'" style="height : 100% ; width : 100% ; display : table ; position: absolute; top: 0; left: 0">
+            <div style="display: table-cell ; height: 100% ; vertical-align: middle ;">
+                <div style="width:90%; margin:auto">
+                    <!-- <this message is shown if a user successfully finished a sublist> -->
+                    <div class="panel panel-primary">
+                        <!-- <the message's heading> -->
+                        <div class="panel-heading" style="font-weight: bolder ;">Attention:</div>
+                        <!-- </the message's heading> -->
+                        <div class="panel-body">
+                            <!-- <the message content> -->
+                                Sie haben nun erfolgreich den ersten Teil abgeschlossen. Sie können nun die Studie abschließen, oder freiwilig noch einen weiteren Teil durchführen, um unsere Forschung zu unterstützen.
+                            <!-- </the message content. please don't edit the buttons below (except their label)> -->
+                            <hr/>
+                            <button ng-click="RC.processFinish()" style="float:right; margin-left: 10px;" class="btn btn-default" type="button">Studie abschließen</button>
+                            <button ng-click="RC.nextSublist()" style="float:right" class="btn btn-default" type="button">Noch ein weiterer Teil</button>
+                        </div>
+                    </div>
+                    <!-- </this message is shown if a user successfully finished a sublist> -->
+                </div>
+            </div>
+        </div>
+
+        <div ng-if="RC.showMessage == 'goodBye'" style="height : 100% ; width : 100% ; display : table ; position: absolute; top: 0; left: 0">
+            <div style="display: table-cell ; height: 100% ; vertical-align: middle ;">
+                <div style="width:90%; margin:auto">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading" style="font-weight: bolder ;">Attention:</div>
+                        <div class="panel-body">
+                            You've successfully completed the experiment. Thank you for your participation. To hand in your submission, click on the "Submit"-button below.
+                            <hr/>
+                            <button ng-click="RC.finished()" style="float:right" class="btn btn-default" type="button">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>

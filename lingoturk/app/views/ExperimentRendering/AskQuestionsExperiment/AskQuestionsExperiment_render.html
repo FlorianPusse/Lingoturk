@@ -1,0 +1,235 @@
+<div style="height: 100% ; width: 100%; display: table">
+    <style>
+            ol .form-control {
+                display: inline-block ;
+            }
+            ol > li {
+                margin-top: 10px ;
+            }
+    </style>
+
+        <div ng-if="RC.showMessage == 'none'" style="display: table-cell ; height: 100% ; vertical-align: middle ;">
+            <div ng-if="RC.state == 'instructionsSlide'" class="panel panel-primary" style="width:90% ; margin:auto">
+                <div class="panel-heading" style="font-weight: bolder ;">Instructions</div>
+                <div class="panel-body">
+                    @_SHOW_INSTRUCTIONS_@
+                    <div style="text-align:center;margin-top:20px">
+                        <button ng-disabled="RC.origin == 'MTURK' && RC.assignmentId == 'ASSIGNMENT_ID_NOT_AVAILABLE'" ng-click="RC.next()" type="button" class="btn btn-success btn-lg">Start</button>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-if="RC.state == 'workerIdSlide'" class="panel panel-primary" style="width:90% ; margin:auto">
+                <div class="panel-heading" style="font-weight: bolder ;">Please enter your workerId into the box below:</div>
+                <div class="panel-body">
+                    <input id="workerId" ng-model="RC.workerId" name="workerId" type="text" class="form-control" placeholder="enter here">
+                    <button ng-click="RC.next()" type="button" ng-disabled="RC.workerId == ''" class="btn btn-default" style="float:right ; margin-top:20px">
+                        Next</button>
+                </div>
+            </div>
+
+            <div ng-if="RC.state == 'statisticsSlide'">
+                <statistics-slide statistics="RC.statistics" click="RC.next"></statistics-slide>
+            </div>
+
+            <div id="experiment_content" ng-if="RC.state == 'questionSlide' && RC.questionIndex == $index" ng-repeat="question in RC.questions" style="width:90% ; margin:auto">
+                <!-- the main content of the experiment goes here -->
+                <div id="experiment_panel_1" class="panel panel-primary">
+                    <div id="experiment_heading_1" class="panel-heading" style="font-weight: bolder ;">Question Experiment</div>
+                    <div id="experiment_body_1" class="panel-body">
+                        <h4>Imagine you told a child a story about <strong>{{question.scenario}}</strong>. Try to find out if it understood everything correctly and ask questions!</h4>
+
+                        <div style="float: left; width: 50%; padding: 20px; border-right: solid;margin-top:50px">
+                            <p>
+                                <strong>Type 1: Asking for time points/time spans</strong><br/>
+                            </p>
+                            <ol>
+                                <li ng-class="{'has-success': RC.showError && RC.checkAnswer(question.answer.timeQuestion1),
+                                'has-error': RC.showError && !RC.checkAnswer(question.answer.timeQuestion1)}">
+                                    <input ng-model="question.answer.timeQuestion1" class="form-control">
+                                </li>
+                                <li ng-class="{'has-success': RC.showError && RC.checkAnswer(question.answer.timeQuestion2),
+                                'has-error': RC.showError && !RC.checkAnswer(question.answer.timeQuestion2)}">
+                                    <input ng-model="question.answer.timeQuestion2" class="form-control">
+                                </li>
+                                <li ng-class="{'has-success': RC.showError && RC.checkAnswer(question.answer.timeQuestion3),
+                                'has-error': RC.showError && !RC.checkAnswer(question.answer.timeQuestion3)}">
+                                    <input ng-model="question.answer.timeQuestion3" class="form-control">
+                                </li>
+                            </ol>
+
+                            <p>
+                                <strong>Type 2: Asking for persons, locations, other content details</strong><br/>
+                            </p>
+                            <ol>
+                                <li ng-class="{'has-success': RC.showError && RC.checkAnswer(question.answer.contentQuestion1),
+                                'has-error': RC.showError && !RC.checkAnswer(question.answer.contentQuestion1)}">
+                                    <input ng-model="question.answer.contentQuestion1" class="form-control">
+                                </li>
+                                <li ng-class="{'has-success': RC.showError && RC.checkAnswer(question.answer.contentQuestion2),
+                                'has-error': RC.showError && !RC.checkAnswer(question.answer.contentQuestion2)}">
+                                    <input ng-model="question.answer.contentQuestion2" class="form-control">
+                                </li>
+                                <li ng-class="{'has-success': RC.showError && RC.checkAnswer(question.answer.contentQuestion3),
+                                'has-error': RC.showError && !RC.checkAnswer(question.answer.contentQuestion3)}">
+                                    <input ng-model="question.answer.contentQuestion3" class="form-control">
+                                </li>
+                            </ol>
+
+
+                            <p>
+                                <strong>Type 3: Asking for reasons or for how something happened</strong><br/>
+                            </p>
+                            <ol>
+                                <li ng-class="{'has-success': RC.showError && RC.checkAnswer(question.answer.reasoningQuestion1),
+                                'has-error': RC.showError && !RC.checkAnswer(question.answer.reasoningQuestion1)}">
+                                    <input ng-model="question.answer.reasoningQuestion1" class="form-control">
+                                </li>
+                                <li ng-class="{'has-success': RC.showError && RC.checkAnswer(question.answer.reasoningQuestion2),
+                                'has-error': RC.showError && !RC.checkAnswer(question.answer.reasoningQuestion2)}">
+                                    <input ng-model="question.answer.reasoningQuestion2" class="form-control">
+                                </li>
+                                <li ng-class="{'has-success': RC.showError && RC.checkAnswer(question.answer.reasoningQuestion3),
+                                'has-error': RC.showError && !RC.checkAnswer(question.answer.reasoningQuestion3)}">
+                                    <input ng-model="question.answer.reasoningQuestion3" class="form-control">
+                                </li>
+                            </ol>
+
+
+                            <p>
+                                <strong>Type 4: Free questions</strong><br/>
+                                Any question that sounds reasonable to you to ask for this situation
+                            </p>
+                            <ol>
+                                <li ng-class="{'has-success': RC.showError && RC.checkAnswer(question.answer.freeQuestion1),
+                                'has-error': RC.showError && !RC.checkAnswer(question.answer.freeQuestion1)}">
+                                    <input ng-model="question.answer.freeQuestion1" class="form-control">
+                                </li>
+                                <li ng-class="{'has-success': RC.showError && RC.checkAnswer(question.answer.freeQuestion2),
+                                'has-error': RC.showError && !RC.checkAnswer(question.answer.freeQuestion2)}">
+                                    <input ng-model="question.answer.freeQuestion2" class="form-control">
+                                </li>
+                                <li ng-class="{'has-success': RC.showError && RC.checkAnswer(question.answer.freeQuestion3),
+                                'has-error': RC.showError && !RC.checkAnswer(question.answer.freeQuestion3)}">
+                                    <input ng-model="question.answer.freeQuestion3" class="form-control">
+                                </li>
+                                <li ng-class="{'has-success': RC.showError && RC.checkAnswer(question.answer.freeQuestion4),
+                                'has-error': RC.showError && !RC.checkAnswer(question.answer.freeQuestion4)}">
+                                    <input ng-model="question.answer.freeQuestion4" class="form-control">
+                                </li>
+                                <li ng-class="{'has-success': RC.showError && RC.checkAnswer(question.answer.freeQuestion5),
+                                'has-error': RC.showError && !RC.checkAnswer(question.answer.freeQuestion5)}">
+                                    <input ng-model="question.answer.freeQuestion5" class="form-control">
+                                </li>
+                                <li ng-class="{'has-success': RC.showError && RC.checkAnswer(question.answer.freeQuestion6),
+                                'has-error': RC.showError && !RC.checkAnswer(question.answer.freeQuestion6)}">
+                                    <input ng-model="question.answer.freeQuestion6" class="form-control">
+                                </li>
+                            </ol>
+                        </div>
+                        <div style="float: right; width: 50%; padding: 20px;margin-top:50px">
+                            <strong style="display:block">Short Instructions:</strong>
+                            <ol>
+                                <li> Try to ask about central, relevant aspects of the situation and anything that could plausibly
+                                    have happened before or after.</li>
+                                <li> Please do not formulate the same question again with different words, every question should
+                                    be unique.</li>
+                                <li> Formulate only questions that can be answered with a couple of words, i.e. no complex explanation or elaboration should be required.</li>
+                                <li> To refer to the persons acting in the situation, please use "they", since you don't know for sure whether it is a man, woman, or multiple persons.</li>
+                            </ol>
+                            <div style="width:100%; text-align: center; padding-top:15px">
+                                <button onclick="$('.show-example').toggle()" type="button" class="show-example btn btn-primary">show example</button>
+                                <button onclick="$('.show-example').toggle()" type="button" style="display: none" class="show-example btn btn-primary">hide example</button>
+                                <div class="show-example" style="display: none;margin-top:20px;background: #cecece; text-align: initial;">
+                                    <span style="font-size:17px">Imagine you told a child a story about <strong>a person visiting a restaurant</strong>. Try to find out if it understood everything correctly and ask questions!</span>
+                                    <p style="margin-top:10px">
+                                        <span style="font-size:16px">Type 1: Asking for time points/time spans</span>
+                                    </p>
+                                    <ol>
+                                        <li>When did they order a dessert?</li>
+                                        <li>When did they pay?</li>
+                                        <li>How long did they wait?</li>
+                                    </ol>
+
+                                    <p>
+                                        <span style="font-size:16px">Type 2: Asking for persons, locations, other content details</span>
+                                    </p>
+                                    <ol>
+                                        <li>Who cooked the food?</li>
+                                        <li>Where did they sit?</li>
+                                        <li>What did they order?</li>
+                                    </ol>
+
+                                    <p>
+                                        <span style="font-size:16px">Type 3: Asking for reasons or for how something happened</span>
+                                    </p>
+                                    <ol>
+                                        <li>How did the food taste?</li>
+                                        <li>Why did they order the vegetarian option?</li>
+                                        <li>Why did they ask for a reservation?</li>
+                                    </ol>
+
+                                    <p>
+                                        <span style="font-size:16px">Type 4: Free questions</span>
+                                    </p>
+                                    <ol>
+                                        <li>What did they use to flavour their food?</li>
+                                        <li>Why did they complain about their steak?</li>
+                                        <li>Which type of wine did they drink?</li>
+                                        <li>How many courses did they have?</li>
+                                        <li>What cutlery was used to cut the food?</li>
+                                        <li>What did the waiter bring?</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="clear:both"></div>
+
+                        <button ng-click="RC.nextQuestion()" type="button" class="btn btn-default" style="float:right ; margin-top:20px">Next</button>
+                    </div>
+                </div>
+                <!-- /the main content of the experiment goes here -->
+            </div>
+        </div>
+
+        <div ng-if="RC.showMessage == 'nextSubList'" style="height : 100% ; width : 100% ; display : table ; position: absolute ; top: 0 ; left: 0">
+            <div style="display: table-cell ; height: 100% ; vertical-align: middle ;">
+                <div style="width:90% ; margin:auto">
+                    <!-- <this message is shown if a user successfully finished a sublist> -->
+                    <div class="panel panel-primary">
+                        <!-- <the message's heading> -->
+                        <div class="panel-heading" style="font-weight: bolder ;" id="nextSubList_title">Attention:</div>
+                        <!-- </the message's heading> -->
+                        <div class="panel-body">
+                            <!-- <the message content> -->
+                            <div id="nextSubList_message">
+                                You've successfully completed a sublist. You may either stop here or continue with another one.
+                            </div>
+                            <!-- </the message content. please don't edit the buttons below (except their label)> -->
+                            <hr/>
+                            <button ng-click="RC.processFinish()" style="float:right ; margin-left: 10px ;" class="btn btn-default" type="button">Stop here</button>
+                            <button ng-click="RC.nextSublist()" style="float:right" class="btn btn-default" type="button">Continue</button>
+                        </div>
+                    </div>
+                    <!-- </this message is shown if a user successfully finished a sublist> -->
+                </div>
+            </div>
+        </div>
+
+        <div ng-if="RC.showMessage == 'goodBye'" style="height : 100% ; width : 100% ; display : table ; position: absolute ; top: 0 ; left: 0">
+            <div style="display: table-cell ; height: 100% ; vertical-align: middle ;">
+                <div style="width:90% ; margin:auto">
+                    <div class="panel panel-primary">
+                        <div id="goodBye_title" class="panel-heading" style="font-weight: bolder ;">Attention:</div>
+                        <div class="panel-body">
+                            <div id="goodBye_message">
+                                You've successfully completed the experiment. Thank you for your participation. To hand in your submission, click on the "Submit"-button below.
+                            </div>
+                            <hr/>
+                            <button ng-click="RC.finished()" style="float:right" class="btn btn-default" type="button">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
